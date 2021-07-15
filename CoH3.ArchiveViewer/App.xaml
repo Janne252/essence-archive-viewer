@@ -1,0 +1,4 @@
+﻿<Application x:Class="ArchiveViewer.App" StartupUri="MainWindow.xaml" Exit="Application_Exit" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+  <Application.Resources>
+</Application.Resources>
+</Application>

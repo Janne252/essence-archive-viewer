@@ -1,0 +1,127 @@
+<Window
+	x:Class="ArchiveViewer.FindWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:system="clr-namespace:System;assembly=mscorlib" xmlns:archiveViewer="clr-namespace:ArchiveViewer"
+	Name="ThisWindow"
+	Title="Find"
+	Icon="Icon.ico"
+	Height="192"
+	Width="384"
+	ResizeMode="NoResize"
+	WindowStartupLocation="CenterOwner"
+	DataContext="{Binding ElementName=ThisWindow, Path=Options}"
+	Loaded="Find_Loaded">
+	<UIElement.CommandBindings>
+		<CommandBinding
+			Command="Find"
+			CanExecute="Find_CanExecute"
+			Executed="Find_Executed" />
+		<CommandBinding
+			Command="Close"
+			Executed="Close_Executed" />
+	</UIElement.CommandBindings>
+	<FrameworkElement.Resources>
+		<ResourceDictionary>
+			<ObjectDataProvider
+				MethodName="GetValues"
+				ObjectType="{x:Type system:Enum}"
+				x:Key="FindMethods"
+            >
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="archiveViewer:FindMethod"/>
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
+		</ResourceDictionary>
+	</FrameworkElement.Resources>
+	<Grid
+		Margin="8">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition
+				Width="*" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition
+				Height="*" />
+			<RowDefinition
+				Height="8" />
+			<RowDefinition
+				Height="Auto" />
+		</Grid.RowDefinitions>
+		<GroupBox
+			Grid.Row="0"
+			Grid.Column="0">
+			<Grid
+				VerticalAlignment="Center">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition
+						Width="96" />
+					<ColumnDefinition
+						Width="*" />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition
+						Height="Auto" />
+					<RowDefinition
+						Height="4" />
+					<RowDefinition
+						Height="Auto" />
+					<RowDefinition
+						Height="4" />
+					<RowDefinition
+						Height="Auto" />
+				</Grid.RowDefinitions>
+				<Label
+					Grid.Row="0"
+					Grid.Column="0"
+					Content="Find What:" />
+				<TextBox
+					Name="What"
+					Grid.Row="0"
+					Grid.Column="1"
+					Text="{Binding Path=What, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+				<Label
+					Grid.Row="2"
+					Grid.Column="0"
+					Content="Use:" />
+				<ComboBox
+					Grid.Row="2"
+					Grid.Column="1"
+					ItemsSource="{Binding Source={StaticResource FindMethods}, Mode=OneTime}"
+					SelectedValue="{Binding Path=Method, Mode=TwoWay}" />
+				<StackPanel
+					Grid.Row="4"
+					Grid.Column="1"
+					Orientation="Horizontal">
+					<CheckBox
+						Content="Match Case"
+						IsChecked="{Binding Path=MatchCase, Mode=TwoWay}" />
+				</StackPanel>
+			</Grid>
+		</GroupBox>
+		<StackPanel
+			Grid.Row="2"
+			Grid.Column="0"
+			HorizontalAlignment="Right"
+			Orientation="Horizontal">
+			<FrameworkElement.Resources>
+				<ResourceDictionary>
+					<Style
+						TargetType="{x:Type Button}"
+						x:Key="{x:Type Button}">
+						<Setter
+							Property="Margin"
+							Value="4,0,0,0" />
+					</Style>
+				</ResourceDictionary>
+			</FrameworkElement.Resources>
+			<Button
+				Content="Find"
+				Command="Find"
+				IsDefault="True"
+				MinWidth="96" />
+			<Button
+				Content="Cancel"
+				Command="Close"
+				IsCancel="True"
+				MinWidth="96" />
+		</StackPanel>
+	</Grid>
+</Window>
