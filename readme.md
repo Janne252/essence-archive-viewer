@@ -9,7 +9,7 @@ Supported `SGA` versions (based on `Essence.Core.dll`):
 - `7` (Company of Heroes 2)
 - `8` ??
 - `9` (Dawn of War III)
-- `10` (Company of Heroes 3)
+- `10` (Company of Heroes 3, Age of Empires IV)
 
 This is a decompiled and altered version of the Relic Entertainment's official [Archive Viewer](http://modding.companyofheroes.com/archive-viewer). Rough overview of changes:
 - Replaced referenced `RelicCore.dll` with `Essence.Core.dll`
