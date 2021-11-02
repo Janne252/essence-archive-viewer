@@ -8,84 +8,47 @@ using System.Xml;
 
 namespace ArchiveViewer
 {
-	// Token: 0x0200000C RID: 12
-	[DataContract]
+    [DataContract]
 	public sealed class Settings : INotifyPropertyChanged
 	{
-		// Token: 0x06000058 RID: 88 RVA: 0x00002E8A File Offset: 0x0000108A
-		public Settings()
+        public Settings()
 		{
-			mainWindow = new WindowSettings();
-			validate();
+			_mainWindow = new WindowSettings();
+			Validate();
 		}
 
-		// Token: 0x17000019 RID: 25
-		// (get) Token: 0x06000059 RID: 89 RVA: 0x00002EAE File Offset: 0x000010AE
-		public WindowSettings MainWindow
-		{
-			get
-			{
-				return mainWindow;
-			}
-		}
+		public WindowSettings MainWindow => _mainWindow;
 
-		// Token: 0x1700001A RID: 26
-		// (get) Token: 0x0600005A RID: 90 RVA: 0x00002EB6 File Offset: 0x000010B6
-		public ObservableCollection<string> RecentFiles
-		{
-			get
-			{
-				return recentFiles;
-			}
-		}
+        public ObservableCollection<string> RecentFiles => _recentFiles;
 
-		// Token: 0x14000002 RID: 2
-		// (add) Token: 0x0600005B RID: 91 RVA: 0x00002EC0 File Offset: 0x000010C0
-		// (remove) Token: 0x0600005C RID: 92 RVA: 0x00002EF8 File Offset: 0x000010F8
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		// Token: 0x0600005D RID: 93 RVA: 0x00002F30 File Offset: 0x00001130
-		private void notifyPropertyChanged(params string[] propertyNames)
+		private void Validate()
 		{
-			PropertyChangedEventHandler propertyChanged = PropertyChanged;
-			if (propertyChanged != null)
+			if (_mainWindow == null)
 			{
-				foreach (string propertyName in propertyNames)
-				{
-					propertyChanged(this, new PropertyChangedEventArgs(propertyName));
-				}
+				_mainWindow = new WindowSettings();
 			}
-		}
-
-		// Token: 0x0600005E RID: 94 RVA: 0x00002F68 File Offset: 0x00001168
-		private void validate()
-		{
-			if (mainWindow == null)
+			if (_recentFiles == null)
 			{
-				mainWindow = new WindowSettings();
-			}
-			if (recentFiles == null)
-			{
-				recentFiles = new ObservableCollection<string>();
+				_recentFiles = new ObservableCollection<string>();
 				return;
 			}
-			while (recentFiles.Count > 10)
+			while (_recentFiles.Count > 10)
 			{
-				recentFiles.RemoveAt(recentFiles.Count - 1);
+				_recentFiles.RemoveAt(_recentFiles.Count - 1);
 			}
 		}
 
-		// Token: 0x0600005F RID: 95 RVA: 0x00002FC3 File Offset: 0x000011C3
 		[OnDeserialized]
-		private void onDeserialized(StreamingContext context)
+		private void OnDeserialized(StreamingContext context)
 		{
-			validate();
+			Validate();
 		}
 
-		// Token: 0x06000060 RID: 96 RVA: 0x00002FCC File Offset: 0x000011CC
 		public static string GetRootPath(bool create)
 		{
-			string text = Path.Combine(new string[]
+			var text = Path.Combine(new[]
 			{
 				Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
 				"SEGA",
@@ -104,7 +67,7 @@ namespace ArchiveViewer
 					}
 					catch (Exception ex)
 					{
-						Trace.TraceError("Error creating directroy {0}: {1}", new object[]
+						Trace.TraceError("Error creating directory {0}: {1}", new object[]
 						{
 							text,
 							ex.Message
@@ -117,10 +80,9 @@ namespace ArchiveViewer
 			return text;
 		}
 
-		// Token: 0x06000061 RID: 97 RVA: 0x00003064 File Offset: 0x00001264
 		public static string GetSettingsPath(bool create)
 		{
-			string rootPath = GetRootPath(create);
+			var rootPath = GetRootPath(create);
 			if (rootPath == null)
 			{
 				return null;
@@ -128,24 +90,21 @@ namespace ArchiveViewer
 			return Path.Combine(rootPath, "Settings.xml");
 		}
 
-		// Token: 0x06000062 RID: 98 RVA: 0x00003088 File Offset: 0x00001288
 		public static Settings Load()
 		{
-			string settingsPath = GetSettingsPath(false);
+			var settingsPath = GetSettingsPath(false);
 			if (settingsPath != null)
 			{
 				try
 				{
-					DataContractSerializer dataContractSerializer = new DataContractSerializer(typeof(Settings));
-					XmlReaderSettings settings = new XmlReaderSettings
+					var dataContractSerializer = new DataContractSerializer(typeof(Settings));
+					var settings = new XmlReaderSettings
 					{
 						CloseInput = true
 					};
-					using (XmlReader xmlReader = XmlReader.Create(new FileStream(settingsPath, FileMode.Open, FileAccess.Read, FileShare.Read), settings))
-					{
-						return (Settings)dataContractSerializer.ReadObject(xmlReader);
-					}
-				}
+                    using var xmlReader = XmlReader.Create(new FileStream(settingsPath, FileMode.Open, FileAccess.Read, FileShare.Read), settings);
+                    return (Settings)dataContractSerializer.ReadObject(xmlReader);
+                }
 				catch (FileNotFoundException)
 				{
 				}
@@ -161,26 +120,23 @@ namespace ArchiveViewer
 			return new Settings();
 		}
 
-		// Token: 0x06000063 RID: 99 RVA: 0x00003148 File Offset: 0x00001348
 		public void Save()
 		{
-			string settingsPath = GetSettingsPath(true);
+			var settingsPath = GetSettingsPath(true);
 			if (settingsPath != null)
 			{
 				try
 				{
-					DataContractSerializer dataContractSerializer = new DataContractSerializer(typeof(Settings));
-					XmlWriterSettings settings = new XmlWriterSettings
+					var dataContractSerializer = new DataContractSerializer(typeof(Settings));
+					var settings = new XmlWriterSettings
 					{
 						CloseOutput = true,
 						Indent = true,
 						IndentChars = "\t"
 					};
-					using (XmlWriter xmlWriter = XmlWriter.Create(new FileStream(settingsPath, FileMode.Create, FileAccess.Write, FileShare.Read), settings))
-					{
-						dataContractSerializer.WriteObject(xmlWriter, this);
-					}
-				}
+                    using var xmlWriter = XmlWriter.Create(new FileStream(settingsPath, FileMode.Create, FileAccess.Write, FileShare.Read), settings);
+                    dataContractSerializer.WriteObject(xmlWriter, this);
+                }
 				catch (Exception ex)
 				{
 					Trace.TraceError("Error saving settings {0}: {1}", new object[]
@@ -192,12 +148,11 @@ namespace ArchiveViewer
 			}
 		}
 
-		// Token: 0x06000064 RID: 100 RVA: 0x00003204 File Offset: 0x00001404
-		private int findRecentFile(string fileName)
+		private int FindRecentFile(string fileName)
 		{
-			for (int i = 0; i < recentFiles.Count; i++)
+			for (var i = 0; i < _recentFiles.Count; i++)
 			{
-				if (fileName.Equals(recentFiles[i], StringComparison.CurrentCultureIgnoreCase))
+				if (fileName.Equals(_recentFiles[i], StringComparison.CurrentCultureIgnoreCase))
 				{
 					return i;
 				}
@@ -205,41 +160,34 @@ namespace ArchiveViewer
 			return -1;
 		}
 
-		// Token: 0x06000065 RID: 101 RVA: 0x00003240 File Offset: 0x00001440
 		public void AddRecentFile(string fileName)
 		{
-			int num = findRecentFile(fileName);
+			var num = FindRecentFile(fileName);
 			if (num != -1)
 			{
-				recentFiles.Move(num, 0);
+				_recentFiles.Move(num, 0);
 				return;
 			}
-			recentFiles.Insert(0, fileName);
-			while (recentFiles.Count > 10)
+			_recentFiles.Insert(0, fileName);
+			while (_recentFiles.Count > 10)
 			{
-				recentFiles.RemoveAt(recentFiles.Count - 1);
+				_recentFiles.RemoveAt(_recentFiles.Count - 1);
 			}
 		}
 
-		// Token: 0x06000066 RID: 102 RVA: 0x000032A0 File Offset: 0x000014A0
 		public void RemoveRecentFile(string fileName)
 		{
-			int num = findRecentFile(fileName);
+			var num = FindRecentFile(fileName);
 			if (num != -1)
 			{
-				recentFiles.RemoveAt(num);
+				_recentFiles.RemoveAt(num);
 			}
 		}
 
-		// Token: 0x04000028 RID: 40
-		private const int MAX_RECENT_FILES = 10;
-
-		// Token: 0x04000029 RID: 41
 		[DataMember(Name = "MainWindow")]
-		private WindowSettings mainWindow = new WindowSettings();
+		private WindowSettings _mainWindow = new();
 
-		// Token: 0x0400002A RID: 42
 		[DataMember(Name = "RecentFiles")]
-		private ObservableCollection<string> recentFiles;
+		private ObservableCollection<string> _recentFiles;
 	}
 }

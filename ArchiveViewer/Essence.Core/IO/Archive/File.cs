@@ -18,7 +18,7 @@ namespace Essence.Core.IO.Archive
     {
       Archive = archive;
       Name = name;
-      int num = name.LastIndexOf('.');
+      var num = name.LastIndexOf('.');
       Extension = num >= 0 ? name.Substring(num + 1) : string.Empty;
       StoreLength = storeLength;
       Length = length;
@@ -32,7 +32,7 @@ namespace Essence.Core.IO.Archive
 
     public INode Parent { get; internal set; }
 
-    public IReadOnlyList<INode> Children => (IReadOnlyList<INode>) null;
+    public IReadOnlyList<INode> Children => null;
 
     public string Name { get; }
 
@@ -55,7 +55,7 @@ namespace Essence.Core.IO.Archive
       get
       {
         if (!m_crc32.HasValue)
-          m_crc32 = new uint?(Archive.GetCRC(this));
+          m_crc32 = Archive.GetCRC(this);
         return m_crc32.Value;
       }
     }

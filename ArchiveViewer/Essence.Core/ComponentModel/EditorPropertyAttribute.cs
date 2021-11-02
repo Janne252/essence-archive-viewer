@@ -93,7 +93,7 @@ namespace Essence.Core.ComponentModel
 
     public object PropertyValue { get; }
 
-    public override object TypeId => (object) (GetType().FullName + PropertyName);
+    public override object TypeId => GetType().FullName + PropertyName;
 
     public override bool Equals(object obj)
     {

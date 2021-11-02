@@ -16,7 +16,7 @@ namespace Essence.Core.IO
     }
 
     public UCSReader(string fileName, bool escape)
-      : this((TextReader) new StreamReader((Stream) new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read), UCS.Encoding), escape)
+      : this(new StreamReader(new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read), UCS.Encoding), escape)
     {
     }
 
@@ -36,23 +36,22 @@ namespace Essence.Core.IO
       if (m_textReader != null)
       {
         m_textReader.Dispose();
-        m_textReader = (TextReader) null;
+        m_textReader = null;
       }
-      GC.SuppressFinalize((object) this);
+      GC.SuppressFinalize(this);
     }
 
     public void Close() => Dispose();
 
     public bool Read(out int locStringID, out string text)
     {
-      string str = m_textReader.ReadLine();
+      var str = m_textReader.ReadLine();
       if (str != null)
       {
-        int length = str.IndexOf('\t');
-        int result;
-        if (length != -1 && int.TryParse(str.Substring(0, length), NumberStyles.Integer, (IFormatProvider) CultureInfo.InvariantCulture, out result))
+        var length = str.IndexOf('\t');
+        if (length != -1 && int.TryParse(str.Substring(0, length), NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
         {
-          string input = str.Substring(length + 1);
+          var input = str.Substring(length + 1);
           if (m_escape)
             input = UCS.Unescape(input);
           locStringID = result;
@@ -61,7 +60,7 @@ namespace Essence.Core.IO
         }
       }
       locStringID = -1;
-      text = (string) null;
+      text = null;
       return false;
     }
 
@@ -72,8 +71,8 @@ namespace Essence.Core.IO
         int locStringID;
         string text;
         do
-          ;
-        while (!Read(out locStringID, out text));
+        {
+        } while (!Read(out locStringID, out text));
         yield return new KeyValuePair<int, string>(locStringID, text);
       }
     }

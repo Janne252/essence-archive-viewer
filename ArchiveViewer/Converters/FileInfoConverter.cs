@@ -5,40 +5,34 @@ using Essence.Core.IO.Archive;
 
 namespace ArchiveViewer.Converters
 {
-	// Token: 0x02000017 RID: 23
 	[ValueConversion(typeof(INode), typeof(object))]
 	public class FileInfoConverter : IValueConverter
 	{
-		// Token: 0x06000095 RID: 149 RVA: 0x00003B28 File Offset: 0x00001D28
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			FileInfoParameter fileInfoParameter = FileInfoParameter.Invalid;
-			if (parameter is FileInfoParameter)
-			{
-				fileInfoParameter = (FileInfoParameter)parameter;
-			}
-			else if (parameter is string)
-			{
-				fileInfoParameter = (FileInfoParameter)Enum.Parse(typeof(FileInfoParameter), (string)parameter, true);
-			}
-			switch (fileInfoParameter)
+            var fileInfoParameter = parameter switch
+            {
+                FileInfoParameter infoParameter => infoParameter,
+                string s => (FileInfoParameter) Enum.Parse(typeof(FileInfoParameter), s, true),
+                _ => FileInfoParameter.Invalid
+            };
+            switch (fileInfoParameter)
 			{
 			case FileInfoParameter.Invalid:
-				throw new ArgumentOutOfRangeException("parameter");
+				throw new ArgumentOutOfRangeException(nameof(parameter));
 			case FileInfoParameter.Description:
 			{
-				TOC toc = value as TOC;
-				if (toc != null)
+                if (value is TOC toc)
 				{
 					return toc.AlternateName;
 				}
 				break;
 			}
 			}
-			INode node = value as INode;
-			if (node != null)
+
+            if (value is INode node)
 			{
-				FileInfoCache.FileInfo fileInfo = fileInfoCahce.GetFileInfo(node);
+				var fileInfo = _fileInfoCache.GetFileInfo(node);
 				if (fileInfo != null)
 				{
 					switch (fileInfoParameter)
@@ -59,13 +53,11 @@ namespace ArchiveViewer.Converters
 			return value;
 		}
 
-		// Token: 0x06000096 RID: 150 RVA: 0x00003BFC File Offset: 0x00001DFC
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
 			throw new NotImplementedException();
 		}
 
-		// Token: 0x04000074 RID: 116
-		private FileInfoCache fileInfoCahce = new FileInfoCache();
+		private readonly FileInfoCache _fileInfoCache = new();
 	}
 }

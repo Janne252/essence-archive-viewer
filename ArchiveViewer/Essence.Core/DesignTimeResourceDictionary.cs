@@ -10,7 +10,7 @@ namespace Essence.Core
 
     public new Uri Source
     {
-      get => IsInDesignMode ? base.Source : (Uri) null;
+      get => IsInDesignMode ? base.Source : null;
       set
       {
         if (!IsInDesignMode)

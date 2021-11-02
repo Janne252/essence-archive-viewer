@@ -20,10 +20,10 @@ namespace Essence.Core.IO
     {
       if (wildcard == null)
         throw new ArgumentNullException(nameof (wildcard));
-      StringBuilder stringBuilder = new StringBuilder();
+      var stringBuilder = new StringBuilder();
       stringBuilder.Append("^");
       int index;
-      for (int startIndex = 0; startIndex < wildcard.Length; startIndex = index + 1)
+      for (var startIndex = 0; startIndex < wildcard.Length; startIndex = index + 1)
       {
         index = wildcard.IndexOfAny(WildcardCharacters, startIndex);
         if (index == -1)
@@ -53,14 +53,14 @@ namespace Essence.Core.IO
         throw new ArgumentNullException(nameof (path));
       if (wildcard == null)
         throw new ArgumentNullException(nameof (wildcard));
-      string[] pathParts = wildcard.Split(new char[2]
+      var pathParts = wildcard.Split(new char[2]
       {
         Path.DirectorySeparatorChar,
         Path.AltDirectorySeparatorChar
       }, StringSplitOptions.RemoveEmptyEntries);
       if (pathParts.Length == 0)
-        return new string[0];
-      List<string> files = new List<string>();
+        return Array.Empty<string>();
+      var files = new List<string>();
       GetFiles(path, pathParts, 0, SearchOption.TopDirectoryOnly, files);
       return files.ToArray();
     }
@@ -86,10 +86,10 @@ namespace Essence.Core.IO
           {
             try
             {
-              foreach (string directory in Directory.GetDirectories(path, pathParts[index], searchOption))
+              foreach (var directory in Directory.GetDirectories(path, pathParts[index], searchOption))
                 GetFiles(directory, pathParts, ++index, searchOption, files);
             }
-            catch (DirectoryNotFoundException ex)
+            catch (DirectoryNotFoundException)
             {
             }
           }
@@ -98,10 +98,10 @@ namespace Essence.Core.IO
         {
           try
           {
-            foreach (string file in Directory.GetFiles(path, pathParts[index], searchOption))
+            foreach (var file in Directory.GetFiles(path, pathParts[index], searchOption))
               files.Add(file);
           }
-          catch (DirectoryNotFoundException ex)
+          catch (DirectoryNotFoundException)
           {
           }
         }

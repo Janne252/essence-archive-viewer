@@ -23,7 +23,7 @@ namespace Essence.Core.IO
       BinaryReader binaryReader,
       KeyResolver keyResolver)
     {
-      BinaryConfigTableNode binaryConfigTableNode = new BinaryConfigTableNode(key);
+      var binaryConfigTableNode = new BinaryConfigTableNode(key);
       ReadChildren(binaryReader, keyResolver, binaryConfigTableNode.Children);
       return binaryConfigTableNode;
     }
@@ -32,9 +32,9 @@ namespace Essence.Core.IO
 
     protected override IEnumerable<BinaryConfigNode> GetOrderedChildren()
     {
-      BinaryConfigNode[] array = Children.ToArray();
-      Array.Sort<BinaryConfigNode>(array, (Comparison<BinaryConfigNode>) ((lhs, rhs) => lhs.Key.Hash.CompareTo(rhs.Key.Hash)));
-      return (IEnumerable<BinaryConfigNode>) array;
+      var array = Children.ToArray();
+      Array.Sort<BinaryConfigNode>(array, (lhs, rhs) => lhs.Key.Hash.CompareTo(rhs.Key.Hash));
+      return array;
     }
   }
 }

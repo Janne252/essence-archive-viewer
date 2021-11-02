@@ -11,7 +11,7 @@ namespace Essence.Core
   public static class SharedProperty
   {
     public const string StorageRoot = "Z:\\Relic_Projects";
-    private static readonly Lazy<SharedPropertyDatabase> Database = new Lazy<SharedPropertyDatabase>((Func<SharedPropertyDatabase>) (() => new SharedPropertyDatabase(Environment.MachineName)), true);
+    private static readonly Lazy<SharedPropertyDatabase> Database = new(() => new SharedPropertyDatabase(Environment.MachineName), true);
 
     public static string BuildServer => GetSharedProperty(nameof (BuildServer));
 
@@ -21,37 +21,34 @@ namespace Essence.Core
 
     public static T GetSharedProperty<T>(string name)
     {
-      string sharedProperty = Database.Value.SharedProperties[name];
-      return (T) (TypeDescriptor.GetConverter(typeof (T)) ?? throw new NotSupportedException()).ConvertFrom((object) sharedProperty);
+      var sharedProperty = Database.Value.SharedProperties[name];
+      return (T) (TypeDescriptor.GetConverter(typeof (T)) ?? throw new NotSupportedException()).ConvertFrom(sharedProperty);
     }
 
     public static string GetSharedProperty(string name, string defaultValue)
     {
-      string str;
-      return TryGetSharedProperty(name, out str) ? str : defaultValue;
+        return TryGetSharedProperty(name, out var str) ? str : defaultValue;
     }
 
     public static T GetSharedProperty<T>(string name, T defaultValue)
     {
-      T obj;
-      return TryGetSharedProperty<T>(name, out obj) ? obj : defaultValue;
+        return TryGetSharedProperty<T>(name, out var obj) ? obj : defaultValue;
     }
 
     public static bool TryGetSharedProperty(string name, out string value) => Database.Value.SharedProperties.TryGetValue(name, out value);
 
     public static bool TryGetSharedProperty<T>(string name, out T value)
     {
-      string str;
-      if (Database.Value.SharedProperties.TryGetValue(name, out str))
+        if (Database.Value.SharedProperties.TryGetValue(name, out var str))
       {
-        TypeConverter converter = TypeDescriptor.GetConverter(typeof (T));
+        var converter = TypeDescriptor.GetConverter(typeof (T));
         if (converter != null)
         {
           if (converter.CanConvertFrom(typeof (string)))
           {
             try
             {
-              value = (T) converter.ConvertFrom((object) str);
+              value = (T) converter.ConvertFrom(str);
               return true;
             }
             catch
@@ -60,7 +57,7 @@ namespace Essence.Core
           }
         }
       }
-      value = default (T);
+      value = default;
       return false;
     }
 
@@ -70,31 +67,30 @@ namespace Essence.Core
       public const string IdServer = "IdServer";
       private static readonly KeyValuePair<string, string>[] DefaultSharedProperties = new KeyValuePair<string, string>[2]
       {
-        new KeyValuePair<string, string>(nameof (BuildServer), "relbuildsvr02"),
-        new KeyValuePair<string, string>(nameof (IdServer), "relbuildsvr02")
+        new(nameof (BuildServer), "relbuildsvr02"),
+        new(nameof (IdServer), "relbuildsvr02")
       };
-      private const string SharedPropertyPath = "Z:\\Relic_Projects\\EssenseEngine\\SharedProperties\\SharedPropertyV2.xml";
 
       public SharedPropertyDatabase(string machineName)
       {
-        Dictionary<string, string> dictionary = new Dictionary<string, string>();
-        foreach (KeyValuePair<string, string> defaultSharedProperty in DefaultSharedProperties)
+        var dictionary = new Dictionary<string, string>();
+        foreach (var defaultSharedProperty in DefaultSharedProperties)
           dictionary.Add(defaultSharedProperty.Key, defaultSharedProperty.Value);
         try
         {
-          XDocument node = XDocument.Load("Z:\\Relic_Projects\\EssenseEngine\\SharedProperties\\SharedPropertyV2.xml");
-          XElement xelement = node.XPathSelectElement("/SharedProperty/Properties[@defaultProperties='true']");
+          var node = XDocument.Load("Z:\\Relic_Projects\\EssenseEngine\\SharedProperties\\SharedPropertyV2.xml");
+          var xelement = node.XPathSelectElement("/SharedProperty/Properties[@defaultProperties='true']");
           if (xelement != null)
           {
-            foreach (XElement element in xelement.Elements())
+            foreach (var element in xelement.Elements())
               dictionary[element.Name.LocalName] = element.Value;
           }
           if (!string.IsNullOrEmpty(machineName))
           {
-            foreach (XElement xpathSelectElement1 in node.XPathSelectElements("/SharedProperty/Properties"))
+            foreach (var xpathSelectElement1 in node.XPathSelectElements("/SharedProperty/Properties"))
             {
-              bool flag = false;
-              foreach (XElement xpathSelectElement2 in xpathSelectElement1.XPathSelectElements("./MachineNameTargets/MachineNameTarget"))
+              var flag = false;
+              foreach (var xpathSelectElement2 in xpathSelectElement1.XPathSelectElements("./MachineNameTargets/MachineNameTarget"))
               {
                 if (string.Equals(machineName, xpathSelectElement2.Value, StringComparison.OrdinalIgnoreCase))
                 {
@@ -104,15 +100,14 @@ namespace Essence.Core
               }
               if (flag)
               {
-                foreach (XElement element in xpathSelectElement1.Elements())
+                foreach (var element in xpathSelectElement1.Elements())
                 {
                   if (element.Name.LocalName != "MachineNameTargets")
                   {
-                    string empty;
-                    if (!dictionary.TryGetValue(element.Name.LocalName, out empty))
+                      if (!dictionary.TryGetValue(element.Name.LocalName, out var empty))
                       empty = string.Empty;
                     dictionary[element.Name.LocalName] = element.Value;
-                    Trace.TraceWarning("Overriding shared property [{0}] value [{1}] with [{2}] for [{3}].", (object) element.Name.LocalName, (object) empty, (object) element.Value, (object) machineName);
+                    Trace.TraceWarning("Overriding shared property [{0}] value [{1}] with [{2}] for [{3}].", element.Name.LocalName, empty, element.Value, machineName);
                   }
                 }
               }
@@ -121,9 +116,9 @@ namespace Essence.Core
         }
         catch (Exception ex)
         {
-          Trace.TraceError("Error loading {0}: {1}", (object) "Z:\\Relic_Projects\\EssenseEngine\\SharedProperties\\SharedPropertyV2.xml", (object) ex.Message);
+          Trace.TraceError("Error loading {0}: {1}", "Z:\\Relic_Projects\\EssenseEngine\\SharedProperties\\SharedPropertyV2.xml", ex.Message);
         }
-        SharedProperties = new ReadOnlyDictionary<string, string>((IDictionary<string, string>) dictionary);
+        SharedProperties = new ReadOnlyDictionary<string, string>(dictionary);
       }
 
       public ReadOnlyDictionary<string, string> SharedProperties { get; }

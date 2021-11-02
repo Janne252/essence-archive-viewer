@@ -24,16 +24,14 @@ namespace Essence.Core.Collections
       if (source == null)
         throw new ArgumentNullException(nameof (source));
       if (source is IList<TSource> sourceList)
-        return sourceList.Count == 1 ? sourceList[0] : default (TSource);
-      using (IEnumerator<TSource> enumerator = source.GetEnumerator())
-      {
-        if (!enumerator.MoveNext())
-          return default (TSource);
-        TSource current = enumerator.Current;
-        if (!enumerator.MoveNext())
+        return sourceList.Count == 1 ? sourceList[0] : default;
+      using var enumerator = source.GetEnumerator();
+      if (!enumerator.MoveNext())
+          return default;
+      var current = enumerator.Current;
+      if (!enumerator.MoveNext())
           return current;
-      }
-      return default (TSource);
+      return default;
     }
 
     public static TSource OneElementOrDefault<TSource>(
@@ -44,9 +42,9 @@ namespace Essence.Core.Collections
         throw new ArgumentNullException(nameof (source));
       if (predicate == null)
         throw new ArgumentNullException(nameof (predicate));
-      TSource source1 = default (TSource);
+      TSource source1 = default;
       long num = 0;
-      foreach (TSource source2 in source)
+      foreach (var source2 in source)
       {
         if (predicate(source2))
         {
@@ -55,8 +53,8 @@ namespace Essence.Core.Collections
         }
       }
       if (num == 0L)
-        return default (TSource);
-      return num == 1L ? source1 : default (TSource);
+        return default;
+      return num == 1L ? source1 : default;
     }
 
     public static int FirstIndexOf<T>(this IEnumerable<T> source, Func<T, bool> predicate)
@@ -65,8 +63,8 @@ namespace Essence.Core.Collections
         throw new ArgumentNullException(nameof (source));
       if (predicate == null)
         throw new ArgumentNullException(nameof (predicate));
-      int num = 0;
-      foreach (T obj in source)
+      var num = 0;
+      foreach (var obj in source)
       {
         if (predicate(obj))
           return num;

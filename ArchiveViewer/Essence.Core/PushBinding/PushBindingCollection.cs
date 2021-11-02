@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.Windows;
 
 namespace Essence.Core.PushBinding
@@ -20,7 +19,7 @@ namespace Essence.Core.PushBinding
     {
       if (e.Action != NotifyCollectionChangedAction.Add)
         return;
-      foreach (PushBinding newItem in (IEnumerable) e.NewItems)
+      foreach (PushBinding newItem in e.NewItems)
         newItem.SetupTargetBinding(TargetObject);
     }
 

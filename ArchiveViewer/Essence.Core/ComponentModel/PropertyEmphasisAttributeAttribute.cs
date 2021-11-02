@@ -5,7 +5,7 @@ namespace Essence.Core.ComponentModel
   [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
   public class PropertyEmphasisAttributeAttribute : Attribute
   {
-    public static readonly PropertyEmphasisAttributeAttribute Default = new PropertyEmphasisAttributeAttribute(PropertyEmphasis.Default);
+    public static readonly PropertyEmphasisAttributeAttribute Default = new(PropertyEmphasis.Default);
 
     public PropertyEmphasisAttributeAttribute(PropertyEmphasis propertyEmphasis) => PropertyEmphasis = propertyEmphasis;
 

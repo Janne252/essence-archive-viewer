@@ -9,7 +9,7 @@ namespace Essence.Core.IO.Archive
     internal Folder(Archive archive, IList<INode> children, string name)
     {
       Archive = archive;
-      Children = (IReadOnlyList<INode>) new ReadOnlyCollection<INode>(children);
+      Children = new ReadOnlyCollection<INode>(children);
       Name = name;
     }
 

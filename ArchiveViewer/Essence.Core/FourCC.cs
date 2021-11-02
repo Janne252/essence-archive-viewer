@@ -6,12 +6,12 @@ namespace Essence.Core
   {
     private uint m_value;
 
-    public FourCC(uint value) => m_value = IsValid(value, out int _) ? value : throw new ArgumentOutOfRangeException(nameof (value));
+    public FourCC(uint value) => m_value = IsValid(value, out var _) ? value : throw new ArgumentOutOfRangeException(nameof (value));
 
     public uint Value
     {
       get => m_value;
-      set => m_value = IsValid(value, out int _) ? value : throw new ArgumentOutOfRangeException(nameof (value));
+      set => m_value = IsValid(value, out var _) ? value : throw new ArgumentOutOfRangeException(nameof (value));
     }
 
     public override bool Equals(object obj) => obj is FourCC other && Equals(other);
@@ -22,14 +22,13 @@ namespace Essence.Core
 
     public override string ToString()
     {
-      int length;
-      if (!IsValid(m_value, out length))
+        if (!IsValid(m_value, out var length))
         return string.Empty;
-      int num = 0;
-      char[] chArray = new char[length];
-      for (int index = 4 - length; index < 4; ++index)
+      var num = 0;
+      var chArray = new char[length];
+      for (var index = 4 - length; index < 4; ++index)
       {
-        char ch = (char) (m_value >> 8 * (3 - index) & (uint) byte.MaxValue);
+        var ch = (char) (m_value >> 8 * (3 - index) & byte.MaxValue);
         chArray[num++] = ch;
       }
       return new string(chArray);
@@ -51,15 +50,15 @@ namespace Essence.Core
           if (value.Length <= 4)
           {
             uint num = 0;
-            int index = 0;
-            for (int length = value.Length; index < length; ++index)
+            var index = 0;
+            for (var length = value.Length; index < length; ++index)
             {
-              char c = value[index];
+              var c = value[index];
               if (!IsValid(c))
-                throw new ArgumentException(string.Format("Character [0x{0:X}] out of ASCII character range [0x20,0x7E].", (object) c), nameof (value));
+                throw new ArgumentException($"Character [0x{c:X}] out of ASCII character range [0x20,0x7E].", nameof (value));
               if (num == 0U && c == ' ')
-                throw new ArgumentException(string.Format("Spaces [0x{0:X}] may not precede printing characters.", (object) ' '), nameof (value));
-              num = num << 8 | (uint) c;
+                throw new ArgumentException($"Spaces [0x{' ':X}] may not precede printing characters.", nameof (value));
+              num = num << 8 | c;
             }
             return new FourCC(num);
           }
@@ -69,19 +68,19 @@ namespace Essence.Core
 
     public static bool TryParse(string value, out FourCC result)
     {
-      if (value != null && value.Length > 0 && value.Length <= 4)
+      if (value is {Length: > 0 and <= 4})
       {
         uint num = 0;
-        int index = 0;
-        for (int length = value.Length; index < length; ++index)
+        var index = 0;
+        for (var length = value.Length; index < length; ++index)
         {
-          char c = value[index];
+          var c = value[index];
           if (!IsValid(c) || num == 0U && c == ' ')
           {
             result = new FourCC();
             return false;
           }
-          num = num << 8 | (uint) c;
+          num = num << 8 | c;
         }
         result = new FourCC(num);
         return true;
@@ -90,16 +89,16 @@ namespace Essence.Core
       return false;
     }
 
-    private static bool IsValid(char c) => c >= ' ' && c <= '~';
+    private static bool IsValid(char c) => c is >= ' ' and <= '~';
 
     private static bool IsValid(uint fourCC, out int length)
     {
       length = 0;
       if (fourCC != 0U)
       {
-        for (int index = 0; index < 4; ++index)
+        for (var index = 0; index < 4; ++index)
         {
-          char c = (char) (fourCC >> 8 * (3 - index) & (uint) byte.MaxValue);
+          var c = (char) (fourCC >> 8 * (3 - index) & byte.MaxValue);
           switch (c)
           {
             case char.MinValue:

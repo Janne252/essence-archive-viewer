@@ -8,9 +8,9 @@ namespace Essence.Core
 {
   public sealed class OptionParser
   {
-    private List<IOption> options = new List<IOption>();
-    private List<string> unnamedValues = new List<string>();
-    private Dictionary<string, List<string>> unhandledValues = new Dictionary<string, List<string>>((IEqualityComparer<string>) StringComparer.InvariantCultureIgnoreCase);
+    private readonly List<IOption> options = new();
+    private readonly List<string> unnamedValues = new();
+    private readonly Dictionary<string, List<string>> unhandledValues = new(StringComparer.InvariantCultureIgnoreCase);
 
     public OptionParser()
       : this("-", "--", false)
@@ -19,12 +19,8 @@ namespace Essence.Core
 
     public OptionParser(string shortPrefix, string longPrefix, bool allowUnhandled)
     {
-      if (shortPrefix == null)
-        throw new ArgumentNullException(nameof (shortPrefix));
-      if (longPrefix == null)
-        throw new ArgumentNullException(nameof (longPrefix));
-      ShortPrefix = shortPrefix;
-      LongPrefix = longPrefix;
+        ShortPrefix = shortPrefix ?? throw new ArgumentNullException(nameof (shortPrefix));
+      LongPrefix = longPrefix ?? throw new ArgumentNullException(nameof (longPrefix));
       AllowUnhandled = allowUnhandled;
     }
 
@@ -34,16 +30,18 @@ namespace Essence.Core
 
     public bool AllowUnhandled { get; }
 
-    private IOption GetOption<T>(T name) => options.FirstOrDefault<IOption>((Func<IOption, bool>) (o => o.Equals((object) (T) name))) ?? throw new ArgumentException(string.Format("Option '{0}' not defined.", (object) name));
+    private IOption GetOption<T>(T name) => options.FirstOrDefault<IOption>(o => o.Equals(name)) ?? throw new ArgumentException(
+        $"Option '{name}' not defined.");
 
     private TypedValueOption<OptionType> GetOption<T, OptionType>(T name)
     {
-      IOption option = options.FirstOrDefault<IOption>((Func<IOption, bool>) (o => o.Equals((object) (T) name)));
+      var option = options.FirstOrDefault<IOption>(o => o.Equals(name));
       if (option == null)
-        throw new ArgumentException(string.Format("Option '{0}' not defined.", (object) name));
-      if (!(option is ValueOption valueOption))
-        throw new ArgumentException(string.Format("Option '{0}' does not supply a value.", (object) name));
-      return valueOption is TypedValueOption<OptionType> typedValueOption ? typedValueOption : throw new ArgumentException(string.Format("Option '{0}' is of a different type than {1}.", (object) name, (object) typeof (OptionType).Name));
+        throw new ArgumentException($"Option '{name}' not defined.");
+      if (option is not ValueOption valueOption)
+        throw new ArgumentException($"Option '{name}' does not supply a value.");
+      return valueOption is TypedValueOption<OptionType> typedValueOption ? typedValueOption : throw new ArgumentException(
+          $"Option '{name}' is of a different type than {typeof(OptionType).Name}.");
     }
 
     public void Register(string longName, string description) => Register(char.MinValue, longName, description);
@@ -53,14 +51,14 @@ namespace Essence.Core
       if (longName == null)
         throw new ArgumentNullException(nameof (longName));
       if (longName.Length <= 1)
-        throw new ArgumentException(string.Format("Argument longName '{0}' must be at least two characters in length.", (object) longName));
+        throw new ArgumentException($"Argument longName '{longName}' must be at least two characters in length.");
       if (description == null)
         throw new ArgumentNullException(nameof (description));
-      if (shortName != char.MinValue && options.FirstOrDefault<IOption>((Func<IOption, bool>) (o => ((IEquatable<char>) o).Equals(shortName))) != null)
-        throw new ArgumentException(string.Format("Option '{0}' already defined.", (object) shortName));
-      if (options.FirstOrDefault<IOption>((Func<IOption, bool>) (o => ((IEquatable<string>) o).Equals(longName))) != null)
-        throw new ArgumentException(string.Format("Option '{0}' already defined.", (object) longName));
-      options.Add((IOption) new SwitchOption(shortName, longName, description));
+      if (shortName != char.MinValue && options.FirstOrDefault<IOption>(o => o.Equals(shortName)) != null)
+        throw new ArgumentException($"Option '{shortName}' already defined.");
+      if (options.FirstOrDefault<IOption>(o => o.Equals(longName)) != null)
+        throw new ArgumentException($"Option '{longName}' already defined.");
+      options.Add(new SwitchOption(shortName, longName, description));
     }
 
     public void Register<OptionType>(string longName, string description) where OptionType : new() => Register<OptionType>(char.MinValue, longName, description);
@@ -99,23 +97,23 @@ namespace Essence.Core
       if (longName == null)
         throw new ArgumentNullException(nameof (longName));
       if (longName.Length <= 1)
-        throw new ArgumentException(string.Format("Argument longName '{0}' must be at least two characters in length.", (object) longName));
+        throw new ArgumentException($"Argument longName '{longName}' must be at least two characters in length.");
       if (description == null)
         throw new ArgumentNullException(nameof (description));
-      if (shortName != char.MinValue && options.FirstOrDefault<IOption>((Func<IOption, bool>) (o => ((IEquatable<char>) o).Equals(shortName))) != null)
-        throw new ArgumentException(string.Format("Option '{0}' already defined.", (object) shortName));
-      if (options.FirstOrDefault<IOption>((Func<IOption, bool>) (o => ((IEquatable<string>) o).Equals(longName))) != null)
-        throw new ArgumentException(string.Format("Option '{0}' already defined.", (object) longName));
-      options.Add((IOption) new TypedValueOption<OptionType>(shortName, longName, description, required, variable, defaultValue));
+      if (shortName != char.MinValue && options.FirstOrDefault<IOption>(o => o.Equals(shortName)) != null)
+        throw new ArgumentException($"Option '{shortName}' already defined.");
+      if (options.FirstOrDefault<IOption>(o => o.Equals(longName)) != null)
+        throw new ArgumentException($"Option '{longName}' already defined.");
+      options.Add(new TypedValueOption<OptionType>(shortName, longName, description, required, variable, defaultValue));
     }
 
     public string[] GetUsage(bool fixedWidth)
     {
-      Usage[] source = new Usage[options.Count];
-      for (int index = 0; index < options.Count; ++index)
+      var source = new Usage[options.Count];
+      for (var index = 0; index < options.Count; ++index)
       {
-        IOption option = options[index];
-        StringBuilder stringBuilder = new StringBuilder();
+        var option = options[index];
+        var stringBuilder = new StringBuilder();
         if (option.ShortName != char.MinValue)
         {
           stringBuilder.Append(ShortPrefix);
@@ -132,10 +130,10 @@ namespace Essence.Core
           stringBuilder.Append(" <value>");
         source[index] = new Usage(stringBuilder.ToString(), option.GetExtendedDescription());
       }
-      string format = fixedWidth ? string.Format("{{0,{0}}} | {{1}}", (object) -((IEnumerable<Usage>) source).Max<Usage>((Func<Usage, int>) (u => u.Name.Length))) : "{0} | {1}";
-      string[] usage = new string[source.Length];
-      for (int index = 0; index < source.Length; ++index)
-        usage[index] = string.Format(format, (object) source[index].Name, (object) source[index].Description);
+      var format = fixedWidth ? $"{{0,{-source.Max<Usage>(u => u.Name.Length)}}} | {{1}}" : "{0} | {1}";
+      var usage = new string[source.Length];
+      for (var index = 0; index < source.Length; ++index)
+        usage[index] = string.Format(format, source[index].Name, source[index].Description);
       return usage;
     }
 
@@ -145,19 +143,19 @@ namespace Essence.Core
 
     public OptionType GetValue<OptionType>(char shortName)
     {
-      TypedValueOption<OptionType> option = GetOption<char, OptionType>(shortName);
+      var option = GetOption<char, OptionType>(shortName);
       return option.Values.Count >= 1 ? option.Values[0] : option.DefaultValue;
     }
 
     public OptionType GetValue<OptionType>(string longName)
     {
-      TypedValueOption<OptionType> option = GetOption<string, OptionType>(longName);
+      var option = GetOption<string, OptionType>(longName);
       return option.Values.Count >= 1 ? option.Values[0] : option.DefaultValue;
     }
 
     public bool TryGetValue<OptionType>(char shortName, out OptionType value)
     {
-      TypedValueOption<OptionType> option = GetOption<char, OptionType>(shortName);
+      var option = GetOption<char, OptionType>(shortName);
       if (option.Values.Count >= 1)
       {
         value = option.Values[0];
@@ -169,7 +167,7 @@ namespace Essence.Core
 
     public bool TryGetValue<OptionType>(string longName, out OptionType value)
     {
-      TypedValueOption<OptionType> option = GetOption<string, OptionType>(longName);
+      var option = GetOption<string, OptionType>(longName);
       if (option.Values.Count >= 1)
       {
         value = option.Values[0];
@@ -181,19 +179,21 @@ namespace Essence.Core
 
     public OptionType[] GetValues<OptionType>(char shortName)
     {
-      TypedValueOption<OptionType> option = GetOption<char, OptionType>(shortName);
-      return option.Variable ? option.Values.ToArray() : throw new ArgumentException(string.Format("Option '{0}' does not accept a variable amount of arguments.", (object) shortName));
+      var option = GetOption<char, OptionType>(shortName);
+      return option.Variable ? option.Values.ToArray() : throw new ArgumentException(
+          $"Option '{shortName}' does not accept a variable amount of arguments.");
     }
 
     public OptionType[] GetValues<OptionType>(string longName)
     {
-      TypedValueOption<OptionType> option = GetOption<string, OptionType>(longName);
-      return option.Variable ? option.Values.ToArray() : throw new ArgumentException(string.Format("Option '{0}' does not accept a variable amount of arguments.", (object) longName));
+      var option = GetOption<string, OptionType>(longName);
+      return option.Variable ? option.Values.ToArray() : throw new ArgumentException(
+          $"Option '{longName}' does not accept a variable amount of arguments.");
     }
 
     public ReadOnlyCollection<string> GetUnnamedValues() => unnamedValues.AsReadOnly();
 
-    public void RemoveUnnamedValue(string unnamedValue) => unnamedValues.RemoveAll((Predicate<string>) (item => item == unnamedValue));
+    public void RemoveUnnamedValue(string unnamedValue) => unnamedValues.RemoveAll(item => item == unnamedValue);
 
     public void RemoveUnnamedValues(Predicate<string> predicate) => unnamedValues.RemoveAll(predicate);
 
@@ -208,21 +208,19 @@ namespace Essence.Core
     {
       if (!AllowUnhandled)
         throw new ApplicationException("Unhandled values not allowed.");
-      List<string> stringList;
-      return unhandledValues.TryGetValue(name, out stringList) && stringList.Count >= 1 ? stringList[0] : (string) null;
+      return unhandledValues.TryGetValue(name, out var stringList) && stringList.Count >= 1 ? stringList[0] : null;
     }
 
     public bool TryGetUnhandledValue(string name, out string value)
     {
       if (!AllowUnhandled)
         throw new ApplicationException("Unhandled values not allowed.");
-      List<string> stringList;
-      if (unhandledValues.TryGetValue(name, out stringList) && stringList.Count >= 1)
+      if (unhandledValues.TryGetValue(name, out var stringList) && stringList.Count >= 1)
       {
         value = stringList[0];
         return true;
       }
-      value = (string) null;
+      value = null;
       return false;
     }
 
@@ -230,62 +228,60 @@ namespace Essence.Core
     {
       if (!AllowUnhandled)
         throw new ApplicationException("Unhandled values not allowed.");
-      List<string> stringList;
-      return unhandledValues.TryGetValue(name, out stringList) ? stringList.AsReadOnly() : new ReadOnlyCollection<string>((IList<string>) new string[0]);
+      return unhandledValues.TryGetValue(name, out var stringList) ? stringList.AsReadOnly() : new ReadOnlyCollection<string>(Array.Empty<string>());
     }
 
     public void Parse()
     {
-      string[] commandLineArgs = Environment.GetCommandLineArgs();
-      string[] destinationArray = new string[Math.Max(0, commandLineArgs.Length - 1)];
+      var commandLineArgs = Environment.GetCommandLineArgs();
+      var destinationArray = new string[Math.Max(0, commandLineArgs.Length - 1)];
       if (commandLineArgs.Length != 0)
-        Array.Copy((Array) commandLineArgs, 1, (Array) destinationArray, 0, commandLineArgs.Length - 1);
+        Array.Copy(commandLineArgs, 1, destinationArray, 0, commandLineArgs.Length - 1);
       Parse(destinationArray);
     }
 
     public void Parse(params string[] args)
     {
-      foreach (IOption option in options)
+      foreach (var option in options)
         option.Reset();
       unnamedValues.Clear();
-      for (int index = 0; index < args.Length; ++index)
+      for (var index = 0; index < args.Length; ++index)
       {
-        string str1 = args[index];
-        bool flag1 = str1.StartsWith(ShortPrefix);
-        bool flag2 = str1.StartsWith(LongPrefix);
+        var str1 = args[index];
+        var flag1 = str1.StartsWith(ShortPrefix);
+        var flag2 = str1.StartsWith(LongPrefix);
         if (flag1 | flag2)
         {
-          IOption option = (IOption) null;
+          var option = (IOption) null;
           if (flag1 && str1.Length == ShortPrefix.Length + 1)
           {
-            char shortName = str1[ShortPrefix.Length];
-            option = options.FirstOrDefault<IOption>((Func<IOption, bool>) (o => ((IEquatable<char>) o).Equals(shortName)));
+            var shortName = str1[ShortPrefix.Length];
+            option = options.FirstOrDefault<IOption>(o => o.Equals(shortName));
           }
           else if (flag2)
           {
-            string longName = str1.Substring(LongPrefix.Length);
-            option = options.FirstOrDefault<IOption>((Func<IOption, bool>) (o => ((IEquatable<string>) o).Equals(longName)));
+            var longName = str1.Substring(LongPrefix.Length);
+            option = options.FirstOrDefault<IOption>(o => o.Equals(longName));
           }
           switch (option)
           {
             case null:
               if (!AllowUnhandled)
-                throw new ApplicationException(string.Format("Argument '{0}' not recognised.", (object) str1));
-              string str2 = (string) null;
+                throw new ApplicationException($"Argument '{str1}' not recognised.");
+              var str2 = (string) null;
               if (flag2)
                 str2 = LongPrefix;
               else if (flag1)
                 str2 = ShortPrefix;
-              string key = str1.Substring(str2.Length);
-              List<string> stringList;
-              if (!unhandledValues.TryGetValue(key, out stringList))
+              var key = str1.Substring(str2.Length);
+              if (!unhandledValues.TryGetValue(key, out var stringList))
               {
                 stringList = new List<string>();
                 unhandledValues.Add(key, stringList);
               }
               if (index + 1 < args.Length)
               {
-                string str3 = args[index + 1];
+                var str3 = args[index + 1];
                 if (!str3.StartsWith(ShortPrefix) && !str3.StartsWith(LongPrefix))
                 {
                   stringList.Add(str3);
@@ -299,12 +295,12 @@ namespace Essence.Core
               ((SwitchOption) option).Supplied = true;
               continue;
             case ValueOption _:
-              ValueOption valueOption = (ValueOption) option;
+              var valueOption = (ValueOption) option;
               if (valueOption.Supplied && !valueOption.Variable)
-                throw new ApplicationException(string.Format("Argument '{0}' supplied more than once.", (object) str1));
+                throw new ApplicationException($"Argument '{str1}' supplied more than once.");
               if (index + 1 == args.Length)
-                throw new ApplicationException(string.Format("Argument '{0}' missing value.", (object) str1));
-              string str4 = args[++index];
+                throw new ApplicationException($"Argument '{str1}' missing value.");
+              var str4 = args[++index];
               valueOption.Parse(str1, str4);
               continue;
             default:
@@ -314,10 +310,10 @@ namespace Essence.Core
         else
           unnamedValues.Add(str1);
       }
-      foreach (IOption option in options)
+      foreach (var option in options)
       {
-        if (option is ValueOption valueOption && valueOption.Required && !valueOption.Supplied)
-          throw new ApplicationException(string.Format("Required argument '{0}{1}' not supplied.", (object) LongPrefix, (object) valueOption.LongName));
+        if (option is ValueOption {Required: true, Supplied: false} valueOption)
+          throw new ApplicationException($"Required argument '{LongPrefix}{valueOption.LongName}' not supplied.");
       }
     }
 
@@ -354,7 +350,7 @@ namespace Essence.Core
 
       public bool Supplied { get; set; }
 
-      public bool Equals(char shortName) => (int) ShortName == (int) shortName;
+      public bool Equals(char shortName) => ShortName == shortName;
 
       public bool Equals(string longName) => LongName.Equals(longName, StringComparison.InvariantCultureIgnoreCase);
 
@@ -364,9 +360,8 @@ namespace Essence.Core
 
       public override bool Equals(object obj)
       {
-        char? nullable = obj as char?;
-        if (nullable.HasValue)
-          return Equals(nullable.Value);
+          if (obj is char nullable)
+          return Equals(nullable);
         return obj is string longName && Equals(longName);
       }
 
@@ -403,7 +398,7 @@ namespace Essence.Core
 
       public abstract bool Supplied { get; }
 
-      public bool Equals(char shortName) => (int) ShortName == (int) shortName;
+      public bool Equals(char shortName) => ShortName == shortName;
 
       public bool Equals(string longName) => LongName.Equals(longName, StringComparison.InvariantCultureIgnoreCase);
 
@@ -415,9 +410,8 @@ namespace Essence.Core
 
       public override bool Equals(object obj)
       {
-        char? nullable = obj as char?;
-        if (nullable.HasValue)
-          return Equals(nullable.Value);
+          if (obj is char nullable)
+          return Equals(nullable);
         return obj is string longName && Equals(longName);
       }
 
@@ -450,18 +444,18 @@ namespace Essence.Core
 
       public override string GetExtendedDescription()
       {
-        StringBuilder stringBuilder = new StringBuilder();
+        var stringBuilder = new StringBuilder();
         stringBuilder.Append(Description);
         if (!Required)
         {
-          T defaultValue = DefaultValue;
-          ref T local = ref defaultValue;
-          string str = (object) local != null ? local.ToString() : (string) null;
+          var defaultValue = DefaultValue;
+          ref var local = ref defaultValue;
+          var str = local is { } ? local.ToString() : null;
           if (!string.IsNullOrEmpty(str))
           {
             if (stringBuilder.Length > 0)
               stringBuilder.Append(" ");
-            stringBuilder.AppendFormat("Defaults to {0}.", (object) str);
+            stringBuilder.AppendFormat("Defaults to {0}.", str);
           }
         }
         if (Variable)
@@ -472,13 +466,13 @@ namespace Essence.Core
         }
         if (typeof (T).IsEnum)
         {
-          string[] names = Enum.GetNames(typeof (T));
+          var names = Enum.GetNames(typeof (T));
           if (names.Length != 0)
           {
             if (stringBuilder.Length > 0)
               stringBuilder.Append(" ");
             stringBuilder.Append("Supported values are ");
-            for (int index = 0; index < names.Length; ++index)
+            for (var index = 0; index < names.Length; ++index)
             {
               stringBuilder.Append(names[index]);
               if (index + 2 < names.Length)
@@ -502,18 +496,19 @@ namespace Essence.Core
           }
           catch (Exception ex)
           {
-            throw new ApplicationException(string.Format("Argument '{0}' value '{1}' must be one of '{2}'.", (object) arg, (object) value, (object) string.Join("; ", Enum.GetNames(typeof (T)))), ex);
+            throw new ApplicationException(
+                $"Argument '{arg}' value '{value}' must be one of '{string.Join("; ", Enum.GetNames(typeof(T)))}'.", ex);
           }
         }
         else
         {
           try
           {
-            Values.Add((T) Convert.ChangeType((object) value, typeof (T)));
+            Values.Add((T) Convert.ChangeType(value, typeof (T)));
           }
           catch (Exception ex)
           {
-            throw new ApplicationException(string.Format("Argument '{0}' value '{1}' must be of type {2}.", (object) arg, (object) value, (object) typeof (T).Name), ex);
+            throw new ApplicationException($"Argument '{arg}' value '{value}' must be of type {typeof(T).Name}.", ex);
           }
         }
       }

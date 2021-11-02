@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace Essence.Core.IO
@@ -20,26 +19,17 @@ namespace Essence.Core.IO
 
     private static uint GetTime(string fileName, TimeAttribute timeAttribute)
     {
-      WIN32_FILE_ATTRIBUTE_DATA lpFileInformation;
-      if (!GetFileAttributesEx(fileName, GET_FILEEX_INFO_LEVELS.GetFileExInfoStandard, out lpFileInformation))
+        if (!GetFileAttributesEx(fileName, GET_FILEEX_INFO_LEVELS.GetFileExInfoStandard, out var lpFileInformation))
         return 0;
-      long dateTime1;
-      switch (timeAttribute)
-      {
-        case TimeAttribute.CreationTime:
-          dateTime1 = lpFileInformation.ftCreationTime.GetDateTime();
-          break;
-        case TimeAttribute.LastAccessTime:
-          dateTime1 = lpFileInformation.ftLastAccessTime.GetDateTime();
-          break;
-        case TimeAttribute.LastWriteTime:
-          dateTime1 = lpFileInformation.ftLastWriteTime.GetDateTime();
-          break;
-        default:
-          throw new ArgumentOutOfRangeException(nameof (timeAttribute));
-      }
-      DateTime dateTime2 = DateTime.FromFileTimeUtc(dateTime1);
-      DaylightTime daylightChanges = TimeZone.CurrentTimeZone.GetDaylightChanges(dateTime2.Year);
+        long dateTime1 = timeAttribute switch
+        {
+            TimeAttribute.CreationTime => lpFileInformation.ftCreationTime.GetDateTime(),
+            TimeAttribute.LastAccessTime => lpFileInformation.ftLastAccessTime.GetDateTime(),
+            TimeAttribute.LastWriteTime => lpFileInformation.ftLastWriteTime.GetDateTime(),
+            _ => throw new ArgumentOutOfRangeException(nameof(timeAttribute))
+        };
+        var dateTime2 = DateTime.FromFileTimeUtc(dateTime1);
+      var daylightChanges = TimeZone.CurrentTimeZone.GetDaylightChanges(dateTime2.Year);
       if (dateTime2 <= daylightChanges.Start || dateTime2 >= daylightChanges.End)
         dateTime1 += daylightChanges.Delta.Ticks;
       return (uint) ((ulong) (dateTime1 - 116444736000000000L) / 10000000UL);
@@ -53,10 +43,10 @@ namespace Essence.Core.IO
 
     private struct FILETIME
     {
-      private uint dwLowDateTime;
-      private uint dwHighDateTime;
+      private readonly uint dwLowDateTime;
+      private readonly uint dwHighDateTime;
 
-      public long GetDateTime() => (long) dwHighDateTime << 32 | (long) dwLowDateTime;
+      public long GetDateTime() => (long) dwHighDateTime << 32 | dwLowDateTime;
     }
 
     private struct WIN32_FILE_ATTRIBUTE_DATA

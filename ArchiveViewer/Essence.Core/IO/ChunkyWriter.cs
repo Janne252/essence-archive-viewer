@@ -16,7 +16,7 @@ namespace Essence.Core.IO
     }
 
     public ChunkyWriter(string fileName)
-      : this((Stream) new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Read))
+      : this(new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Read))
     {
     }
 
@@ -35,8 +35,8 @@ namespace Essence.Core.IO
 
     public void PopChunk()
     {
-      long position = m_binaryWriter.BaseStream.Position;
-      ChunkHeaderFixup chunkHeaderFixup = m_chunkHeaderFixups.Pop();
+      var position = m_binaryWriter.BaseStream.Position;
+      var chunkHeaderFixup = m_chunkHeaderFixups.Pop();
       if (position > chunkHeaderFixup.DataStartPosition)
       {
         m_binaryWriter.BaseStream.Seek(chunkHeaderFixup.SizePosition, SeekOrigin.Begin);
@@ -93,11 +93,11 @@ namespace Essence.Core.IO
       if (m_binaryWriter == null)
         throw new InvalidOperationException();
       if (m_chunkHeaderFixups.Count > 0 && m_chunkHeaderFixups.Peek().Type != Chunky.FolderType)
-        throw new ApplicationException(string.Format("Chunks can only be written to {0} chunks.", (object) Chunky.FolderType));
+        throw new ApplicationException($"Chunks can only be written to {Chunky.FolderType} chunks.");
       WriteFourCC(m_binaryWriter, chunkHeader.Type);
       WriteFourCC(m_binaryWriter, chunkHeader.ID);
       m_binaryWriter.Write(chunkHeader.Version);
-      long position = m_binaryWriter.BaseStream.Position;
+      var position = m_binaryWriter.BaseStream.Position;
       m_binaryWriter.Write(chunkHeader.Size);
       WriteString(m_binaryWriter, chunkHeader.Name);
       return new ChunkHeaderFixup(chunkHeader.Type, position, m_binaryWriter.BaseStream.Position);
@@ -108,7 +108,7 @@ namespace Essence.Core.IO
     public void Dispose()
     {
       Dispose(true);
-      GC.SuppressFinalize((object) this);
+      GC.SuppressFinalize(this);
     }
 
     private void Dispose(bool disposing)
@@ -116,7 +116,7 @@ namespace Essence.Core.IO
       if (!disposing || m_binaryWriter == null)
         return;
       m_binaryWriter.Close();
-      m_binaryWriter = (BinaryWriter) null;
+      m_binaryWriter = null;
     }
 
     private BinaryWriter EnsureCanWriteData()
@@ -124,17 +124,17 @@ namespace Essence.Core.IO
       if (m_binaryWriter == null)
         throw new InvalidOperationException();
       if (m_chunkHeaderFixups.Count == 0 || m_chunkHeaderFixups.Peek().Type != Chunky.DataType)
-        throw new ApplicationException(string.Format("Data can only be written to {0} chunks.", (object) Chunky.DataType));
+        throw new ApplicationException($"Data can only be written to {Chunky.DataType} chunks.");
       return m_binaryWriter;
     }
 
-    private static void WriteFourCC(BinaryWriter binaryWriter, FourCC fourCC) => binaryWriter.Write((uint) (((int) fourCC.Value & (int) byte.MaxValue) << 24 | ((int) fourCC.Value & 65280) << 8) | (fourCC.Value & 16711680U) >> 8 | (fourCC.Value & 4278190080U) >> 24);
+    private static void WriteFourCC(BinaryWriter binaryWriter, FourCC fourCC) => binaryWriter.Write((uint) (((int) fourCC.Value & byte.MaxValue) << 24 | ((int) fourCC.Value & 65280) << 8) | (fourCC.Value & 16711680U) >> 8 | (fourCC.Value & 4278190080U) >> 24);
 
     private static void WriteString(BinaryWriter binaryWriter, string value)
     {
       if (!string.IsNullOrEmpty(value))
       {
-        byte[] bytes = Chunky.Encoding.GetBytes(value);
+        var bytes = Chunky.Encoding.GetBytes(value);
         binaryWriter.Write((uint) bytes.Length);
         binaryWriter.Write(bytes);
       }

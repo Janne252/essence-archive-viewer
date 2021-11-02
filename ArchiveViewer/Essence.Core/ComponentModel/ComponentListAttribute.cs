@@ -5,8 +5,8 @@ namespace Essence.Core.ComponentModel
   [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Field)]
   public class ComponentListAttribute : Attribute
   {
-    public static readonly ComponentListAttribute Yes = new ComponentListAttribute(true);
-    public static readonly ComponentListAttribute No = new ComponentListAttribute(false);
+    public static readonly ComponentListAttribute Yes = new(true);
+    public static readonly ComponentListAttribute No = new(false);
 
     public ComponentListAttribute(bool componentList) => ComponentList = componentList;
 

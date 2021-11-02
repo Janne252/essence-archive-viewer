@@ -10,22 +10,22 @@ namespace Essence.Core.IO
     internal static Encoding Encoding = Encoding.Unicode;
     internal const char Delimiter = '\t';
     internal const char EscapeCharacter = '\\';
-    internal static readonly ReadOnlyCollection<KeyValuePair<char, char>> EscapeSequences = new ReadOnlyCollection<KeyValuePair<char, char>>((IList<KeyValuePair<char, char>>) new KeyValuePair<char, char>[4]
+    internal static readonly ReadOnlyCollection<KeyValuePair<char, char>> EscapeSequences = new(new KeyValuePair<char, char>[4]
     {
-      new KeyValuePair<char, char>('\\', '\\'),
-      new KeyValuePair<char, char>('n', '\n'),
-      new KeyValuePair<char, char>('r', '\r'),
-      new KeyValuePair<char, char>('t', '\t')
+        new('\\', '\\'),
+        new('n', '\n'),
+        new('r', '\r'),
+        new('t', '\t')
     });
 
     public static string Escape(string input)
     {
-      int num = 0;
-      foreach (char ch in input)
+      var num = 0;
+      foreach (var ch in input)
       {
-        foreach (KeyValuePair<char, char> escapeSequence in EscapeSequences)
+        foreach (var escapeSequence in EscapeSequences)
         {
-          if ((int) ch == (int) escapeSequence.Value)
+          if (ch == escapeSequence.Value)
           {
             ++num;
             break;
@@ -34,13 +34,13 @@ namespace Essence.Core.IO
       }
       if (num == 0)
         return input;
-      StringBuilder stringBuilder = new StringBuilder(input.Length + num);
-      foreach (char ch in input)
+      var stringBuilder = new StringBuilder(input.Length + num);
+      foreach (var ch in input)
       {
-        bool flag = false;
-        foreach (KeyValuePair<char, char> escapeSequence in EscapeSequences)
+        var flag = false;
+        foreach (var escapeSequence in EscapeSequences)
         {
-          if ((int) ch == (int) escapeSequence.Value)
+          if (ch == escapeSequence.Value)
           {
             stringBuilder.Append('\\');
             stringBuilder.Append(escapeSequence.Key);
@@ -58,19 +58,19 @@ namespace Essence.Core.IO
     {
       if (input.IndexOf('\\') == -1)
         return input;
-      StringBuilder stringBuilder = new StringBuilder(input.Length);
-      int index = 0;
+      var stringBuilder = new StringBuilder(input.Length);
+      var index = 0;
       while (index < input.Length)
       {
-        char ch = input[index];
+        var ch = input[index];
         if (ch == '\\')
         {
-          bool flag = false;
+          var flag = false;
           if (index + 1 < input.Length)
           {
-            foreach (KeyValuePair<char, char> escapeSequence in EscapeSequences)
+            foreach (var escapeSequence in EscapeSequences)
             {
-              if ((int) input[index + 1] == (int) escapeSequence.Key)
+              if (input[index + 1] == escapeSequence.Key)
               {
                 stringBuilder.Append(escapeSequence.Value);
                 index += 2;

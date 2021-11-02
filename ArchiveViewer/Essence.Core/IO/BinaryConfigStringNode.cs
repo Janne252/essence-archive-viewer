@@ -21,11 +21,11 @@ namespace Essence.Core.IO
       DictionaryKey key,
       BinaryReader binaryReader)
     {
-      List<byte> byteList = (List<byte>) null;
+      var byteList = (List<byte>) null;
       while (true)
       {
-        byte num = binaryReader.ReadByte();
-        if (num != (byte) 0)
+        var num = binaryReader.ReadByte();
+        if (num != 0)
         {
           if (byteList == null)
             byteList = new List<byte>(64);
@@ -34,8 +34,10 @@ namespace Essence.Core.IO
         else
           break;
       }
-      BinaryConfigStringNode configStringNode = new BinaryConfigStringNode(key);
-      configStringNode.Value = byteList != null ? Chunky.Encoding.GetString(byteList.ToArray()) : string.Empty;
+      var configStringNode = new BinaryConfigStringNode(key)
+      {
+          Value = byteList != null ? Chunky.Encoding.GetString(byteList.ToArray()) : string.Empty
+      };
       return configStringNode;
     }
 
@@ -43,7 +45,7 @@ namespace Essence.Core.IO
 
     protected internal override long Write(BinaryWriter binaryWriter)
     {
-      long position = binaryWriter.BaseStream.Position;
+      var position = binaryWriter.BaseStream.Position;
       if (!string.IsNullOrEmpty(Value))
         binaryWriter.Write(Chunky.Encoding.GetBytes(Value));
       binaryWriter.Write((byte) 0);

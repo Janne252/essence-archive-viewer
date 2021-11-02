@@ -5,7 +5,7 @@ namespace Essence.Core.ComponentModel
   [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Field)]
   public class DisplayIconAttribute : Attribute
   {
-    public static readonly DisplayIconAttribute Default = new DisplayIconAttribute();
+    public static readonly DisplayIconAttribute Default = new();
 
     public DisplayIconAttribute()
       : this(string.Empty)
@@ -25,6 +25,6 @@ namespace Essence.Core.ComponentModel
 
     public override int GetHashCode() => DisplayIcon.GetHashCode();
 
-    public override bool IsDefaultAttribute() => Equals((object) Default);
+    public override bool IsDefaultAttribute() => Equals(Default);
   }
 }

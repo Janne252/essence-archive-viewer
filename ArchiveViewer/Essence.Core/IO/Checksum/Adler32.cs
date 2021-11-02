@@ -25,24 +25,24 @@ namespace Essence.Core.IO.Checksum
     {
       while (cbSize >= 5552)
       {
-        int num = 694;
+        var num = 694;
         do
         {
-          m_a += (uint) array[ibStart++];
+          m_a += array[ibStart++];
           m_b += m_a;
-          m_a += (uint) array[ibStart++];
+          m_a += array[ibStart++];
           m_b += m_a;
-          m_a += (uint) array[ibStart++];
+          m_a += array[ibStart++];
           m_b += m_a;
-          m_a += (uint) array[ibStart++];
+          m_a += array[ibStart++];
           m_b += m_a;
-          m_a += (uint) array[ibStart++];
+          m_a += array[ibStart++];
           m_b += m_a;
-          m_a += (uint) array[ibStart++];
+          m_a += array[ibStart++];
           m_b += m_a;
-          m_a += (uint) array[ibStart++];
+          m_a += array[ibStart++];
           m_b += m_a;
-          m_a += (uint) array[ibStart++];
+          m_a += array[ibStart++];
           m_b += m_a;
         }
         while (--num != 0);
@@ -54,26 +54,26 @@ namespace Essence.Core.IO.Checksum
         return;
       for (; cbSize >= 8; cbSize -= 8)
       {
-        m_a += (uint) array[ibStart++];
+        m_a += array[ibStart++];
         m_b += m_a;
-        m_a += (uint) array[ibStart++];
+        m_a += array[ibStart++];
         m_b += m_a;
-        m_a += (uint) array[ibStart++];
+        m_a += array[ibStart++];
         m_b += m_a;
-        m_a += (uint) array[ibStart++];
+        m_a += array[ibStart++];
         m_b += m_a;
-        m_a += (uint) array[ibStart++];
+        m_a += array[ibStart++];
         m_b += m_a;
-        m_a += (uint) array[ibStart++];
+        m_a += array[ibStart++];
         m_b += m_a;
-        m_a += (uint) array[ibStart++];
+        m_a += array[ibStart++];
         m_b += m_a;
-        m_a += (uint) array[ibStart++];
+        m_a += array[ibStart++];
         m_b += m_a;
       }
       for (; cbSize > 0; --cbSize)
       {
-        m_a += (uint) array[ibStart++];
+        m_a += array[ibStart++];
         m_b += m_a;
       }
       m_a %= 65521U;

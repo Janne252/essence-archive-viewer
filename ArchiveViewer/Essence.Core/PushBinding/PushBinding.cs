@@ -8,7 +8,7 @@ namespace Essence.Core.PushBinding
   public class PushBinding : FreezableBinding
   {
     public static DependencyProperty TargetPropertyMirrorProperty = DependencyProperty.Register(nameof (TargetPropertyMirror), typeof (object), typeof (PushBinding));
-    public static DependencyProperty TargetPropertyListenerProperty = DependencyProperty.Register(nameof (TargetPropertyListener), typeof (object), typeof (PushBinding), (PropertyMetadata) new UIPropertyMetadata((object) null, new PropertyChangedCallback(OnTargetPropertyListenerChanged)));
+    public static DependencyProperty TargetPropertyListenerProperty = DependencyProperty.Register(nameof (TargetPropertyListener), typeof (object), typeof (PushBinding), new UIPropertyMetadata(null, new PropertyChangedCallback(OnTargetPropertyListenerChanged)));
 
     private static void OnTargetPropertyListenerChanged(
       object sender,
@@ -39,42 +39,42 @@ namespace Essence.Core.PushBinding
 
     public void SetupTargetBinding(DependencyObject targetObject)
     {
-      if (targetObject == null || DesignerProperties.GetIsInDesignMode((DependencyObject) this))
+      if (targetObject == null || DesignerProperties.GetIsInDesignMode(this))
         return;
-      Binding binding = new Binding()
+      var binding = new Binding
       {
-        Source = (object) targetObject,
-        Mode = BindingMode.OneWay
+        Source = targetObject,
+        Mode = BindingMode.OneWay,
+        Path = TargetDependencyProperty == null ? new PropertyPath(TargetProperty, Array.Empty<object>()) : new PropertyPath(TargetDependencyProperty)
       };
-      binding.Path = TargetDependencyProperty == null ? new PropertyPath(TargetProperty, Array.Empty<object>()) : new PropertyPath((object) TargetDependencyProperty);
-      BindingOperations.SetBinding((DependencyObject) this, TargetPropertyListenerProperty, (BindingBase) binding);
-      BindingOperations.SetBinding((DependencyObject) this, TargetPropertyMirrorProperty, (BindingBase) Binding);
+      BindingOperations.SetBinding(this, TargetPropertyListenerProperty, binding);
+      BindingOperations.SetBinding(this, TargetPropertyMirrorProperty, Binding);
       TargetPropertyValueChanged();
       switch (targetObject)
       {
         case FrameworkElement _:
-          ((FrameworkElement) targetObject).Loaded += (RoutedEventHandler) ((_param1, _param2) => TargetPropertyValueChanged());
+          ((FrameworkElement) targetObject).Loaded += (_param1, _param2) => TargetPropertyValueChanged();
           break;
         case FrameworkContentElement _:
-          ((FrameworkContentElement) targetObject).Loaded += (RoutedEventHandler) ((_param1, _param2) => TargetPropertyValueChanged());
+          ((FrameworkContentElement) targetObject).Loaded += (_param1, _param2) => TargetPropertyValueChanged();
           break;
       }
     }
 
     private void TargetPropertyValueChanged()
     {
-      object obj = GetValue(TargetPropertyListenerProperty);
+      var obj = GetValue(TargetPropertyListenerProperty);
       SetValue(TargetPropertyMirrorProperty, obj);
     }
 
     protected override void CloneCore(Freezable sourceFreezable)
     {
-      PushBinding pushBinding = sourceFreezable as PushBinding;
+      var pushBinding = sourceFreezable as PushBinding;
       TargetProperty = pushBinding.TargetProperty;
       TargetDependencyProperty = pushBinding.TargetDependencyProperty;
       base.CloneCore(sourceFreezable);
     }
 
-    protected override Freezable CreateInstanceCore() => (Freezable) new PushBinding();
+    protected override Freezable CreateInstanceCore() => new PushBinding();
   }
 }

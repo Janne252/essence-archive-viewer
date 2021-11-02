@@ -277,17 +277,17 @@ namespace Essence.Core.IO.Checksum
       CRC32Hash ^= uint.MaxValue;
       for (; cbSize >= 8; cbSize -= 8)
       {
-        CRC32Hash = CRC32Table[((int) CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ CRC32Hash >> 8;
-        CRC32Hash = CRC32Table[((int) CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ CRC32Hash >> 8;
-        CRC32Hash = CRC32Table[((int) CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ CRC32Hash >> 8;
-        CRC32Hash = CRC32Table[((int) CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ CRC32Hash >> 8;
-        CRC32Hash = CRC32Table[((int) CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ CRC32Hash >> 8;
-        CRC32Hash = CRC32Table[((int) CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ CRC32Hash >> 8;
-        CRC32Hash = CRC32Table[((int) CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ CRC32Hash >> 8;
-        CRC32Hash = CRC32Table[((int) CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ CRC32Hash >> 8;
+        CRC32Hash = CRC32Table[((int) CRC32Hash ^ array[ibStart++]) & byte.MaxValue] ^ CRC32Hash >> 8;
+        CRC32Hash = CRC32Table[((int) CRC32Hash ^ array[ibStart++]) & byte.MaxValue] ^ CRC32Hash >> 8;
+        CRC32Hash = CRC32Table[((int) CRC32Hash ^ array[ibStart++]) & byte.MaxValue] ^ CRC32Hash >> 8;
+        CRC32Hash = CRC32Table[((int) CRC32Hash ^ array[ibStart++]) & byte.MaxValue] ^ CRC32Hash >> 8;
+        CRC32Hash = CRC32Table[((int) CRC32Hash ^ array[ibStart++]) & byte.MaxValue] ^ CRC32Hash >> 8;
+        CRC32Hash = CRC32Table[((int) CRC32Hash ^ array[ibStart++]) & byte.MaxValue] ^ CRC32Hash >> 8;
+        CRC32Hash = CRC32Table[((int) CRC32Hash ^ array[ibStart++]) & byte.MaxValue] ^ CRC32Hash >> 8;
+        CRC32Hash = CRC32Table[((int) CRC32Hash ^ array[ibStart++]) & byte.MaxValue] ^ CRC32Hash >> 8;
       }
       for (; cbSize > 0; --cbSize)
-        CRC32Hash = CRC32Table[((int) CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ CRC32Hash >> 8;
+        CRC32Hash = CRC32Table[((int) CRC32Hash ^ array[ibStart++]) & byte.MaxValue] ^ CRC32Hash >> 8;
       CRC32Hash ^= uint.MaxValue;
     }
 

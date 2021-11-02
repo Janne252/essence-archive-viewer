@@ -9,7 +9,7 @@ namespace Essence.Core.IO.Archive
     internal TOC(Archive archive, IList<INode> children, string name, string alternateName)
     {
       Archive = archive;
-      Children = (IReadOnlyList<INode>) new ReadOnlyCollection<INode>(children);
+      Children = new ReadOnlyCollection<INode>(children);
       Name = name;
       FullName = name.ToUpperInvariant() + ":" + Path.DirectorySeparatorChar.ToString();
       AlternateName = alternateName;
@@ -17,7 +17,7 @@ namespace Essence.Core.IO.Archive
 
     public Archive Archive { get; }
 
-    public INode Parent => (INode) Archive;
+    public INode Parent => Archive;
 
     public IReadOnlyList<INode> Children { get; }
 

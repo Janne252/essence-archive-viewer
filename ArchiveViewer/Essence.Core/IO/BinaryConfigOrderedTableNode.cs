@@ -22,13 +22,13 @@ namespace Essence.Core.IO
       BinaryReader binaryReader,
       KeyResolver keyResolver)
     {
-      BinaryConfigOrderedTableNode orderedTableNode = new BinaryConfigOrderedTableNode(key);
+      var orderedTableNode = new BinaryConfigOrderedTableNode(key);
       ReadChildren(binaryReader, keyResolver, orderedTableNode.Children);
       return orderedTableNode;
     }
 
     protected internal override uint GetNodeType() => 101;
 
-    protected override IEnumerable<BinaryConfigNode> GetOrderedChildren() => (IEnumerable<BinaryConfigNode>) Children;
+    protected override IEnumerable<BinaryConfigNode> GetOrderedChildren() => Children;
   }
 }

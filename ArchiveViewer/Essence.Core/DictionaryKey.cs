@@ -7,7 +7,7 @@ namespace Essence.Core
     public DictionaryKey(ulong hash)
     {
       Hash = hash;
-      String = (string) null;
+      String = null;
     }
 
     public DictionaryKey(string @string)

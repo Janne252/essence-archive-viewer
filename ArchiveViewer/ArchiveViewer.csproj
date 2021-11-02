@@ -209,6 +209,9 @@
     <EmbeddedResource Include="Properties\Resources.resources" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\.editorconfig">
+      <Link>.editorconfig</Link>
+    </None>
     <None Include="app.config" />
     <None Include="app.manifest" />
     <None Include="CoH3.AchiveViewer_TemporaryKey.pfx" />

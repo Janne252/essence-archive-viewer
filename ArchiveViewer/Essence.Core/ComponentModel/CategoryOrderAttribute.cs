@@ -15,7 +15,7 @@ namespace Essence.Core.ComponentModel
 
     public int Order { get; }
 
-    public override object TypeId => (object) this;
+    public override object TypeId => this;
 
     public override bool Equals(object obj)
     {

@@ -32,7 +32,7 @@ namespace Essence.Core.IO
 
     protected internal override long Write(BinaryWriter binaryWriter)
     {
-      long position = binaryWriter.BaseStream.Position;
+      var position = binaryWriter.BaseStream.Position;
       binaryWriter.Write(Value);
       return position;
     }

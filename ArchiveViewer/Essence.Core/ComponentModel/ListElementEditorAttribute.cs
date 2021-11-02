@@ -38,13 +38,13 @@ namespace Essence.Core.ComponentModel
       {
         if (m_typeId == null)
         {
-          string str = EditorBaseTypeName;
-          int length = str.IndexOf(',');
+          var str = EditorBaseTypeName;
+          var length = str.IndexOf(',');
           if (length != -1)
             str = str.Substring(0, length);
           m_typeId = GetType().FullName + str;
         }
-        return (object) m_typeId;
+        return m_typeId;
       }
     }
 
@@ -57,10 +57,10 @@ namespace Essence.Core.ComponentModel
 
     public override int GetHashCode()
     {
-      string editorTypeName = EditorTypeName;
-      int num1 = editorTypeName != null ? editorTypeName.GetHashCode() : 0;
-      string editorBaseTypeName = EditorBaseTypeName;
-      int num2 = editorBaseTypeName != null ? editorBaseTypeName.GetHashCode() : 0;
+      var editorTypeName = EditorTypeName;
+      var num1 = editorTypeName != null ? editorTypeName.GetHashCode() : 0;
+      var editorBaseTypeName = EditorBaseTypeName;
+      var num2 = editorBaseTypeName != null ? editorBaseTypeName.GetHashCode() : 0;
       return num1 ^ num2;
     }
   }

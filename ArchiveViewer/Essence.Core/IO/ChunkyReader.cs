@@ -18,7 +18,7 @@ namespace Essence.Core.IO
     }
 
     public ChunkyReader(string fileName)
-      : this((Stream) new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+      : this(new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
     {
     }
 
@@ -32,8 +32,8 @@ namespace Essence.Core.IO
     public ChunkHeader? PeakChunk()
     {
       PeakNextChunk(PeakBehaviour.PreservePosition);
-      ref ChunkHeaderPosition? local = ref m_nextChunkHeaderPosition;
-      return !local.HasValue ? new ChunkHeader?() : new ChunkHeader?(local.GetValueOrDefault().Header);
+      ref var local = ref m_nextChunkHeaderPosition;
+      return !local.HasValue ? new ChunkHeader?() : local.GetValueOrDefault().Header;
     }
 
     public ChunkHeader PushFolderChunk(FourCC id, uint version) => PushChunk(Chunky.FolderType, id, version);
@@ -46,9 +46,10 @@ namespace Essence.Core.IO
       if (!m_nextChunkHeaderPosition.HasValue)
         throw new EndOfStreamException();
       if (m_nextChunkHeaderPosition.Value.Header.Type != type || m_nextChunkHeaderPosition.Value.Header.ID != id)
-        throw new IOException(string.Format("{0} chunk [{1}] not found.", (object) type, (object) id));
+        throw new IOException($"{type} chunk [{id}] not found.");
       if (m_nextChunkHeaderPosition.Value.Header.Version > version)
-        throw new IOException(string.Format("{0} chunk [{1}] version [{2}] newer than expected version [{3}].", (object) type, (object) id, (object) m_nextChunkHeaderPosition.Value.Header.Version, (object) version));
+        throw new IOException(
+            $"{type} chunk [{id}] version [{m_nextChunkHeaderPosition.Value.Header.Version}] newer than expected version [{version}].");
       m_chunkHeaderPositions.Push(m_nextChunkHeaderPosition.Value);
       m_nextChunkHeaderPosition = new ChunkHeaderPosition?();
       return m_chunkHeaderPositions.Peek().Header;
@@ -56,9 +57,9 @@ namespace Essence.Core.IO
 
     public void PopChunk()
     {
-      ChunkHeaderPosition chunkHeaderPosition = m_chunkHeaderPositions.Pop();
+      var chunkHeaderPosition = m_chunkHeaderPositions.Pop();
       m_nextChunkHeaderPosition = new ChunkHeaderPosition?();
-      m_binaryReader.BaseStream.Seek(chunkHeaderPosition.DataPosition + (long) chunkHeaderPosition.Header.Size, SeekOrigin.Begin);
+      m_binaryReader.BaseStream.Seek(chunkHeaderPosition.DataPosition + chunkHeaderPosition.Header.Size, SeekOrigin.Begin);
     }
 
     public bool SkipNextChunk()
@@ -66,7 +67,7 @@ namespace Essence.Core.IO
       PeakNextChunk(PeakBehaviour.PositionAtChunkData);
       if (!m_nextChunkHeaderPosition.HasValue)
         return false;
-      long size = (long) m_nextChunkHeaderPosition.Value.Header.Size;
+      var size = (long) m_nextChunkHeaderPosition.Value.Header.Size;
       m_nextChunkHeaderPosition = new ChunkHeaderPosition?();
       m_binaryReader.BaseStream.Seek(size, SeekOrigin.Current);
       return true;
@@ -102,16 +103,16 @@ namespace Essence.Core.IO
 
     private void ReadHeader()
     {
-      byte[] bytes = Encoding.ASCII.GetBytes("Relic Chunky\r\n\u001A\0");
-      byte[] second = m_binaryReader.ReadBytes(bytes.Length);
-      if (!((IEnumerable<byte>) bytes).SequenceEqual<byte>((IEnumerable<byte>) second))
+      var bytes = Encoding.ASCII.GetBytes("Relic Chunky\r\n\u001A\0");
+      var second = m_binaryReader.ReadBytes(bytes.Length);
+      if (!bytes.SequenceEqual<byte>(second))
         throw new IOException("Not a chunky file.");
-      uint num1 = m_binaryReader.ReadUInt32();
+      var num1 = m_binaryReader.ReadUInt32();
       if (num1 != 4U)
-        throw new IOException(string.Format("Unsupported chunky version [{0}].", (object) num1));
-      uint num2 = m_binaryReader.ReadUInt32();
+        throw new IOException($"Unsupported chunky version [{num1}].");
+      var num2 = m_binaryReader.ReadUInt32();
       if (num2 != 1U)
-        throw new IOException(string.Format("Unsupported chunky platform [{0}].", (object) num2));
+        throw new IOException($"Unsupported chunky platform [{num2}].");
     }
 
     private void PeakNextChunk(PeakBehaviour peakBehaviour)
@@ -123,28 +124,28 @@ namespace Essence.Core.IO
       {
         chunkHeaderPosition = m_chunkHeaderPositions.Peek();
         if (chunkHeaderPosition.Header.Type != Chunky.FolderType)
-          throw new ApplicationException(string.Format("Chunks can only be read from {0} chunks.", (object) Chunky.FolderType));
+          throw new ApplicationException($"Chunks can only be read from {Chunky.FolderType} chunks.");
       }
       if (m_nextChunkHeaderPosition.HasValue)
       {
         if (peakBehaviour != PeakBehaviour.PositionAtChunkData)
           return;
-        Stream baseStream = m_binaryReader.BaseStream;
+        var baseStream = m_binaryReader.BaseStream;
         chunkHeaderPosition = m_nextChunkHeaderPosition.Value;
-        long dataPosition = chunkHeaderPosition.DataPosition;
+        var dataPosition = chunkHeaderPosition.DataPosition;
         baseStream.Seek(dataPosition, SeekOrigin.Begin);
       }
       else
       {
-        long position1 = m_binaryReader.BaseStream.Position;
+        var position1 = m_binaryReader.BaseStream.Position;
         if (m_chunkHeaderPositions.Count > 0)
         {
-          long num1 = position1;
+          var num1 = position1;
           chunkHeaderPosition = m_chunkHeaderPositions.Peek();
-          long dataPosition = chunkHeaderPosition.DataPosition;
+          var dataPosition = chunkHeaderPosition.DataPosition;
           chunkHeaderPosition = m_chunkHeaderPositions.Peek();
-          long size = (long) chunkHeaderPosition.Header.Size;
-          long num2 = dataPosition + size;
+          var size = (long) chunkHeaderPosition.Header.Size;
+          var num2 = dataPosition + size;
           if (num1 == num2)
             return;
         }
@@ -153,18 +154,18 @@ namespace Essence.Core.IO
         {
           type = ReadFourCC(m_binaryReader);
         }
-        catch (EndOfStreamException ex)
+        catch (EndOfStreamException)
         {
           return;
         }
         if (type != Chunky.DataType && type != Chunky.FolderType)
-          throw new IOException(string.Format("Unsupported chunk type [{0}].", (object) type));
-        FourCC id = ReadFourCC(m_binaryReader);
-        uint version = m_binaryReader.ReadUInt32();
-        uint size1 = m_binaryReader.ReadUInt32();
-        string name = ReadString(m_binaryReader);
-        long position2 = m_binaryReader.BaseStream.Position;
-        m_nextChunkHeaderPosition = new ChunkHeaderPosition?(new ChunkHeaderPosition(new ChunkHeader(type, id, version, size1, name), position1, position2));
+          throw new IOException($"Unsupported chunk type [{type}].");
+        var id = ReadFourCC(m_binaryReader);
+        var version = m_binaryReader.ReadUInt32();
+        var size1 = m_binaryReader.ReadUInt32();
+        var name = ReadString(m_binaryReader);
+        var position2 = m_binaryReader.BaseStream.Position;
+        m_nextChunkHeaderPosition = new ChunkHeaderPosition(new ChunkHeader(type, id, version, size1, name), position1, position2);
         if (peakBehaviour != PeakBehaviour.PreservePosition)
           return;
         m_binaryReader.BaseStream.Seek(position1, SeekOrigin.Begin);
@@ -176,7 +177,7 @@ namespace Essence.Core.IO
     public void Dispose()
     {
       Dispose(true);
-      GC.SuppressFinalize((object) this);
+      GC.SuppressFinalize(this);
     }
 
     private void Dispose(bool disposing)
@@ -184,7 +185,7 @@ namespace Essence.Core.IO
       if (!disposing || m_binaryReader == null)
         return;
       m_binaryReader.Close();
-      m_binaryReader = (BinaryReader) null;
+      m_binaryReader = null;
     }
 
     private BinaryReader EnsureCanReadData()
@@ -192,19 +193,19 @@ namespace Essence.Core.IO
       if (m_binaryReader == null)
         throw new InvalidOperationException();
       if (m_chunkHeaderPositions.Count == 0 || m_chunkHeaderPositions.Peek().Header.Type != Chunky.DataType)
-        throw new ApplicationException(string.Format("Data can only be read from {0} chunks.", (object) Chunky.DataType));
+        throw new ApplicationException($"Data can only be read from {Chunky.DataType} chunks.");
       return m_binaryReader;
     }
 
     private static FourCC ReadFourCC(BinaryReader binaryReader)
     {
-      uint num = binaryReader.ReadUInt32();
-      return new FourCC((uint) (((int) num & (int) byte.MaxValue) << 24 | ((int) num & 65280) << 8) | (num & 16711680U) >> 8 | (num & 4278190080U) >> 24);
+      var num = binaryReader.ReadUInt32();
+      return new FourCC((uint) (((int) num & byte.MaxValue) << 24 | ((int) num & 65280) << 8) | (num & 16711680U) >> 8 | (num & 4278190080U) >> 24);
     }
 
     private static string ReadString(BinaryReader binaryReader)
     {
-      uint count = binaryReader.ReadUInt32();
+      var count = binaryReader.ReadUInt32();
       return count > 0U ? Chunky.Encoding.GetString(binaryReader.ReadBytes((int) count)) : string.Empty;
     }
 

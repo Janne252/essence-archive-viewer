@@ -20,8 +20,8 @@ namespace Essence.Core.IO
 
     public int Add(string value)
     {
-      int locID = 1;
-      foreach (int key in Database.Keys)
+      var locID = 1;
+      foreach (var key in Database.Keys)
       {
         if (key >= locID)
           locID = key + 1;
@@ -36,8 +36,7 @@ namespace Essence.Core.IO
 
     public string Get(int locID)
     {
-      string str;
-      return Database.TryGetValue(locID, out str) ? str : (string) null;
+        return Database.TryGetValue(locID, out var str) ? str : null;
     }
 
     public SortedDictionary<int, string> Database { get; }
@@ -45,21 +44,17 @@ namespace Essence.Core.IO
     public void Read(string fileName)
     {
       Database.Clear();
-      using (UCSReader ucsReader = new UCSReader(fileName, !m_doNotEscape))
-      {
-        foreach (KeyValuePair<int, string> keyValuePair in ucsReader.Read())
+      using var ucsReader = new UCSReader(fileName, !m_doNotEscape);
+      foreach (var keyValuePair in ucsReader.Read())
           Database[keyValuePair.Key] = keyValuePair.Value;
-      }
     }
 
     public void Write(string fileName)
     {
       Directory.CreateDirectory(Path.GetDirectoryName(fileName));
-      using (UCSWriter ucsWriter = new UCSWriter(fileName, !m_doNotEscape))
-      {
-        foreach (KeyValuePair<int, string> keyValuePair in Database)
+      using var ucsWriter = new UCSWriter(fileName, !m_doNotEscape);
+      foreach (var keyValuePair in Database)
           ucsWriter.Write(keyValuePair.Key, keyValuePair.Value);
-      }
     }
   }
 }

@@ -5,18 +5,18 @@ namespace Essence.Core.Commands
 {
   public abstract class BaseCommand<T> : ICommand
   {
-    bool ICommand.CanExecute(object parameter) => CanExecute(!(parameter is T obj) ? default (T) : obj);
+    bool ICommand.CanExecute(object parameter) => CanExecute(parameter is not T obj ? default : obj);
 
-    void ICommand.Execute(object parameter) => Execute(!(parameter is T obj) ? default (T) : obj);
+    void ICommand.Execute(object parameter) => Execute(parameter is not T obj ? default : obj);
 
     public event EventHandler CanExecuteChanged;
 
     public void RaiseCanExecuteChanged()
     {
-      EventHandler canExecuteChanged = CanExecuteChanged;
+      var canExecuteChanged = CanExecuteChanged;
       if (canExecuteChanged == null)
         return;
-      canExecuteChanged((object) this, EventArgs.Empty);
+      canExecuteChanged(this, EventArgs.Empty);
     }
 
     public abstract bool CanExecute(T parameter);

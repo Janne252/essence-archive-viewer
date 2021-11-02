@@ -8,7 +8,7 @@ namespace Essence.Core.Commands
     private readonly Func<T, bool> m_canExecuteFunc;
 
     public DelegateCommand(Action<T> executeAction)
-      : this(executeAction, (Func<T, bool>) null)
+      : this(executeAction, null)
     {
     }
 
@@ -20,7 +20,7 @@ namespace Essence.Core.Commands
 
     public override bool CanExecute(T parameter)
     {
-      Func<T, bool> canExecuteFunc = m_canExecuteFunc;
+      var canExecuteFunc = m_canExecuteFunc;
       return canExecuteFunc == null || canExecuteFunc(parameter);
     }
 

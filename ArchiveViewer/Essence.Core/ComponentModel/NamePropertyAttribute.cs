@@ -5,7 +5,7 @@ namespace Essence.Core.ComponentModel
   [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property)]
   public class NamePropertyAttribute : Attribute
   {
-    public static readonly NamePropertyAttribute Default = new NamePropertyAttribute((string) null);
+    public static readonly NamePropertyAttribute Default = new(null);
 
     public NamePropertyAttribute(string propertyName) => PropertyName = propertyName;
 

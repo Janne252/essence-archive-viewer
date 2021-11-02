@@ -14,7 +14,7 @@ namespace Essence.Core
     {
       private RefCountedDisposable<T> m_refCountedDisposable;
 
-      public static Ref Create(T disposable) => new Ref(new RefCountedDisposable<T>(disposable));
+      public static Ref Create(T disposable) => new(new RefCountedDisposable<T>(disposable));
 
       private Ref(RefCountedDisposable<T> refCountedDisposable)
       {
@@ -30,7 +30,7 @@ namespace Essence.Core
 
       public bool IsDisposed => m_refCountedDisposable == null;
 
-      public bool IsUnique => m_refCountedDisposable != null && m_refCountedDisposable.m_refCount == 1;
+      public bool IsUnique => m_refCountedDisposable is {m_refCount: 1};
 
       public T Target => m_refCountedDisposable != null ? m_refCountedDisposable.m_disposable : throw new InvalidOperationException();
 
@@ -42,13 +42,13 @@ namespace Essence.Core
           throw new Exception();
         if (Interlocked.Decrement(ref m_refCountedDisposable.m_refCount) == 0)
         {
-          T disposable = m_refCountedDisposable.m_disposable;
-          m_refCountedDisposable.m_disposable = default (T);
-          m_refCountedDisposable = (RefCountedDisposable<T>) null;
+          var disposable = m_refCountedDisposable.m_disposable;
+          m_refCountedDisposable.m_disposable = default;
+          m_refCountedDisposable = null;
           disposable.Dispose();
         }
         else
-          m_refCountedDisposable = (RefCountedDisposable<T>) null;
+          m_refCountedDisposable = null;
       }
 
       public bool TryGetTarget(out T target)
@@ -58,7 +58,7 @@ namespace Essence.Core
           target = m_refCountedDisposable.m_disposable;
           return true;
         }
-        target = default (T);
+        target = default;
         return false;
       }
     }

@@ -21,12 +21,9 @@ namespace Essence.Core.Pipeline
 
     public PipelineConfig(IEnumerable<string> searchStartPaths)
     {
-      foreach (string searchStartPath in searchStartPaths)
+      foreach (var searchStartPath in searchStartPaths)
       {
-        string pipelineRoot;
-        ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> configSections;
-        ReadOnlyDictionary<string, Project> projects;
-        if (LoadPipelineIni(searchStartPath, out pipelineRoot, out configSections, out projects))
+          if (LoadPipelineIni(searchStartPath, out var pipelineRoot, out var configSections, out var projects))
         {
           PipelineRoot = pipelineRoot;
           ConfigSections = configSections;
@@ -34,14 +31,15 @@ namespace Essence.Core.Pipeline
           return;
         }
       }
-      throw new ApplicationException(string.Format("No {0} file found in any parents of the paths [{1}].", (object) "pipeline.ini", (object) string.Join(";", searchStartPaths)));
+      throw new ApplicationException(
+          $"No {"pipeline.ini"} file found in any parents of the paths [{string.Join(";", searchStartPaths)}].");
     }
 
     public PipelineConfig()
-      : this((IEnumerable<string>) new string[2]
+      : this(new string[2]
       {
-        Environment.CurrentDirectory,
-        Path.GetFullPath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location))
+          Environment.CurrentDirectory,
+          Path.GetFullPath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location))
       })
     {
     }
@@ -50,16 +48,14 @@ namespace Essence.Core.Pipeline
 
     public string GetConfigValue(string section, string project, string key)
     {
-      string str;
-      return TryGetProjectConfigValue(section, project, key, out str) ? str : GetConfigValue(section, key);
+        return TryGetProjectConfigValue(section, project, key, out var str) ? str : GetConfigValue(section, key);
     }
 
     public bool TryGetConfigValue(string section, string key, out string value)
     {
-      ReadOnlyDictionary<string, string> readOnlyDictionary;
-      if (ConfigSections.TryGetValue(section, out readOnlyDictionary))
+        if (ConfigSections.TryGetValue(section, out var readOnlyDictionary))
         return readOnlyDictionary.TryGetValue(key, out value);
-      value = (string) null;
+      value = null;
       return false;
     }
 
@@ -71,16 +67,15 @@ namespace Essence.Core.Pipeline
       string key,
       out string value)
     {
-      Project project1;
-      if (projectName != null && Projects.TryGetValue(projectName, out project1))
+        if (projectName != null && Projects.TryGetValue(projectName, out var project1))
       {
-        foreach (Project project2 in project1.DependencyChain)
+        foreach (var project2 in project1.DependencyChain)
         {
           if (project2.TryGetConfigValue(section, key, out value))
             return true;
         }
       }
-      value = (string) null;
+      value = null;
       return false;
     }
 
@@ -94,7 +89,7 @@ namespace Essence.Core.Pipeline
       out ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> configSections,
       out ReadOnlyDictionary<string, Project> projects)
     {
-      for (string str = searchStartPath; str != null; str = Path.GetDirectoryName(str))
+      for (var str = searchStartPath; str != null; str = Path.GetDirectoryName(str))
       {
         if (File.Exists(Path.Combine(str, "pipeline.ini")))
         {
@@ -103,9 +98,9 @@ namespace Essence.Core.Pipeline
           return true;
         }
       }
-      pipelineRoot = (string) null;
-      configSections = (ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>>) null;
-      projects = (ReadOnlyDictionary<string, Project>) null;
+      pipelineRoot = null;
+      configSections = null;
+      projects = null;
       return false;
     }
 
@@ -114,40 +109,39 @@ namespace Essence.Core.Pipeline
       out ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> readOnlyConfigSections,
       out ReadOnlyDictionary<string, Project> readOnlyProjects)
     {
-      IniFile iniFile = new IniFile();
+      var iniFile = new IniFile();
       iniFile.Read(Path.Combine(pipelineRoot, "pipeline.ini"));
-      Dictionary<string, ReadOnlyDictionary<string, string>> dictionary1 = new Dictionary<string, ReadOnlyDictionary<string, string>>((IEqualityComparer<string>) StringComparer.OrdinalIgnoreCase);
-      Dictionary<string, Project> parents = new Dictionary<string, Project>((IEqualityComparer<string>) StringComparer.OrdinalIgnoreCase);
-      Dictionary<string, IDictionary<string, ReadOnlyDictionary<string, string>>> projectConfigSections = new Dictionary<string, IDictionary<string, ReadOnlyDictionary<string, string>>>((IEqualityComparer<string>) StringComparer.OrdinalIgnoreCase);
-      foreach (KeyValuePair<string, Dictionary<string, string>> section in iniFile.Sections)
+      var dictionary1 = new Dictionary<string, ReadOnlyDictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
+      var parents = new Dictionary<string, Project>(StringComparer.OrdinalIgnoreCase);
+      var projectConfigSections = new Dictionary<string, IDictionary<string, ReadOnlyDictionary<string, string>>>(StringComparer.OrdinalIgnoreCase);
+      foreach (var section in iniFile.Sections)
       {
-        int length = section.Key.IndexOf(':');
+        var length = section.Key.IndexOf(':');
         if (length != -1)
         {
-          string key = section.Key.Substring(0, length);
-          string str = section.Key.Substring(length + 1);
+          var key = section.Key.Substring(0, length);
+          var str = section.Key.Substring(length + 1);
           if (key.Equals("project", StringComparison.InvariantCultureIgnoreCase))
           {
-            parents.Add(str, new Project(pipelineRoot, str, (IDictionary<string, string>) section.Value));
+            parents.Add(str, new Project(pipelineRoot, str, section.Value));
           }
           else
           {
-            IDictionary<string, ReadOnlyDictionary<string, string>> dictionary2;
-            if (!projectConfigSections.TryGetValue(str, out dictionary2))
+              if (!projectConfigSections.TryGetValue(str, out var dictionary2))
             {
-              dictionary2 = (IDictionary<string, ReadOnlyDictionary<string, string>>) new Dictionary<string, ReadOnlyDictionary<string, string>>((IEqualityComparer<string>) StringComparer.OrdinalIgnoreCase);
+              dictionary2 = new Dictionary<string, ReadOnlyDictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
               projectConfigSections.Add(str, dictionary2);
             }
-            dictionary2.Add(key, new ReadOnlyDictionary<string, string>((IDictionary<string, string>) section.Value));
+            dictionary2.Add(key, new ReadOnlyDictionary<string, string>(section.Value));
           }
         }
         else
-          dictionary1.Add(section.Key, new ReadOnlyDictionary<string, string>((IDictionary<string, string>) section.Value));
+          dictionary1.Add(section.Key, new ReadOnlyDictionary<string, string>(section.Value));
       }
-      foreach (Project project in parents.Values)
-        project.Resolve((IDictionary<string, Project>) parents, (IDictionary<string, IDictionary<string, ReadOnlyDictionary<string, string>>>) projectConfigSections);
-      readOnlyConfigSections = new ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>>((IDictionary<string, ReadOnlyDictionary<string, string>>) dictionary1);
-      readOnlyProjects = new ReadOnlyDictionary<string, Project>((IDictionary<string, Project>) parents);
+      foreach (var project in parents.Values)
+        project.Resolve(parents, projectConfigSections);
+      readOnlyConfigSections = new ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>>(dictionary1);
+      readOnlyProjects = new ReadOnlyDictionary<string, Project>(parents);
     }
   }
 }

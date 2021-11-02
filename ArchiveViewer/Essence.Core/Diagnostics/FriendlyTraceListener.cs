@@ -14,9 +14,9 @@ namespace Essence.Core.Diagnostics
       int id,
       object data)
     {
-      if (Filter != null && !Filter.ShouldTrace(eventCache, source, eventType, id, (string) null, (object[]) null, data, (object[]) null))
+      if (Filter != null && !Filter.ShouldTrace(eventCache, source, eventType, id, null, null, data, null))
         return;
-      string empty = string.Empty;
+      var empty = string.Empty;
       if (data != null)
         empty = data.ToString();
       writeLine(empty, eventType);
@@ -29,12 +29,12 @@ namespace Essence.Core.Diagnostics
       int id,
       params object[] data)
     {
-      if (Filter != null && !Filter.ShouldTrace(eventCache, source, eventType, id, (string) null, (object[]) null, (object) null, data))
+      if (Filter != null && !Filter.ShouldTrace(eventCache, source, eventType, id, null, null, null, data))
         return;
-      StringBuilder stringBuilder = new StringBuilder();
+      var stringBuilder = new StringBuilder();
       if (data != null)
       {
-        for (int index = 0; index < data.Length; ++index)
+        for (var index = 0; index < data.Length; ++index)
         {
           if (index != 0)
             stringBuilder.Append(", ");
@@ -61,7 +61,7 @@ namespace Essence.Core.Diagnostics
       int id,
       string message)
     {
-      if (Filter != null && !Filter.ShouldTrace(eventCache, source, eventType, id, message, (object[]) null, (object) null, (object[]) null))
+      if (Filter != null && !Filter.ShouldTrace(eventCache, source, eventType, id, message, null, null, null))
         return;
       writeLine(message, eventType);
     }
@@ -74,10 +74,10 @@ namespace Essence.Core.Diagnostics
       string format,
       params object[] args)
     {
-      if (Filter != null && !Filter.ShouldTrace(eventCache, source, eventType, id, format, args, (object) null, (object[]) null))
+      if (Filter != null && !Filter.ShouldTrace(eventCache, source, eventType, id, format, args, null, null))
         return;
       if (args != null)
-        writeLine(string.Format((IFormatProvider) CultureInfo.InvariantCulture, format, args), eventType);
+        writeLine(string.Format(CultureInfo.InvariantCulture, format, args), eventType);
       else
         writeLine(format, eventType);
     }
@@ -88,6 +88,8 @@ namespace Essence.Core.Diagnostics
 
     protected abstract void Write(string message, TraceEventType eventType);
 
+#pragma warning disable IDE1006 // Naming Styles
     public virtual void writeLine(string message, TraceEventType eventType) => Write(message + Environment.NewLine, eventType);
+#pragma warning restore IDE1006 // Naming Styles
   }
 }

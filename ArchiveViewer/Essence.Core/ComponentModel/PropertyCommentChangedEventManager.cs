@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Specialized;
 using System.Windows;
 
@@ -27,7 +26,7 @@ namespace Essence.Core.ComponentModel
         default:
           if (listener == null)
             throw new ArgumentNullException(nameof (listener));
-          CurrentManager.AddListener(source, propertyName, listener, (EventHandler<PropertyCommentChangedEventArgs>) null);
+          CurrentManager.AddListener(source, propertyName, listener, null);
           break;
       }
     }
@@ -48,7 +47,7 @@ namespace Essence.Core.ComponentModel
         default:
           if (listener == null)
             throw new ArgumentNullException(nameof (listener));
-          CurrentManager.RemoveListener(source, propertyName, listener, (EventHandler<PropertyCommentChangedEventArgs>) null);
+          CurrentManager.RemoveListener(source, propertyName, listener, null);
           break;
       }
     }
@@ -69,7 +68,7 @@ namespace Essence.Core.ComponentModel
         default:
           if (handler == null)
             throw new ArgumentNullException(nameof (handler));
-          CurrentManager.AddListener(source, propertyName, (IWeakEventListener) null, handler);
+          CurrentManager.AddListener(source, propertyName, null, handler);
           break;
       }
     }
@@ -90,12 +89,12 @@ namespace Essence.Core.ComponentModel
         default:
           if (handler == null)
             throw new ArgumentNullException(nameof (handler));
-          CurrentManager.RemoveListener(source, propertyName, (IWeakEventListener) null, handler);
+          CurrentManager.RemoveListener(source, propertyName, null, handler);
           break;
       }
     }
 
-    protected override ListenerList NewListenerList() => (ListenerList) new ListenerList<PropertyCommentChangedEventArgs>();
+    protected override ListenerList NewListenerList() => new ListenerList<PropertyCommentChangedEventArgs>();
 
     protected override void StartListening(object source) => ((INotifyPropertyCommentChanged) source).PropertyCommentChanged += new PropertyCommentChangedEventHandler(OnPropertyCommentChanged);
 
@@ -103,27 +102,27 @@ namespace Essence.Core.ComponentModel
 
     protected override bool Purge(object source, object data, bool purgeAll)
     {
-      bool flag1 = false;
+      var flag1 = false;
       if (!purgeAll)
       {
-        HybridDictionary hybridDictionary = (HybridDictionary) data;
-        ICollection keys = hybridDictionary.Keys;
-        string[] strArray = new string[keys.Count];
-        keys.CopyTo((Array) strArray, 0);
-        for (int index = strArray.Length - 1; index >= 0; --index)
+        var hybridDictionary = (HybridDictionary) data;
+        var keys = hybridDictionary.Keys;
+        var strArray = new string[keys.Count];
+        keys.CopyTo(strArray, 0);
+        for (var index = strArray.Length - 1; index >= 0; --index)
         {
-          bool flag2 = purgeAll || source == null;
+          var flag2 = purgeAll || source == null;
           if (!flag2)
           {
-            ListenerList list = (ListenerList) hybridDictionary[(object) strArray[index]];
+            var list = (ListenerList) hybridDictionary[strArray[index]];
             if (ListenerList.PrepareForWriting(ref list))
-              hybridDictionary[(object) strArray[index]] = (object) list;
+              hybridDictionary[strArray[index]] = list;
             if (list.Purge())
               flag1 = true;
             flag2 = list.IsEmpty;
           }
           if (flag2)
-            hybridDictionary.Remove((object) strArray[index]);
+            hybridDictionary.Remove(strArray[index]);
         }
         if (hybridDictionary.Count == 0)
         {
@@ -145,11 +144,11 @@ namespace Essence.Core.ComponentModel
     {
       get
       {
-        PropertyCommentChangedEventManager manager = (PropertyCommentChangedEventManager) GetCurrentManager(typeof (PropertyCommentChangedEventManager));
+        var manager = (PropertyCommentChangedEventManager) GetCurrentManager(typeof (PropertyCommentChangedEventManager));
         if (manager == null)
         {
           manager = new PropertyCommentChangedEventManager();
-          SetCurrentManager(typeof (PropertyCommentChangedEventManager), (WeakEventManager) manager);
+          SetCurrentManager(typeof (PropertyCommentChangedEventManager), manager);
         }
         return manager;
       }
@@ -163,23 +162,23 @@ namespace Essence.Core.ComponentModel
     {
       using (WriteLock)
       {
-        HybridDictionary hybridDictionary = (HybridDictionary) this[(object) source];
+        var hybridDictionary = (HybridDictionary) this[source];
         if (hybridDictionary == null)
         {
           hybridDictionary = new HybridDictionary(true);
-          this[(object) source] = (object) hybridDictionary;
-          StartListening((object) source);
+          this[source] = hybridDictionary;
+          StartListening(source);
         }
-        ListenerList list = (ListenerList) hybridDictionary[(object) propertyName];
+        var list = (ListenerList) hybridDictionary[propertyName];
         if (list == null)
         {
-          list = (ListenerList) new ListenerList<PropertyCommentChangedEventArgs>();
-          hybridDictionary[(object) propertyName] = (object) list;
+          list = new ListenerList<PropertyCommentChangedEventArgs>();
+          hybridDictionary[propertyName] = list;
         }
         if (ListenerList.PrepareForWriting(ref list))
-          hybridDictionary[(object) propertyName] = (object) list;
+          hybridDictionary[propertyName] = list;
         if (handler != null)
-          list.AddHandler((Delegate) handler);
+          list.AddHandler(handler);
         else
           list.Add(listener);
         ScheduleCleanup();
@@ -194,43 +193,43 @@ namespace Essence.Core.ComponentModel
     {
       using (WriteLock)
       {
-        HybridDictionary hybridDictionary = (HybridDictionary) this[(object) source];
+        var hybridDictionary = (HybridDictionary) this[source];
         if (hybridDictionary == null)
           return;
-        ListenerList list = (ListenerList) hybridDictionary[(object) propertyName];
+        var list = (ListenerList) hybridDictionary[propertyName];
         if (list != null)
         {
           if (ListenerList.PrepareForWriting(ref list))
-            hybridDictionary[(object) propertyName] = (object) list;
+            hybridDictionary[propertyName] = list;
           if (handler != null)
-            list.RemoveHandler((Delegate) handler);
+            list.RemoveHandler(handler);
           else
             list.Remove(listener);
           if (list.IsEmpty)
-            hybridDictionary.Remove((object) propertyName);
+            hybridDictionary.Remove(propertyName);
         }
         if (hybridDictionary.Count != 0)
           return;
-        StopListening((object) source);
-        Remove((object) source);
+        StopListening(source);
+        Remove(source);
       }
     }
 
     private void OnPropertyCommentChanged(object sender, PropertyCommentChangedEventArgs args)
     {
-      ListenerList list = (ListenerList) null;
+      var list = (ListenerList) null;
       using (ReadLock)
       {
-        HybridDictionary hybridDictionary = (HybridDictionary) this[sender];
+        var hybridDictionary = (HybridDictionary) this[sender];
         if (hybridDictionary != null)
-          list = (ListenerList) hybridDictionary[(object) args.PropertyName];
+          list = (ListenerList) hybridDictionary[args.PropertyName];
         if (list == null)
           list = ListenerList.Empty;
         list.BeginUse();
       }
       try
       {
-        DeliverEventToList(sender, (EventArgs) args, list);
+        DeliverEventToList(sender, args, list);
       }
       finally
       {

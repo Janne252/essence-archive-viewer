@@ -96,7 +96,7 @@ namespace Essence.Core.ComponentModel
 
     public object PropertyValue { get; }
 
-    public override object TypeId => (object) (GetType().FullName + PropertyName);
+    public override object TypeId => GetType().FullName + PropertyName;
 
     public override bool Equals(object obj)
     {
@@ -107,9 +107,9 @@ namespace Essence.Core.ComponentModel
 
     public override int GetHashCode()
     {
-      int hashCode = PropertyName.GetHashCode();
-      object propertyValue = PropertyValue;
-      int num = propertyValue != null ? propertyValue.GetHashCode() : 0;
+      var hashCode = PropertyName.GetHashCode();
+      var propertyValue = PropertyValue;
+      var num = propertyValue != null ? propertyValue.GetHashCode() : 0;
       return hashCode ^ num;
     }
   }

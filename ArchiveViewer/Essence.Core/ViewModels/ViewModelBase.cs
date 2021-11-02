@@ -9,10 +9,10 @@ namespace Essence.Core.ViewModels
 
     protected virtual void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
     {
-      PropertyChangedEventHandler propertyChanged = PropertyChanged;
+      var propertyChanged = PropertyChanged;
       if (propertyChanged == null)
         return;
-      propertyChanged((object) this, new PropertyChangedEventArgs(propertyName));
+      propertyChanged(this, new PropertyChangedEventArgs(propertyName));
     }
   }
 }

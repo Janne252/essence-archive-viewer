@@ -11,21 +11,20 @@ namespace Essence.Core.ComponentModel
 
     public static IEnumerable<string> GetErrors(this IDataErrorInfo dataErrorInfo)
     {
-      string error = dataErrorInfo.Error;
+      var error = dataErrorInfo.Error;
       if (!string.IsNullOrEmpty(error))
         yield return error;
-      PropertyInfo[] propertyInfoArray = dataErrorInfo.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
-      for (int index = 0; index < propertyInfoArray.Length; ++index)
+      var propertyInfoArray = dataErrorInfo.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
+      for (var index = 0; index < propertyInfoArray.Length; ++index)
       {
-        PropertyInfo propertyInfo = propertyInfoArray[index];
+        var propertyInfo = propertyInfoArray[index];
         if (propertyInfo.CanWrite)
         {
-          string str = dataErrorInfo[propertyInfo.Name];
+          var str = dataErrorInfo[propertyInfo.Name];
           if (!string.IsNullOrEmpty(str))
             yield return str;
         }
       }
-      propertyInfoArray = (PropertyInfo[]) null;
     }
   }
 }

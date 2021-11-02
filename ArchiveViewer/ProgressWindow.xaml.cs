@@ -1,117 +1,83 @@
 ﻿using System;
-using System.CodeDom.Compiler;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Markup;
 using Essence.Core.IO.Archive;
+using File = Essence.Core.IO.Archive.File;
 
 namespace ArchiveViewer
 {
-	// Token: 0x02000008 RID: 8
-	public partial class ProgressWindow : Window, INotifyPropertyChanged
+    public partial class ProgressWindow : Window, INotifyPropertyChanged
 	{
-		// Token: 0x0600001E RID: 30 RVA: 0x00002511 File Offset: 0x00000711
-		public ProgressWindow(INode node, string destination)
+        public ProgressWindow(INode node, string destination)
 		{
 			Node = node;
 			Destination = destination;
-			Total = calculateTotal(node);
+			Total = CalculateTotal(node);
 			Extracted = 0L;
 			InitializeComponent();
 		}
 
-		// Token: 0x17000006 RID: 6
-		// (get) Token: 0x0600001F RID: 31 RVA: 0x00002542 File Offset: 0x00000742
-		// (set) Token: 0x06000020 RID: 32 RVA: 0x0000254A File Offset: 0x0000074A
 		public INode Node { get; private set; }
 
-		// Token: 0x17000007 RID: 7
-		// (get) Token: 0x06000021 RID: 33 RVA: 0x00002553 File Offset: 0x00000753
-		// (set) Token: 0x06000022 RID: 34 RVA: 0x0000255B File Offset: 0x0000075B
 		public string Destination { get; private set; }
 
-		// Token: 0x17000008 RID: 8
-		// (get) Token: 0x06000023 RID: 35 RVA: 0x00002564 File Offset: 0x00000764
-		// (set) Token: 0x06000024 RID: 36 RVA: 0x0000256C File Offset: 0x0000076C
 		public long Total { get; private set; }
 
-		// Token: 0x17000009 RID: 9
-		// (get) Token: 0x06000025 RID: 37 RVA: 0x00002575 File Offset: 0x00000775
-		// (set) Token: 0x06000026 RID: 38 RVA: 0x0000257D File Offset: 0x0000077D
 		public long Extracted { get; private set; }
 
-		// Token: 0x1700000A RID: 10
-		// (get) Token: 0x06000027 RID: 39 RVA: 0x00002586 File Offset: 0x00000786
-		public long Remaining
-		{
-			get
-			{
-				return Total - Extracted;
-			}
-		}
+		public long Remaining => Total - Extracted;
 
-		// Token: 0x1700000B RID: 11
-		// (get) Token: 0x06000028 RID: 40 RVA: 0x00002595 File Offset: 0x00000795
-		// (set) Token: 0x06000029 RID: 41 RVA: 0x0000259D File Offset: 0x0000079D
-		public double Progress { get; private set; }
+        public double Progress { get; private set; }
 
-		// Token: 0x14000001 RID: 1
-		// (add) Token: 0x0600002A RID: 42 RVA: 0x000025A8 File Offset: 0x000007A8
-		// (remove) Token: 0x0600002B RID: 43 RVA: 0x000025E0 File Offset: 0x000007E0
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		// Token: 0x0600002C RID: 44 RVA: 0x00002618 File Offset: 0x00000818
-		private long calculateTotal(INode node)
+		private long CalculateTotal(INode node)
 		{
-			long num = 0L;
-            Essence.Core.IO.Archive.File file = node as Essence.Core.IO.Archive.File;
-			if (file != null)
+			var num = 0L;
+            if (node is File file)
 			{
-				num += (long)((ulong)file.StoreLength);
+				num += file.StoreLength;
 			}
 			if (node.Children != null)
 			{
-				foreach (INode node2 in node.Children)
+				foreach (var node2 in node.Children)
 				{
-					num += calculateTotal(node2);
+					num += CalculateTotal(node2);
 				}
 			}
 			return num;
 		}
 
-		// Token: 0x0600002D RID: 45 RVA: 0x00002688 File Offset: 0x00000888
-		private void notifyPropertyChanged(params string[] propertyNames)
+		private void NotifyPropertyChanged(params string[] propertyNames)
 		{
-			PropertyChangedEventHandler propertyChanged = PropertyChanged;
+			var propertyChanged = PropertyChanged;
 			if (propertyChanged != null)
 			{
-				foreach (string propertyName in propertyNames)
+				foreach (var propertyName in propertyNames)
 				{
 					PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 				}
 			}
 		}
 
-		// Token: 0x0600002E RID: 46 RVA: 0x000026C8 File Offset: 0x000008C8
 		public bool Extract(INode node, string destination)
 		{
-			if (cancellationTokenSource.IsCancellationRequested)
+			if (_cancellationTokenSource.IsCancellationRequested)
 			{
 				return false;
 			}
-            Essence.Core.IO.Archive.File file = node as Essence.Core.IO.Archive.File;
-			if (file != null)
+
+            if (node is File file)
 			{
 				System.IO.File.WriteAllBytes(Path.Combine(destination, file.Name), file.GetData());
-				Extracted += (long)((ulong)file.StoreLength);
-				Progress = (double)Extracted / (double)Total;
-				Dispatcher.Invoke(new Action<string[]>(notifyPropertyChanged), new object[]
+				Extracted += file.StoreLength;
+				Progress = Extracted / (double)Total;
+				Dispatcher.Invoke(new Action<string[]>(NotifyPropertyChanged), new object[]
 				{
-					new string[]
+					new[]
 					{
 						"Extracted",
 						"Remaining",
@@ -123,7 +89,7 @@ namespace ArchiveViewer
 			{
 				destination = Path.Combine(destination, node.Name);
 				Directory.CreateDirectory(destination);
-				foreach (INode node2 in node.Children)
+				foreach (var node2 in node.Children)
 				{
 					if (!Extract(node2, destination))
 					{
@@ -135,54 +101,50 @@ namespace ArchiveViewer
 			return true;
 		}
 
-		// Token: 0x0600002F RID: 47 RVA: 0x000028F4 File Offset: 0x00000AF4
 		private void ProgressWindow_Loaded(object sender, RoutedEventArgs e)
 		{
-			cancellationTokenSource = new CancellationTokenSource();
-			thread = new Thread(delegate()
+			_cancellationTokenSource = new CancellationTokenSource();
+			_thread = new Thread(delegate()
 			{
 				try
 				{
 					Directory.CreateDirectory(Destination);
 					Extract(Node, Destination);
-					Dispatcher.Invoke(new Action(delegate()
-					{
-						DialogResult = new bool?(true);
-					}), new object[0]);
+					Dispatcher.Invoke(new Action(delegate
+                    {
+						DialogResult = true;
+					}), Array.Empty<object>());
 				}
 				catch (Exception exception)
 				{
-					Dispatcher.Invoke(new Action(delegate()
-					{
+					Dispatcher.Invoke(new Action(delegate
+                    {
 						MessageBox.Show(string.Format("Error extracting {1}:{0}{0}{2}", Environment.NewLine, Node.Name, exception.Message), Title, MessageBoxButton.OK, MessageBoxImage.Hand);
-						DialogResult = new bool?(false);
-					}), new object[0]);
+						DialogResult = false;
+					}), Array.Empty<object>());
 				}
 			})
 			{
 				Name = "ExtractThread",
 				IsBackground = true
 			};
-			thread.Start();
+			_thread.Start();
 		}
 
-		// Token: 0x06000030 RID: 48 RVA: 0x00002942 File Offset: 0x00000B42
 		private void Close_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (thread != null)
+			if (_thread != null)
 			{
-				cancellationTokenSource.Cancel();
-				thread.Join();
-				cancellationTokenSource = null;
-				thread = null;
+				_cancellationTokenSource.Cancel();
+				_thread.Join();
+				_cancellationTokenSource = null;
+				_thread = null;
 			}
-			DialogResult = new bool?(false);
+			DialogResult = false;
 		}
 
-		// Token: 0x0400000F RID: 15
-		private CancellationTokenSource cancellationTokenSource;
+        private CancellationTokenSource _cancellationTokenSource;
 
-		// Token: 0x04000010 RID: 16
-		private Thread thread;
+		private Thread _thread;
 	}
 }

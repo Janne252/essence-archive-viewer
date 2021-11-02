@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 
 namespace Essence.Core.ComponentModel
 {
@@ -37,56 +36,61 @@ namespace Essence.Core.ComponentModel
     {
       if (m_getLocalizedValue == null)
       {
-        if (m_resourceType == (Type) null || m_resourcePropertyName == null)
+        if (m_resourceType == null || m_resourcePropertyName == null)
         {
-          string resourcePropertyName = m_resourcePropertyName;
-          m_getLocalizedValue = (Func<string>) (() => resourcePropertyName);
+          var resourcePropertyName = m_resourcePropertyName;
+          m_getLocalizedValue = () => resourcePropertyName;
         }
         else
         {
-          Type resourceType = m_resourceType;
+          var resourceType = m_resourceType;
           if (m_resourceType.IsVisible)
           {
-            string resourcePropertyName = m_resourcePropertyName;
-            PropertyInfo property = resourceType.GetProperty(resourcePropertyName);
-            if (property != (PropertyInfo) null)
+            var resourcePropertyName = m_resourcePropertyName;
+            var property = resourceType.GetProperty(resourcePropertyName);
+            if (property != null)
             {
               if (property.PropertyType == typeof (string))
               {
-                MethodInfo getMethod = property.GetGetMethod();
-                m_getLocalizedValue = !(getMethod != (MethodInfo) null) ? (Func<string>) (() =>
+                var getMethod = property.GetGetMethod();
+                m_getLocalizedValue = !(getMethod != null) ? () =>
                 {
-                  throw new InvalidOperationException(string.Format("Property [{0}.{1}] is not readable.", (object) resourceType, (object) resourcePropertyName));
-                }) : (!getMethod.IsStatic ? (Func<string>) (() =>
+                    throw new InvalidOperationException(
+                        $"Property [{resourceType}.{resourcePropertyName}] is not readable.");
+                } : (!getMethod.IsStatic ? () =>
                 {
-                  throw new InvalidOperationException(string.Format("Property [{0}.{1}] is not static.", (object) resourceType, (object) resourcePropertyName));
-                }) : (!getMethod.IsPublic ? (Func<string>) (() =>
+                    throw new InvalidOperationException(
+                        $"Property [{resourceType}.{resourcePropertyName}] is not static.");
+                } : (!getMethod.IsPublic ? () =>
                 {
-                  throw new InvalidOperationException(string.Format("Property [{0}.{1}] is not public.", (object) resourceType, (object) resourcePropertyName));
-                }) : (Func<string>) (() => (string) property.GetValue((object) null, (object[]) null))));
+                    throw new InvalidOperationException(
+                        $"Property [{resourceType}.{resourcePropertyName}] is not public.");
+                } : () => (string) property.GetValue(null, null)));
               }
               else
-                m_getLocalizedValue = (Func<string>) (() =>
+                m_getLocalizedValue = () =>
                 {
-                  throw new InvalidOperationException(string.Format("Property [{0}.{1}] is not of type [{2}].", (object) resourceType, (object) resourcePropertyName, (object) typeof (string)));
-                });
+                    throw new InvalidOperationException(
+                        $"Property [{resourceType}.{resourcePropertyName}] is not of type [{typeof(string)}].");
+                };
             }
             else
-              m_getLocalizedValue = (Func<string>) (() =>
+              m_getLocalizedValue = () =>
               {
-                throw new InvalidOperationException(string.Format("Property [{0}] not found on [{1}].", (object) resourcePropertyName, (object) resourceType));
-              });
+                  throw new InvalidOperationException(
+                      $"Property [{resourcePropertyName}] not found on [{resourceType}].");
+              };
           }
           else
-            m_getLocalizedValue = (Func<string>) (() =>
+            m_getLocalizedValue = () =>
             {
-              throw new InvalidOperationException(string.Format("Type [{0}] is not visible.", (object) resourceType));
-            });
+                throw new InvalidOperationException($"Type [{resourceType}] is not visible.");
+            };
         }
       }
       return m_getLocalizedValue();
     }
 
-    private void ClearLocalizedValue() => m_getLocalizedValue = (Func<string>) null;
+    private void ClearLocalizedValue() => m_getLocalizedValue = null;
   }
 }

@@ -167,7 +167,7 @@ namespace Essence.Core.PushBinding
 
     protected override void CloneCore(Freezable sourceFreezable)
     {
-      FreezableBinding freezableBinding = sourceFreezable as FreezableBinding;
+      var freezableBinding = sourceFreezable as FreezableBinding;
       if (freezableBinding.ElementName != null)
         ElementName = freezableBinding.ElementName;
       else if (freezableBinding.RelativeSource != null)
@@ -191,11 +191,11 @@ namespace Essence.Core.PushBinding
       ValidatesOnDataErrors = freezableBinding.ValidatesOnDataErrors;
       ValidatesOnExceptions = freezableBinding.ValidatesOnExceptions;
       XPath = freezableBinding.XPath;
-      foreach (ValidationRule validationRule in freezableBinding.ValidationRules)
+      foreach (var validationRule in freezableBinding.ValidationRules)
         ValidationRules.Add(validationRule);
       base.CloneCore(sourceFreezable);
     }
 
-    protected override Freezable CreateInstanceCore() => (Freezable) new FreezableBinding();
+    protected override Freezable CreateInstanceCore() => new FreezableBinding();
   }
 }

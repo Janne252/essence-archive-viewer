@@ -15,7 +15,7 @@ namespace Essence.Core.IO
     }
 
     public UCSWriter(string fileName, bool escape)
-      : this((TextWriter) new StreamWriter((Stream) new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Read), UCS.Encoding), escape)
+      : this(new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Read), UCS.Encoding), escape)
     {
     }
 
@@ -35,16 +35,16 @@ namespace Essence.Core.IO
       if (m_textWriter != null)
       {
         m_textWriter.Dispose();
-        m_textWriter = (TextWriter) null;
+        m_textWriter = null;
       }
-      GC.SuppressFinalize((object) this);
+      GC.SuppressFinalize(this);
     }
 
     public void Close() => Dispose();
 
     public void Write(int locStringID, string text)
     {
-      m_textWriter.Write(locStringID.ToString((IFormatProvider) CultureInfo.InstalledUICulture));
+      m_textWriter.Write(locStringID.ToString(CultureInfo.InstalledUICulture));
       m_textWriter.Write('\t');
       if (!string.IsNullOrEmpty(text))
       {

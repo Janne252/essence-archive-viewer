@@ -4,7 +4,7 @@ namespace Essence.Core.Diagnostics
 {
   public class TraceLog : ILog
   {
-    private LogLevels m_levels;
+    private readonly LogLevels m_levels;
 
     public TraceLog()
       : this(LogLevels.Default)

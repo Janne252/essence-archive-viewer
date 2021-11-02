@@ -5,7 +5,7 @@ namespace Essence.Core.ComponentModel
   [AttributeUsage(AttributeTargets.Class)]
   public class CommentPropertyAttribute : Attribute
   {
-    public static readonly CommentPropertyAttribute Default = new CommentPropertyAttribute((string) null);
+    public static readonly CommentPropertyAttribute Default = new(null);
 
     public CommentPropertyAttribute(string propertyName) => PropertyName = propertyName;
 

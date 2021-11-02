@@ -6,7 +6,7 @@ namespace Essence.Core.Pipeline
 {
   public class Project
   {
-    private string m_parentName;
+    private readonly string m_parentName;
 
     public string Name { get; }
 
@@ -24,7 +24,7 @@ namespace Essence.Core.Pipeline
     {
       get
       {
-        Project project = this;
+        var project = this;
         do
         {
           yield return project;
@@ -38,12 +38,9 @@ namespace Essence.Core.Pipeline
     {
       Name = name;
       iniSection.TryGetValue(nameof (Parent), out m_parentName);
-      string relativePath1;
-      DataGenericDirectory = iniSection.TryGetValue("DataGeneric", out relativePath1) ? PipelineConfig.GetFullPath(pipelineRoot, relativePath1) : (string) null;
-      string relativePath2;
-      DataIntermediateDirectory = iniSection.TryGetValue("DataIntermediate", out relativePath2) ? PipelineConfig.GetFullPath(pipelineRoot, relativePath2) : (string) null;
-      string relativePath3;
-      DataPreviewDirectory = iniSection.TryGetValue("DataPreview", out relativePath3) ? PipelineConfig.GetFullPath(pipelineRoot, relativePath3) : (string) null;
+      DataGenericDirectory = iniSection.TryGetValue("DataGeneric", out var relativePath1) ? PipelineConfig.GetFullPath(pipelineRoot, relativePath1) : null;
+      DataIntermediateDirectory = iniSection.TryGetValue("DataIntermediate", out var relativePath2) ? PipelineConfig.GetFullPath(pipelineRoot, relativePath2) : null;
+      DataPreviewDirectory = iniSection.TryGetValue("DataPreview", out var relativePath3) ? PipelineConfig.GetFullPath(pipelineRoot, relativePath3) : null;
     }
 
     internal void Resolve(
@@ -52,26 +49,25 @@ namespace Essence.Core.Pipeline
     {
       if (!string.IsNullOrEmpty(m_parentName))
       {
-        Project project;
-        if (!parents.TryGetValue(m_parentName, out project))
-          throw new ApplicationException(string.Format("{0} parent project [{1}] not found for project [{2}].", (object) "pipeline.ini", (object) m_parentName, (object) Name));
+          if (!parents.TryGetValue(m_parentName, out var project))
+          throw new ApplicationException(
+              $"{"pipeline.ini"} parent project [{m_parentName}] not found for project [{Name}].");
         Parent = project;
       }
-      IDictionary<string, ReadOnlyDictionary<string, string>> dictionary;
-      if (projectConfigSections.TryGetValue(Name, out dictionary))
+
+      if (projectConfigSections.TryGetValue(Name, out var dictionary))
         ConfigSections = new ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>>(dictionary);
       else
-        ConfigSections = new ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>>((IDictionary<string, ReadOnlyDictionary<string, string>>) new Dictionary<string, ReadOnlyDictionary<string, string>>((IEqualityComparer<string>) StringComparer.OrdinalIgnoreCase));
+        ConfigSections = new ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>>(new Dictionary<string, ReadOnlyDictionary<string, string>>(StringComparer.OrdinalIgnoreCase));
     }
 
     public string GetConfigValue(string section, string key) => ConfigSections[section][key];
 
     public bool TryGetConfigValue(string section, string key, out string value)
     {
-      ReadOnlyDictionary<string, string> readOnlyDictionary;
-      if (ConfigSections.TryGetValue(section, out readOnlyDictionary))
+        if (ConfigSections.TryGetValue(section, out var readOnlyDictionary))
         return readOnlyDictionary.TryGetValue(key, out value);
-      value = (string) null;
+      value = null;
       return false;
     }
 

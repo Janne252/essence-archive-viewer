@@ -9,6 +9,6 @@ namespace Essence.Core.IO
     public const uint Platform = 1;
     public static readonly FourCC DataType = FourCC.Parse("DATA");
     public static readonly FourCC FolderType = FourCC.Parse("FOLD");
-    internal static readonly Encoding Encoding = (Encoding) new UTF8Encoding(false, true);
+    internal static readonly Encoding Encoding = new UTF8Encoding(false, true);
   }
 }
