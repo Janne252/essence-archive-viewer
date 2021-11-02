@@ -2,9 +2,9 @@
 
 Opens and extracts SGA files.
 
-Game support;
-Age of Empires IV
-Company of Heroes
-Company of Heroes 2
-Company of Heroes 3
+Game support;<br>
+Age of Empires IV<br>
+Company of Heroes<br>
+Company of Heroes 2<br>
+Company of Heroes 3<br>
 Dawn of War III
