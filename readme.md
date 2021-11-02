@@ -1,5 +1,5 @@
 
-# CoH3 Archive Viewer
+# Essence Archive Viewer
 ![](/preview.png)
 Supported `SGA` versions (based on `Essence.Core.dll`):
 - `4` (Company of Heroes 1)
@@ -20,4 +20,4 @@ This is a decompiled and altered version of the Relic Entertainment's official [
 The library providing APIs (`Essence.Core.dll`) to read and extract contents of `SGA` files is untouched.
 
 ## Download
-- See [releases](https://github.com/Janne252/coh3-archive-viewer/releases)
+- See [releases](https://github.com/Janne252/essence-archive-viewer/releases)
