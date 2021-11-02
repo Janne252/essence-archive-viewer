@@ -101,9 +101,7 @@
     <Compile Include="Converters\SizeConverter.cs" />
     <Compile Include="Essence.Core\Collections\EnumerableExtensions.cs" />
     <Compile Include="Essence.Core\Commands\BaseCommand.cs" />
-    <Compile Include="Essence.Core\Commands\BaseCommand`1.cs" />
     <Compile Include="Essence.Core\Commands\DelegateCommand.cs" />
-    <Compile Include="Essence.Core\Commands\DelegateCommand`1.cs" />
     <Compile Include="Essence.Core\ComponentModel\CategoryOrderAttribute.cs" />
     <Compile Include="Essence.Core\ComponentModel\CommentPropertyAttribute.cs" />
     <Compile Include="Essence.Core\ComponentModel\ComponentListAttribute.cs" />

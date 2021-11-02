@@ -2,28 +2,28 @@
 
 namespace Essence.Core.Commands
 {
-  public class DelegateCommand : BaseCommand
+  public class DelegateCommand<T> : BaseCommand<T>
   {
-    private readonly Action m_executeAction;
-    private readonly Func<bool> m_canExecuteFunc;
+    private readonly Action<T> m_executeAction;
+    private readonly Func<T, bool> m_canExecuteFunc;
 
-    public DelegateCommand(Action executeAction)
-      : this(executeAction, (Func<bool>) null)
+    public DelegateCommand(Action<T> executeAction)
+      : this(executeAction, (Func<T, bool>) null)
     {
     }
 
-    public DelegateCommand(Action executeAction, Func<bool> canExecuteFunc)
+    public DelegateCommand(Action<T> executeAction, Func<T, bool> canExecuteFunc)
     {
       m_canExecuteFunc = canExecuteFunc;
       m_executeAction = executeAction ?? throw new ArgumentNullException(nameof (executeAction));
     }
 
-    public override bool CanExecute()
+    public override bool CanExecute(T parameter)
     {
-      Func<bool> canExecuteFunc = m_canExecuteFunc;
-      return canExecuteFunc == null || canExecuteFunc();
+      Func<T, bool> canExecuteFunc = m_canExecuteFunc;
+      return canExecuteFunc == null || canExecuteFunc(parameter);
     }
 
-    public override void Execute() => m_executeAction();
+    public override void Execute(T parameter) => m_executeAction(parameter);
   }
 }
