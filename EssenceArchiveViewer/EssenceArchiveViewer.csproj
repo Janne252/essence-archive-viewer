@@ -14,7 +14,7 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60DC8134-EBA5-43B8-BCC9-BB4BC16C2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <ApplicationIcon>ArchiveViewer.ico</ApplicationIcon>
+    <ApplicationIcon>EssenceArchiveViewer.ico</ApplicationIcon>
     <StartupObject>ArchiveViewer.App</StartupObject>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
@@ -214,7 +214,6 @@
     </None>
     <None Include="app.config" />
     <None Include="app.manifest" />
-    <None Include="CoH3.AchiveViewer_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

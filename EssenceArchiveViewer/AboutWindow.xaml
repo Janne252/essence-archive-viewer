@@ -43,6 +43,10 @@
 						Height="Auto" />
                     <RowDefinition
 						Height="Auto" />
+                    <RowDefinition
+                        Height="Auto" />
+                    <RowDefinition
+                        Height="Auto" />
                 </Grid.RowDefinitions>
                 <Label
 					Grid.Row="0"
@@ -63,6 +67,24 @@
 					Grid.Column="1"
 					HorizontalAlignment="Left"
 					Content="{Binding Path=Version, Mode=OneTime}" />
+                <Label
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Content="Patch"
+                    HorizontalAlignment="Right" />
+                <Label
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    HorizontalAlignment="Left">Janne252</Label>
+                <Label
+                    Grid.Row="3"
+                    Grid.Column="0"
+                    Content="Essence Decompile"
+                    HorizontalAlignment="Right" />
+                <Label
+                    Grid.Row="3"
+                    Grid.Column="1"
+                    HorizontalAlignment="Left">mbwilding</Label>
             </Grid>
         </GroupBox>
         <Button
