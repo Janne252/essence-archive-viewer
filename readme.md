@@ -2,14 +2,14 @@
 # Essence Archive Viewer
 ![](/preview.png)
 Supported `SGA` versions (based on `Essence.Core.dll`):
-- `4` (Company of Heroes 1)
-- ~~`5` (Dawn of War II)~~
-    > Appears to be broken
+- `4` ompany of Heroes 1
+- ~~`5` Dawn of War II~~
+    - _Appears to be broken_
 - `6` ??
-- `7` (Company of Heroes 2)
+- `7` Company of Heroes 2
 - `8` ??
-- `9` (Dawn of War III)
-- `10` (Company of Heroes 3, Age of Empires IV)
+- `9` Dawn of War III
+- `10` Company of Heroes 3, Age of Empires IV
 
 This is a decompiled and altered version of the Relic Entertainment's official [Archive Viewer](http://modding.companyofheroes.com/archive-viewer). Rough overview of changes:
 - Replaced referenced `RelicCore.dll` with `Essence.Core.dll`
