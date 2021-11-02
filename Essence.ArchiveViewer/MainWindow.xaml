@@ -5,7 +5,7 @@
     xmlns:archiveViewer="clr-namespace:ArchiveViewer" 
     xmlns:converters="clr-namespace:ArchiveViewer.Converters"
 	Name="ThisWindow"
-	Title="Archive Viewer (patched by Janne252)"
+	Title="Essence Archive Viewer"
 	Icon="Icon.ico"
 	Height="704"
 	Width="1024"
