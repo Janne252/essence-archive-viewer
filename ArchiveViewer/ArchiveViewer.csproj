@@ -175,10 +175,10 @@
     <Compile Include="Essence.Core\PushBinding\PushBinding.cs" />
     <Compile Include="Essence.Core\PushBinding\PushBindingCollection.cs" />
     <Compile Include="Essence.Core\PushBinding\PushBindingManager.cs" />
-    <Compile Include="Essence.Core\RefCountedDisposable`1.cs" />
+    <Compile Include="Essence.Core\RefCountedDisposable.cs" />
     <Compile Include="Essence.Core\SharedProperty.cs" />
-    <Compile Include="Essence.Core\ValueChangedEventArgs`1.cs" />
-    <Compile Include="Essence.Core\ValueChangedEventHandler`1.cs" />
+    <Compile Include="Essence.Core\ValueChangedEventArgs.cs" />
+    <Compile Include="Essence.Core\ValueChangedEventHandler.cs" />
     <Compile Include="Essence.Core\ViewModels\ViewModelBase.cs" />
     <Compile Include="FindMethod.cs" />
     <Compile Include="FindWindow.xaml.cs">
