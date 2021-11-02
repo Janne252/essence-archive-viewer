@@ -34,11 +34,13 @@
 				VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition
-						Width="1*" />
+						Width="73*" />
                     <ColumnDefinition
-						Width="1*" />
+						Width="197*" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition
+						Height="Auto" />
                     <RowDefinition
 						Height="Auto" />
                     <RowDefinition
@@ -48,22 +50,37 @@
 					Grid.Row="0"
 					Grid.Column="0"
 					Content="Title:"
-					HorizontalAlignment="Right" />
+					HorizontalAlignment="Right" Width="35" />
                 <Label
 					Grid.Row="0"
 					Grid.Column="1"
-					HorizontalAlignment="Left">Archive Viewer</Label>
-                <Label Margin="134,13,1,13" Grid.RowSpan="2" FontSize="10" Grid.ColumnSpan="2">Patched by Janne252</Label>
+					HorizontalAlignment="Left" Width="133">Essence Archive Viewer</Label>
+                <Label Margin="0,13,1,13" Grid.RowSpan="2" FontSize="10" Grid.Column="1">Patched by Janne252</Label>
                 <Label
 					Grid.Row="1"
 					Grid.Column="0"
 					Content="Version:"
-					HorizontalAlignment="Right" />
+					HorizontalAlignment="Right" Width="52" />
                 <Label
 					Grid.Row="1"
 					Grid.Column="1"
 					HorizontalAlignment="Left"
-					Content="{Binding Path=Version, Mode=OneTime}" />
+					Content="{Binding Path=Version, Mode=OneTime}" Width="Auto" />
+                <Label
+                    Grid.Row="2"
+                    Grid.Column="0"
+					HorizontalAlignment="Right" Width="69"
+                    >Repository:</Label>
+                <Label
+                    Grid.Row="2"
+                    Grid.Column="1"
+					HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    FontFamily="monospace"
+                    FontSize="9" Width="197" Height="21" Margin="0,5,0,0"
+                    >
+                    <Hyperlink NavigateUri="https://github.com/Janne252/essence-archive-viewer" RequestNavigate="Hyperlink_RequestNavigate">github.com/janne252/essence-archive-viewer</Hyperlink></Label>
+
             </Grid>
         </GroupBox>
         <Button
