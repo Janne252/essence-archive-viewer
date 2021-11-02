@@ -16,40 +16,40 @@ namespace ArchiveViewer
 	public partial class FindWindow : Window
 	{
 		// Token: 0x0600000D RID: 13 RVA: 0x00002186 File Offset: 0x00000386
-		public FindWindow(FindWindow.FindOptions options)
+		public FindWindow(FindOptions options)
 		{
-			this.Options = options;
-			this.InitializeComponent();
+			Options = options;
+			InitializeComponent();
 		}
 
 		// Token: 0x17000002 RID: 2
 		// (get) Token: 0x0600000E RID: 14 RVA: 0x0000219B File Offset: 0x0000039B
 		// (set) Token: 0x0600000F RID: 15 RVA: 0x000021A3 File Offset: 0x000003A3
-		public FindWindow.FindOptions Options { get; private set; }
+		public FindOptions Options { get; private set; }
 
 		// Token: 0x06000010 RID: 16 RVA: 0x000021AC File Offset: 0x000003AC
 		private void Find_Loaded(object sender, RoutedEventArgs e)
 		{
-			this.What.SelectAll();
-			this.What.Focus();
+			What.SelectAll();
+			What.Focus();
 		}
 
 		// Token: 0x06000011 RID: 17 RVA: 0x000021C5 File Offset: 0x000003C5
 		private void Find_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.CanExecute = !string.IsNullOrEmpty(this.Options.What);
+			e.CanExecute = !string.IsNullOrEmpty(Options.What);
 		}
 
 		// Token: 0x06000012 RID: 18 RVA: 0x000021E0 File Offset: 0x000003E0
 		private void Find_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			base.DialogResult = new bool?(true);
+			DialogResult = new bool?(true);
 		}
 
 		// Token: 0x06000013 RID: 19 RVA: 0x000021EE File Offset: 0x000003EE
 		private void Close_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			base.DialogResult = new bool?(false);
+			DialogResult = new bool?(false);
 		}
 
 		// Token: 0x02000007 RID: 7
@@ -58,8 +58,8 @@ namespace ArchiveViewer
 			// Token: 0x06000016 RID: 22 RVA: 0x000022D4 File Offset: 0x000004D4
 			public FindOptions()
 			{
-				this.What = string.Empty;
-				this.MatchCase = false;
+				What = string.Empty;
+				MatchCase = false;
 			}
 
 			// Token: 0x17000003 RID: 3
@@ -80,30 +80,30 @@ namespace ArchiveViewer
 			// Token: 0x0600001D RID: 29 RVA: 0x00002384 File Offset: 0x00000584
 			public Func<INode, bool> GetPredicate()
 			{
-				switch (this.Method)
+				switch (Method)
 				{
 				case FindMethod.Wildcards:
 				{
 					StringBuilder stringBuilder = new StringBuilder();
 					stringBuilder.Append("^");
 					int num;
-					for (int i = 0; i < this.What.Length; i = num + 1)
+					for (int i = 0; i < What.Length; i = num + 1)
 					{
-						num = this.What.IndexOfAny(new char[]
+						num = What.IndexOfAny(new char[]
 						{
 							'*',
 							'?'
 						}, i);
 						if (num == -1)
 						{
-							stringBuilder.Append(Regex.Escape(this.What.Substring(i)));
+							stringBuilder.Append(Regex.Escape(What.Substring(i)));
 							break;
 						}
 						if (num > i)
 						{
-							stringBuilder.Append(Regex.Escape(this.What.Substring(i, num - i)));
+							stringBuilder.Append(Regex.Escape(What.Substring(i, num - i)));
 						}
-						char c = this.What[num];
+						char c = What[num];
 						if (c != '*')
 						{
 							if (c == '?')
@@ -117,18 +117,18 @@ namespace ArchiveViewer
 						}
 					}
 					stringBuilder.Append("$");
-					Regex regx = new Regex(stringBuilder.ToString(), this.MatchCase ? RegexOptions.None : RegexOptions.IgnoreCase);
+					Regex regx = new Regex(stringBuilder.ToString(), MatchCase ? RegexOptions.None : RegexOptions.IgnoreCase);
 					return (INode n) => regx.IsMatch(n.Name);
 				}
 				case FindMethod.RegularExpression:
 				{
-					Regex regx = new Regex(this.What, this.MatchCase ? RegexOptions.None : RegexOptions.IgnoreCase);
+					Regex regx = new Regex(What, MatchCase ? RegexOptions.None : RegexOptions.IgnoreCase);
 					return (INode n) => regx.IsMatch(n.Name);
 				}
 				default:
 				{
-					StringComparison stringComparison = this.MatchCase ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase;
-					return (INode n) => n.Name.IndexOf(this.What, stringComparison) >= 0;
+					StringComparison stringComparison = MatchCase ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase;
+					return (INode n) => n.Name.IndexOf(What, stringComparison) >= 0;
 				}
 				}
 			}

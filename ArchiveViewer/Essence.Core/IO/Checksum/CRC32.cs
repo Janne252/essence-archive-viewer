@@ -1,10 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: Essence.Core.IO.Checksum.CRC32
-// Assembly: Essence.Core, Version=4.0.0.30534, Culture=neutral, PublicKeyToken=null
-// MVID: EADC86D6-B806-4644-B499-D7F487995E73
-// Assembly location: C:\Users\anon\Documents\GitHub\coh3-archive-viewer\CoH3.ArchiveViewer\bin\Release\AOE4\Essence.Core.dll
-
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 
@@ -272,31 +266,31 @@ namespace Essence.Core.IO.Checksum
       755167117U
     };
 
-    public CRC32() => this.HashSizeValue = 8 * Marshal.SizeOf(typeof (uint));
+    public CRC32() => HashSizeValue = 8 * Marshal.SizeOf(typeof (uint));
 
     public uint CRC32Hash { get; private set; }
 
-    public override void Initialize() => this.CRC32Hash = 0U;
+    public override void Initialize() => CRC32Hash = 0U;
 
     protected override void HashCore(byte[] array, int ibStart, int cbSize)
     {
-      this.CRC32Hash ^= uint.MaxValue;
+      CRC32Hash ^= uint.MaxValue;
       for (; cbSize >= 8; cbSize -= 8)
       {
-        this.CRC32Hash = CRC32.CRC32Table[((int) this.CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ this.CRC32Hash >> 8;
-        this.CRC32Hash = CRC32.CRC32Table[((int) this.CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ this.CRC32Hash >> 8;
-        this.CRC32Hash = CRC32.CRC32Table[((int) this.CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ this.CRC32Hash >> 8;
-        this.CRC32Hash = CRC32.CRC32Table[((int) this.CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ this.CRC32Hash >> 8;
-        this.CRC32Hash = CRC32.CRC32Table[((int) this.CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ this.CRC32Hash >> 8;
-        this.CRC32Hash = CRC32.CRC32Table[((int) this.CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ this.CRC32Hash >> 8;
-        this.CRC32Hash = CRC32.CRC32Table[((int) this.CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ this.CRC32Hash >> 8;
-        this.CRC32Hash = CRC32.CRC32Table[((int) this.CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ this.CRC32Hash >> 8;
+        CRC32Hash = CRC32Table[((int) CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ CRC32Hash >> 8;
+        CRC32Hash = CRC32Table[((int) CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ CRC32Hash >> 8;
+        CRC32Hash = CRC32Table[((int) CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ CRC32Hash >> 8;
+        CRC32Hash = CRC32Table[((int) CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ CRC32Hash >> 8;
+        CRC32Hash = CRC32Table[((int) CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ CRC32Hash >> 8;
+        CRC32Hash = CRC32Table[((int) CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ CRC32Hash >> 8;
+        CRC32Hash = CRC32Table[((int) CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ CRC32Hash >> 8;
+        CRC32Hash = CRC32Table[((int) CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ CRC32Hash >> 8;
       }
       for (; cbSize > 0; --cbSize)
-        this.CRC32Hash = CRC32.CRC32Table[((int) this.CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ this.CRC32Hash >> 8;
-      this.CRC32Hash ^= uint.MaxValue;
+        CRC32Hash = CRC32Table[((int) CRC32Hash ^ (int) array[ibStart++]) & (int) byte.MaxValue] ^ CRC32Hash >> 8;
+      CRC32Hash ^= uint.MaxValue;
     }
 
-    protected override byte[] HashFinal() => BitConverter.GetBytes(this.CRC32Hash);
+    protected override byte[] HashFinal() => BitConverter.GetBytes(CRC32Hash);
   }
 }

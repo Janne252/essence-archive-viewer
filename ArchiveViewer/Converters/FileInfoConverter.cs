@@ -38,7 +38,7 @@ namespace ArchiveViewer.Converters
 			INode node = value as INode;
 			if (node != null)
 			{
-				FileInfoCache.FileInfo fileInfo = this.fileInfoCahce.GetFileInfo(node);
+				FileInfoCache.FileInfo fileInfo = fileInfoCahce.GetFileInfo(node);
 				if (fileInfo != null)
 				{
 					switch (fileInfoParameter)

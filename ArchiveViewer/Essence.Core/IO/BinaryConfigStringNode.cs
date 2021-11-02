@@ -1,10 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: Essence.Core.IO.BinaryConfigStringNode
-// Assembly: Essence.Core, Version=4.0.0.30534, Culture=neutral, PublicKeyToken=null
-// MVID: EADC86D6-B806-4644-B499-D7F487995E73
-// Assembly location: C:\Users\anon\Documents\GitHub\coh3-archive-viewer\CoH3.ArchiveViewer\bin\Release\AOE4\Essence.Core.dll
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 
 namespace Essence.Core.IO
@@ -50,8 +44,8 @@ namespace Essence.Core.IO
     protected internal override long Write(BinaryWriter binaryWriter)
     {
       long position = binaryWriter.BaseStream.Position;
-      if (!string.IsNullOrEmpty(this.Value))
-        binaryWriter.Write(Chunky.Encoding.GetBytes(this.Value));
+      if (!string.IsNullOrEmpty(Value))
+        binaryWriter.Write(Chunky.Encoding.GetBytes(Value));
       binaryWriter.Write((byte) 0);
       return position;
     }

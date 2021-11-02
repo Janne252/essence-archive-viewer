@@ -17,11 +17,11 @@ namespace ArchiveViewer
 		// Token: 0x0600001E RID: 30 RVA: 0x00002511 File Offset: 0x00000711
 		public ProgressWindow(INode node, string destination)
 		{
-			this.Node = node;
-			this.Destination = destination;
-			this.Total = this.calculateTotal(node);
-			this.Extracted = 0L;
-			this.InitializeComponent();
+			Node = node;
+			Destination = destination;
+			Total = calculateTotal(node);
+			Extracted = 0L;
+			InitializeComponent();
 		}
 
 		// Token: 0x17000006 RID: 6
@@ -50,7 +50,7 @@ namespace ArchiveViewer
 		{
 			get
 			{
-				return this.Total - this.Extracted;
+				return Total - Extracted;
 			}
 		}
 
@@ -77,7 +77,7 @@ namespace ArchiveViewer
 			{
 				foreach (INode node2 in node.Children)
 				{
-					num += this.calculateTotal(node2);
+					num += calculateTotal(node2);
 				}
 			}
 			return num;
@@ -86,12 +86,12 @@ namespace ArchiveViewer
 		// Token: 0x0600002D RID: 45 RVA: 0x00002688 File Offset: 0x00000888
 		private void notifyPropertyChanged(params string[] propertyNames)
 		{
-			PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+			PropertyChangedEventHandler propertyChanged = PropertyChanged;
 			if (propertyChanged != null)
 			{
 				foreach (string propertyName in propertyNames)
 				{
-					this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+					PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 				}
 			}
 		}
@@ -99,7 +99,7 @@ namespace ArchiveViewer
 		// Token: 0x0600002E RID: 46 RVA: 0x000026C8 File Offset: 0x000008C8
 		public bool Extract(INode node, string destination)
 		{
-			if (this.cancellationTokenSource.IsCancellationRequested)
+			if (cancellationTokenSource.IsCancellationRequested)
 			{
 				return false;
 			}
@@ -107,9 +107,9 @@ namespace ArchiveViewer
 			if (file != null)
 			{
 				System.IO.File.WriteAllBytes(Path.Combine(destination, file.Name), file.GetData());
-				this.Extracted += (long)((ulong)file.StoreLength);
-				this.Progress = (double)this.Extracted / (double)this.Total;
-				base.Dispatcher.Invoke(new Action<string[]>(this.notifyPropertyChanged), new object[]
+				Extracted += (long)((ulong)file.StoreLength);
+				Progress = (double)Extracted / (double)Total;
+				Dispatcher.Invoke(new Action<string[]>(notifyPropertyChanged), new object[]
 				{
 					new string[]
 					{
@@ -125,7 +125,7 @@ namespace ArchiveViewer
 				Directory.CreateDirectory(destination);
 				foreach (INode node2 in node.Children)
 				{
-					if (!this.Extract(node2, destination))
+					if (!Extract(node2, destination))
 					{
 						return false;
 					}
@@ -138,21 +138,21 @@ namespace ArchiveViewer
 		// Token: 0x0600002F RID: 47 RVA: 0x000028F4 File Offset: 0x00000AF4
 		private void ProgressWindow_Loaded(object sender, RoutedEventArgs e)
 		{
-			this.cancellationTokenSource = new CancellationTokenSource();
-			this.thread = new Thread(delegate()
+			cancellationTokenSource = new CancellationTokenSource();
+			thread = new Thread(delegate()
 			{
 				try
 				{
-					Directory.CreateDirectory(this.Destination);
-					this.Extract(this.Node, this.Destination);
-					base.Dispatcher.Invoke(new Action(delegate()
+					Directory.CreateDirectory(Destination);
+					Extract(Node, Destination);
+					Dispatcher.Invoke(new Action(delegate()
 					{
-						base.DialogResult = new bool?(true);
+						DialogResult = new bool?(true);
 					}), new object[0]);
 				}
 				catch (Exception exception)
 				{
-					base.Dispatcher.Invoke(new Action(delegate()
+					Dispatcher.Invoke(new Action(delegate()
 					{
 						MessageBox.Show(string.Format("Error extracting {1}:{0}{0}{2}", Environment.NewLine, Node.Name, exception.Message), Title, MessageBoxButton.OK, MessageBoxImage.Hand);
 						DialogResult = new bool?(false);
@@ -163,20 +163,20 @@ namespace ArchiveViewer
 				Name = "ExtractThread",
 				IsBackground = true
 			};
-			this.thread.Start();
+			thread.Start();
 		}
 
 		// Token: 0x06000030 RID: 48 RVA: 0x00002942 File Offset: 0x00000B42
 		private void Close_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (this.thread != null)
+			if (thread != null)
 			{
-				this.cancellationTokenSource.Cancel();
-				this.thread.Join();
-				this.cancellationTokenSource = null;
-				this.thread = null;
+				cancellationTokenSource.Cancel();
+				thread.Join();
+				cancellationTokenSource = null;
+				thread = null;
 			}
-			base.DialogResult = new bool?(false);
+			DialogResult = new bool?(false);
 		}
 
 		// Token: 0x0400000F RID: 15

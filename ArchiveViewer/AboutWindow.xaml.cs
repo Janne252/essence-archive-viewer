@@ -15,8 +15,8 @@ namespace ArchiveViewer
 		// Token: 0x06000001 RID: 1 RVA: 0x00002050 File Offset: 0x00000250
 		public AboutWindow()
 		{
-			this.AssemblyName = Assembly.GetEntryAssembly().GetName();
-			this.InitializeComponent();
+			AssemblyName = Assembly.GetEntryAssembly().GetName();
+			InitializeComponent();
 		}
 
 		// Token: 0x17000001 RID: 1
@@ -27,7 +27,7 @@ namespace ArchiveViewer
 		// Token: 0x06000004 RID: 4 RVA: 0x0000207F File Offset: 0x0000027F
 		private void Close_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			base.DialogResult = new bool?(true);
+			DialogResult = new bool?(true);
 		}
 	}
 }

@@ -1,10 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: Essence.Core.IO.Archive.Archive
-// Assembly: Essence.Core, Version=4.0.0.30534, Culture=neutral, PublicKeyToken=null
-// MVID: EADC86D6-B806-4644-B499-D7F487995E73
-// Assembly location: C:\Users\anon\Documents\GitHub\coh3-archive-viewer\CoH3.ArchiveViewer\bin\Release\AOE4\Essence.Core.dll
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -35,34 +29,34 @@ namespace Essence.Core.IO.Archive
     public Archive(string fileName)
     {
       FileInfo fileInfo = new FileInfo(fileName);
-      this.Name = fileInfo.Name;
-      this.FullName = fileInfo.FullName;
-      this.m_fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-      this.Length = this.m_fileStream.Length;
-      this.m_reader = new BinaryReader((Stream) this.m_fileStream);
-      this.ReadHeader(this.m_reader);
+      Name = fileInfo.Name;
+      FullName = fileInfo.FullName;
+      m_fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+      Length = m_fileStream.Length;
+      m_reader = new BinaryReader((Stream) m_fileStream);
+      ReadHeader(m_reader);
     }
 
-    ~Archive() => this.Dispose(false);
+    ~Archive() => Dispose(false);
 
     public void Dispose()
     {
-      this.Dispose(true);
+      Dispose(true);
       GC.SuppressFinalize((object) this);
     }
 
     private void Dispose(bool disposing)
     {
-      if (!disposing || this.m_fileStream == null)
+      if (!disposing || m_fileStream == null)
         return;
-      this.m_reader.Close();
-      this.m_fileStream = (FileStream) null;
+      m_reader.Close();
+      m_fileStream = (FileStream) null;
     }
 
     private Func<INode, bool> GetSearchPredicate(
       string[] parts,
       int index,
-      Essence.Core.IO.Archive.Archive.SearchMethod searchMethod,
+      SearchMethod searchMethod,
       bool matchCase)
     {
       string part = parts[index];
@@ -76,10 +70,10 @@ namespace Essence.Core.IO.Archive
         type = index + 1 != parts.Length ? typeof (Folder) : typeof (File);
       switch (searchMethod)
       {
-        case Essence.Core.IO.Archive.Archive.SearchMethod.Substring:
+        case SearchMethod.Substring:
           StringComparison stringComparison1 = matchCase ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase;
           return (Func<INode, bool>) (n => type.IsInstanceOfType((object) n) && n.Name.IndexOf(part, stringComparison1) >= 0);
-        case Essence.Core.IO.Archive.Archive.SearchMethod.Wildcards:
+        case SearchMethod.Wildcards:
           if (part.IndexOfAny(new char[2]{ '*', '?' }) == -1)
           {
             StringComparison stringComparison2 = matchCase ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase;
@@ -87,7 +81,7 @@ namespace Essence.Core.IO.Archive
           }
           Regex regx1 = Wildcard.CreateWildcardRegex(part, matchCase ? RegexOptions.None : RegexOptions.IgnoreCase);
           return (Func<INode, bool>) (n => type.IsInstanceOfType((object) n) && regx1.IsMatch(n.Name));
-        case Essence.Core.IO.Archive.Archive.SearchMethod.RegularExpression:
+        case SearchMethod.RegularExpression:
           Regex regx2 = new Regex(part, matchCase ? RegexOptions.None : RegexOptions.IgnoreCase);
           return (Func<INode, bool>) (n => type.IsInstanceOfType((object) n) && regx2.IsMatch(n.Name));
         default:
@@ -97,7 +91,7 @@ namespace Essence.Core.IO.Archive
 
     public List<File> GetFiles(
       string pattern,
-      Essence.Core.IO.Archive.Archive.SearchMethod searchMethod,
+      SearchMethod searchMethod,
       bool matchCase)
     {
       string[] parts = pattern.Split(new char[2]
@@ -107,10 +101,10 @@ namespace Essence.Core.IO.Archive
       }, StringSplitOptions.RemoveEmptyEntries);
       Func<INode, bool>[] searchPredicates = new Func<INode, bool>[parts.Length];
       for (int index = 0; index < parts.Length; ++index)
-        searchPredicates[index] = this.GetSearchPredicate(parts, index, searchMethod, matchCase);
+        searchPredicates[index] = GetSearchPredicate(parts, index, searchMethod, matchCase);
       List<File> files = new List<File>();
       if (searchPredicates.Length != 0)
-        this.GetFiles(searchPredicates, 0, this.Children, files);
+        GetFiles(searchPredicates, 0, Children, files);
       return files;
     }
 
@@ -130,7 +124,7 @@ namespace Essence.Core.IO.Archive
           if (searchPredicates.Length == index + 1)
             files.Add((File) child);
           else
-            this.GetFiles(searchPredicates, index + 1, child.Children, files);
+            GetFiles(searchPredicates, index + 1, child.Children, files);
         }
       }
     }
@@ -143,8 +137,8 @@ namespace Essence.Core.IO.Archive
       try
       {
         long offset = file.FileOffset - 4L;
-        if (this.m_fileStream.Seek(offset, SeekOrigin.Begin) == offset)
-          return this.m_reader.ReadUInt32();
+        if (m_fileStream.Seek(offset, SeekOrigin.Begin) == offset)
+          return m_reader.ReadUInt32();
       }
       catch (Exception ex)
       {
@@ -160,21 +154,21 @@ namespace Essence.Core.IO.Archive
       Exception innerException = (Exception) null;
       try
       {
-        if (this.m_fileStream.Seek(file.FileOffset, SeekOrigin.Begin) == file.FileOffset)
+        if (m_fileStream.Seek(file.FileOffset, SeekOrigin.Begin) == file.FileOffset)
         {
           switch (file.StorageType)
           {
             case FileStorageType.Store:
               byte[] buffer1 = new byte[(int) file.StoreLength];
-              if (this.m_fileStream.Read(buffer1, 0, buffer1.Length) == buffer1.Length)
+              if (m_fileStream.Read(buffer1, 0, buffer1.Length) == buffer1.Length)
                 return buffer1;
               throw new ApplicationException(string.Format("Unable to read {0} bytes at {1}.", (object) file.StoreLength, (object) file.FileOffset));
             case FileStorageType.StreamCompress:
             case FileStorageType.BufferCompress:
               if (file.StoreLength > 0U)
               {
-                this.m_fileStream.Seek(2L, SeekOrigin.Current);
-                using (DeflateStream deflateStream = new DeflateStream((Stream) this.m_fileStream, CompressionMode.Decompress, true))
+                m_fileStream.Seek(2L, SeekOrigin.Current);
+                using (DeflateStream deflateStream = new DeflateStream((Stream) m_fileStream, CompressionMode.Decompress, true))
                 {
                   byte[] buffer2 = new byte[(int) file.StoreLength];
                   if (deflateStream.Read(buffer2, 0, buffer2.Length) == buffer2.Length)
@@ -194,9 +188,9 @@ namespace Essence.Core.IO.Archive
       throw new ApplicationException(string.Format("Error reading data for file {0}.", (object) file), innerException);
     }
 
-    public override string ToString() => this.Name;
+    public override string ToString() => Name;
 
-    Essence.Core.IO.Archive.Archive INode.Archive => this;
+    Archive INode.Archive => this;
 
     public INode Parent => (INode) null;
 
@@ -220,7 +214,7 @@ namespace Essence.Core.IO.Archive
 
     public uint BlockSize { get; private set; }
 
-    private uint ReadIndex(BinaryReader reader) => this.Version <= (ushort) 4 ? (uint) reader.ReadUInt16() : reader.ReadUInt32();
+    private uint ReadIndex(BinaryReader reader) => Version <= (ushort) 4 ? (uint) reader.ReadUInt16() : reader.ReadUInt32();
 
     private string ReadFixedString(BinaryReader reader, int charCount, int charSize)
     {
@@ -250,7 +244,7 @@ namespace Essence.Core.IO.Archive
 
     private string ReadDynamicString(BinaryReader reader, long offset)
     {
-      if (this.m_fileStream.Seek(offset, SeekOrigin.Begin) != offset)
+      if (m_fileStream.Seek(offset, SeekOrigin.Begin) != offset)
         return (string) null;
       List<byte> byteList = new List<byte>(64);
       while (true)
@@ -266,35 +260,35 @@ namespace Essence.Core.IO.Archive
 
     private void ReadHeader(BinaryReader reader)
     {
-      byte[] first = reader.ReadBytes(Essence.Core.IO.Archive.Archive.Magic.Length);
-      if (first == null || first.Length != Essence.Core.IO.Archive.Archive.Magic.Length || !((IEnumerable<byte>) first).SequenceEqual<byte>((IEnumerable<byte>) Essence.Core.IO.Archive.Archive.Magic))
+      byte[] first = reader.ReadBytes(Magic.Length);
+      if (first == null || first.Length != Magic.Length || !((IEnumerable<byte>) first).SequenceEqual<byte>((IEnumerable<byte>) Magic))
         throw new ApplicationException("Magic does not match archive file magic.");
-      this.Version = reader.ReadUInt16();
-      this.Product = (Product) reader.ReadUInt16();
-      if (this.Version < (ushort) 4 || this.Version > (ushort) 10 || this.Product != Product.Essence)
-        throw new ApplicationException(string.Format("Version {0} of product {1} is not supported.", (object) this.Version, (object) this.Product));
-      if (this.Version < (ushort) 6)
+      Version = reader.ReadUInt16();
+      Product = (Product) reader.ReadUInt16();
+      if (Version < (ushort) 4 || Version > (ushort) 10 || Product != Product.Essence)
+        throw new ApplicationException(string.Format("Version {0} of product {1} is not supported.", (object) Version, (object) Product));
+      if (Version < (ushort) 6)
       {
-        this.FileMD5 = reader.ReadBytes(16);
-        if (this.FileMD5 == null || this.FileMD5.Length != 16)
+        FileMD5 = reader.ReadBytes(16);
+        if (FileMD5 == null || FileMD5.Length != 16)
           throw new ApplicationException("Header length is not sufficient for file MD5.");
       }
-      this.NiceName = this.ReadFixedString(reader, 64, 2);
-      if (this.Version < (ushort) 6)
+      NiceName = ReadFixedString(reader, 64, 2);
+      if (Version < (ushort) 6)
       {
-        this.HeaderMD5 = reader.ReadBytes(16);
-        if (this.HeaderMD5 == null || this.HeaderMD5.Length != 16)
+        HeaderMD5 = reader.ReadBytes(16);
+        if (HeaderMD5 == null || HeaderMD5.Length != 16)
           throw new ApplicationException("Header length is not sufficient for header MD5.");
       }
       long? nullable1 = new long?();
-      if (this.Version >= (ushort) 9)
+      if (Version >= (ushort) 9)
         nullable1 = new long?((long) reader.ReadUInt64());
-      else if (this.Version >= (ushort) 8)
+      else if (Version >= (ushort) 8)
         nullable1 = new long?((long) reader.ReadUInt32());
       uint num1 = reader.ReadUInt32();
       long? nullable2 = new long?();
       long dataOffset;
-      if (this.Version >= (ushort) 9)
+      if (Version >= (ushort) 9)
       {
         dataOffset = (long) reader.ReadUInt64();
         nullable2 = new long?((long) reader.ReadUInt64());
@@ -302,99 +296,99 @@ namespace Essence.Core.IO.Archive
       else
       {
         dataOffset = (long) reader.ReadUInt32();
-        if (this.Version >= (ushort) 8)
+        if (Version >= (ushort) 8)
           nullable2 = new long?((long) reader.ReadUInt32());
       }
       int num2 = (int) reader.ReadUInt32();
-      if (this.Version >= (ushort) 8)
-        this.m_fileStream.Seek(256L, SeekOrigin.Current);
-      long offset = nullable1.HasValue ? nullable1.Value : this.m_fileStream.Position;
-      if (offset + (long) num1 > this.Length)
-        throw new ApplicationException(string.Format("Header blob [{0} B, {1} B] outside of file length {1} B.", (object) offset, (object) (offset + (long) num1), (object) this.Length));
-      if (nullable2.HasValue && dataOffset + nullable2.Value > this.Length)
-        throw new ApplicationException(string.Format("Data blob [{0} B, {1} B] outside of file length {1} B.", (object) dataOffset, (object) (dataOffset + nullable2.Value), (object) this.Length));
-      if (this.m_fileStream.Seek(offset, SeekOrigin.Begin) != offset)
+      if (Version >= (ushort) 8)
+        m_fileStream.Seek(256L, SeekOrigin.Current);
+      long offset = nullable1.HasValue ? nullable1.Value : m_fileStream.Position;
+      if (offset + (long) num1 > Length)
+        throw new ApplicationException(string.Format("Header blob [{0} B, {1} B] outside of file length {1} B.", (object) offset, (object) (offset + (long) num1), (object) Length));
+      if (nullable2.HasValue && dataOffset + nullable2.Value > Length)
+        throw new ApplicationException(string.Format("Data blob [{0} B, {1} B] outside of file length {1} B.", (object) dataOffset, (object) (dataOffset + nullable2.Value), (object) Length));
+      if (m_fileStream.Seek(offset, SeekOrigin.Begin) != offset)
         throw new ApplicationException(string.Format("Unable to seek to position {0} B.", (object) offset));
       uint num3 = reader.ReadUInt32();
-      uint length1 = this.ReadIndex(reader);
+      uint length1 = ReadIndex(reader);
       uint num4 = reader.ReadUInt32();
-      uint length2 = this.ReadIndex(reader);
+      uint length2 = ReadIndex(reader);
       uint num5 = reader.ReadUInt32();
-      uint length3 = this.ReadIndex(reader);
+      uint length3 = ReadIndex(reader);
       uint num6 = reader.ReadUInt32();
-      int num7 = (int) this.ReadIndex(reader);
-      if (this.Version >= (ushort) 7)
+      int num7 = (int) ReadIndex(reader);
+      if (Version >= (ushort) 7)
       {
         int num8 = (int) reader.ReadUInt32();
-        if (this.Version >= (ushort) 8)
+        if (Version >= (ushort) 8)
         {
           int num9 = (int) reader.ReadUInt32();
         }
-        this.BlockSize = reader.ReadUInt32();
+        BlockSize = reader.ReadUInt32();
       }
-      if (this.m_fileStream.Seek(offset + (long) num3, SeekOrigin.Begin) != offset + (long) num3)
+      if (m_fileStream.Seek(offset + (long) num3, SeekOrigin.Begin) != offset + (long) num3)
         throw new ApplicationException(string.Format("Unable to seek to position {0} B.", (object) (offset + (long) num3)));
-      Essence.Core.IO.Archive.Archive.TOCData[] tocDataArray = new Essence.Core.IO.Archive.Archive.TOCData[(int) length1];
+      TOCData[] tocDataArray = new TOCData[(int) length1];
       for (uint index = 0; index < length1; ++index)
       {
-        tocDataArray[(int) index].alias = this.ReadFixedString(reader, 64, 1);
-        tocDataArray[(int) index].name = this.ReadFixedString(reader, 64, 1);
-        tocDataArray[(int) index].folderStartIndex = this.ReadIndex(reader);
-        tocDataArray[(int) index].folderEndIndex = this.ReadIndex(reader);
-        tocDataArray[(int) index].fileStartIndex = this.ReadIndex(reader);
-        tocDataArray[(int) index].fileEndIndex = this.ReadIndex(reader);
-        tocDataArray[(int) index].folderRootIndex = this.ReadIndex(reader);
+        tocDataArray[(int) index].alias = ReadFixedString(reader, 64, 1);
+        tocDataArray[(int) index].name = ReadFixedString(reader, 64, 1);
+        tocDataArray[(int) index].folderStartIndex = ReadIndex(reader);
+        tocDataArray[(int) index].folderEndIndex = ReadIndex(reader);
+        tocDataArray[(int) index].fileStartIndex = ReadIndex(reader);
+        tocDataArray[(int) index].fileEndIndex = ReadIndex(reader);
+        tocDataArray[(int) index].folderRootIndex = ReadIndex(reader);
       }
-      if (this.m_fileStream.Seek(offset + (long) num4, SeekOrigin.Begin) != offset + (long) num4)
+      if (m_fileStream.Seek(offset + (long) num4, SeekOrigin.Begin) != offset + (long) num4)
         throw new ApplicationException(string.Format("Unable to seek to position {0} B.", (object) (offset + (long) num4)));
-      Essence.Core.IO.Archive.Archive.FolderData[] folderData = new Essence.Core.IO.Archive.Archive.FolderData[(int) length2];
+      FolderData[] folderData = new FolderData[(int) length2];
       for (uint index = 0; index < length2; ++index)
       {
         folderData[(int) index].nameOffset = reader.ReadUInt32();
-        folderData[(int) index].folderStartIndex = this.ReadIndex(reader);
-        folderData[(int) index].folderEndIndex = this.ReadIndex(reader);
-        folderData[(int) index].fileStartIndex = this.ReadIndex(reader);
-        folderData[(int) index].fileEndIndex = this.ReadIndex(reader);
+        folderData[(int) index].folderStartIndex = ReadIndex(reader);
+        folderData[(int) index].folderEndIndex = ReadIndex(reader);
+        folderData[(int) index].fileStartIndex = ReadIndex(reader);
+        folderData[(int) index].fileEndIndex = ReadIndex(reader);
       }
-      if (this.m_fileStream.Seek(offset + (long) num5, SeekOrigin.Begin) != offset + (long) num5)
+      if (m_fileStream.Seek(offset + (long) num5, SeekOrigin.Begin) != offset + (long) num5)
         throw new ApplicationException(string.Format("Unable to seek to position {0} B.", (object) (offset + (long) num5)));
-      Essence.Core.IO.Archive.Archive.FileData[] fileData = new Essence.Core.IO.Archive.Archive.FileData[(int) length3];
+      FileData[] fileData = new FileData[(int) length3];
       for (uint index = 0; index < length3; ++index)
       {
         fileData[(int) index].nameOffset = reader.ReadUInt32();
-        if (this.Version >= (ushort) 8)
+        if (Version >= (ushort) 8)
           fileData[(int) index].hashOffset = reader.ReadUInt32();
-        fileData[(int) index].dataOffset = this.Version < (ushort) 9 ? (long) reader.ReadUInt32() : (long) reader.ReadUInt64();
+        fileData[(int) index].dataOffset = Version < (ushort) 9 ? (long) reader.ReadUInt32() : (long) reader.ReadUInt64();
         fileData[(int) index].length = reader.ReadUInt32();
         fileData[(int) index].storeLength = reader.ReadUInt32();
-        if (this.Version < (ushort) 10)
+        if (Version < (ushort) 10)
         {
           int num10 = (int) reader.ReadUInt32();
         }
         fileData[(int) index].verificationType = (FileVerificationType) reader.ReadByte();
         fileData[(int) index].storageType = (FileStorageType) reader.ReadByte();
-        if (this.Version >= (ushort) 6)
+        if (Version >= (ushort) 6)
           fileData[(int) index].crc = reader.ReadUInt32();
-        if (this.Version == (ushort) 7)
+        if (Version == (ushort) 7)
           fileData[(int) index].hashOffset = reader.ReadUInt32();
       }
       List<INode> list = new List<INode>(tocDataArray.Length);
-      foreach (Essence.Core.IO.Archive.Archive.TOCData tocData in tocDataArray)
+      foreach (TOCData tocData in tocDataArray)
       {
-        IList<INode> children = this.CreateChildren(reader, folderData, tocData.folderRootIndex, tocData.folderRootIndex + 1U, fileData, 0U, 0U, offset + (long) num6, dataOffset);
+        IList<INode> children = CreateChildren(reader, folderData, tocData.folderRootIndex, tocData.folderRootIndex + 1U, fileData, 0U, 0U, offset + (long) num6, dataOffset);
         TOC parent = new TOC(this, children, tocData.alias, tocData.name);
-        Essence.Core.IO.Archive.Archive.SetParent((INode) parent, children);
+        SetParent((INode) parent, children);
         list.Add((INode) parent);
       }
-      this.Children = (IReadOnlyList<INode>) new ReadOnlyCollection<INode>((IList<INode>) list);
+      Children = (IReadOnlyList<INode>) new ReadOnlyCollection<INode>((IList<INode>) list);
     }
 
     private IList<INode> CreateChildren(
       BinaryReader reader,
-      Essence.Core.IO.Archive.Archive.FolderData[] folderData,
+      FolderData[] folderData,
       uint folderStartIndex,
       uint folderEndIndex,
-      Essence.Core.IO.Archive.Archive.FileData[] fileData,
+      FileData[] fileData,
       uint fileStartIndex,
       uint fileEndIndex,
       long stringOffset,
@@ -403,7 +397,7 @@ namespace Essence.Core.IO.Archive
       List<INode> children1 = new List<INode>((int) folderEndIndex - (int) folderStartIndex + ((int) fileEndIndex - (int) fileStartIndex));
       for (uint index = folderStartIndex; index < folderEndIndex; ++index)
       {
-        string name = this.ReadDynamicString(reader, stringOffset + (long) folderData[(int) index].nameOffset) ?? string.Format("Folder_{0}", (object) index);
+        string name = ReadDynamicString(reader, stringOffset + (long) folderData[(int) index].nameOffset) ?? string.Format("Folder_{0}", (object) index);
         int num = name.LastIndexOfAny(new char[2]
         {
           Path.DirectorySeparatorChar,
@@ -411,11 +405,11 @@ namespace Essence.Core.IO.Archive
         });
         if (num >= 0)
           name = name.Substring(num + 1);
-        IList<INode> children2 = this.CreateChildren(reader, folderData, folderData[(int) index].folderStartIndex, folderData[(int) index].folderEndIndex, fileData, folderData[(int) index].fileStartIndex, folderData[(int) index].fileEndIndex, stringOffset, dataOffset);
+        IList<INode> children2 = CreateChildren(reader, folderData, folderData[(int) index].folderStartIndex, folderData[(int) index].folderEndIndex, fileData, folderData[(int) index].fileStartIndex, folderData[(int) index].fileEndIndex, stringOffset, dataOffset);
         if (name.Length > 0)
         {
           Folder parent = new Folder(this, children2, name);
-          Essence.Core.IO.Archive.Archive.SetParent((INode) parent, children2);
+          SetParent((INode) parent, children2);
           children1.Add((INode) parent);
         }
         else
@@ -424,14 +418,14 @@ namespace Essence.Core.IO.Archive
       for (uint index = fileStartIndex; index < fileEndIndex; ++index)
       {
         long fileOffset = dataOffset + fileData[(int) index].dataOffset;
-        string name = this.ReadDynamicString(reader, stringOffset + (long) fileData[(int) index].nameOffset);
-        if (name == null && this.Version < (ushort) 6)
+        string name = ReadDynamicString(reader, stringOffset + (long) fileData[(int) index].nameOffset);
+        if (name == null && Version < (ushort) 6)
         {
           long offset = fileOffset - 260L;
-          name = this.m_fileStream.Seek(offset, SeekOrigin.Begin) != offset ? string.Format("File_{0}.dat", (object) index) : this.ReadFixedString(reader, 256, 1);
+          name = m_fileStream.Seek(offset, SeekOrigin.Begin) != offset ? string.Format("File_{0}.dat", (object) index) : ReadFixedString(reader, 256, 1);
         }
         uint? crc32 = new uint?();
-        if (this.Version >= (ushort) 6)
+        if (Version >= (ushort) 6)
           crc32 = new uint?(fileData[(int) index].crc);
         children1.Add((INode) new File(this, name, fileData[(int) index].storeLength, fileData[(int) index].length, fileData[(int) index].verificationType, fileData[(int) index].storageType, fileOffset, crc32));
       }

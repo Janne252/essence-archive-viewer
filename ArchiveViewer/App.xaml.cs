@@ -14,14 +14,14 @@ namespace ArchiveViewer
 		{
 			get
 			{
-				return App.settings;
+				return settings;
 			}
 		}
 
 		// Token: 0x06000077 RID: 119 RVA: 0x00003721 File Offset: 0x00001921
 		private void Application_Exit(object sender, ExitEventArgs e)
 		{
-			App.settings.Save();
+			settings.Save();
 		}
 
 		// Token: 0x0400003A RID: 58

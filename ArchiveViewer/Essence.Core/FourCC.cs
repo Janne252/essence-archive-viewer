@@ -1,10 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: Essence.Core.FourCC
-// Assembly: Essence.Core, Version=4.0.0.30534, Culture=neutral, PublicKeyToken=null
-// MVID: EADC86D6-B806-4644-B499-D7F487995E73
-// Assembly location: C:\Users\anon\Documents\GitHub\coh3-archive-viewer\CoH3.ArchiveViewer\bin\Release\AOE4\Essence.Core.dll
-
-using System;
+﻿using System;
 
 namespace Essence.Core
 {
@@ -12,30 +6,30 @@ namespace Essence.Core
   {
     private uint m_value;
 
-    public FourCC(uint value) => this.m_value = FourCC.IsValid(value, out int _) ? value : throw new ArgumentOutOfRangeException(nameof (value));
+    public FourCC(uint value) => m_value = IsValid(value, out int _) ? value : throw new ArgumentOutOfRangeException(nameof (value));
 
     public uint Value
     {
-      get => this.m_value;
-      set => this.m_value = FourCC.IsValid(value, out int _) ? value : throw new ArgumentOutOfRangeException(nameof (value));
+      get => m_value;
+      set => m_value = IsValid(value, out int _) ? value : throw new ArgumentOutOfRangeException(nameof (value));
     }
 
-    public override bool Equals(object obj) => obj is FourCC other && this.Equals(other);
+    public override bool Equals(object obj) => obj is FourCC other && Equals(other);
 
-    public bool Equals(FourCC other) => (int) this.m_value == (int) other.m_value;
+    public bool Equals(FourCC other) => (int) m_value == (int) other.m_value;
 
-    public override int GetHashCode() => this.m_value.GetHashCode();
+    public override int GetHashCode() => m_value.GetHashCode();
 
     public override string ToString()
     {
       int length;
-      if (!FourCC.IsValid(this.m_value, out length))
+      if (!IsValid(m_value, out length))
         return string.Empty;
       int num = 0;
       char[] chArray = new char[length];
       for (int index = 4 - length; index < 4; ++index)
       {
-        char ch = (char) (this.m_value >> 8 * (3 - index) & (uint) byte.MaxValue);
+        char ch = (char) (m_value >> 8 * (3 - index) & (uint) byte.MaxValue);
         chArray[num++] = ch;
       }
       return new string(chArray);
@@ -61,7 +55,7 @@ namespace Essence.Core
             for (int length = value.Length; index < length; ++index)
             {
               char c = value[index];
-              if (!FourCC.IsValid(c))
+              if (!IsValid(c))
                 throw new ArgumentException(string.Format("Character [0x{0:X}] out of ASCII character range [0x20,0x7E].", (object) c), nameof (value));
               if (num == 0U && c == ' ')
                 throw new ArgumentException(string.Format("Spaces [0x{0:X}] may not precede printing characters.", (object) ' '), nameof (value));
@@ -82,7 +76,7 @@ namespace Essence.Core
         for (int length = value.Length; index < length; ++index)
         {
           char c = value[index];
-          if (!FourCC.IsValid(c) || num == 0U && c == ' ')
+          if (!IsValid(c) || num == 0U && c == ' ')
           {
             result = new FourCC();
             return false;
@@ -120,7 +114,7 @@ namespace Essence.Core
                 return false;
               break;
             default:
-              if (!FourCC.IsValid(c))
+              if (!IsValid(c))
               {
                 length = 0;
                 return false;

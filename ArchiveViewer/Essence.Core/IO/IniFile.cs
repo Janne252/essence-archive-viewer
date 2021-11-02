@@ -1,10 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: Essence.Core.IO.IniFile
-// Assembly: Essence.Core, Version=4.0.0.30534, Culture=neutral, PublicKeyToken=null
-// MVID: EADC86D6-B806-4644-B499-D7F487995E73
-// Assembly location: C:\Users\anon\Documents\GitHub\coh3-archive-viewer\CoH3.ArchiveViewer\bin\Release\AOE4\Essence.Core.dll
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -17,7 +11,7 @@ namespace Essence.Core.IO
     private static readonly Regex SectionRegex = new Regex("^\\s*\\[\\s*(.*)\\s*]\\s*$", RegexOptions.Compiled);
     private static readonly Regex KeyValueRegex = new Regex("^([^=]*)=(.*)$", RegexOptions.Compiled);
 
-    public IniFile() => this.Sections = new Dictionary<string, Dictionary<string, string>>((IEqualityComparer<string>) StringComparer.OrdinalIgnoreCase);
+    public IniFile() => Sections = new Dictionary<string, Dictionary<string, string>>((IEqualityComparer<string>) StringComparer.OrdinalIgnoreCase);
 
     public Dictionary<string, Dictionary<string, string>> Sections { get; }
 
@@ -25,18 +19,18 @@ namespace Essence.Core.IO
     {
       value = (string) null;
       Dictionary<string, string> dictionary;
-      return this.Sections.TryGetValue(sectionName, out dictionary) && dictionary.TryGetValue(key, out value);
+      return Sections.TryGetValue(sectionName, out dictionary) && dictionary.TryGetValue(key, out value);
     }
 
-    public string GetValue(string sectionName, string key) => this.Sections[sectionName][key];
+    public string GetValue(string sectionName, string key) => Sections[sectionName][key];
 
     public void SetValue(string sectionName, string key, string value)
     {
       Dictionary<string, string> dictionary;
-      if (!this.Sections.TryGetValue(sectionName, out dictionary))
+      if (!Sections.TryGetValue(sectionName, out dictionary))
       {
         dictionary = new Dictionary<string, string>((IEqualityComparer<string>) StringComparer.OrdinalIgnoreCase);
-        this.Sections.Add(sectionName, dictionary);
+        Sections.Add(sectionName, dictionary);
       }
       dictionary[key] = value;
     }
@@ -44,12 +38,12 @@ namespace Essence.Core.IO
     public void Read(string fileName)
     {
       using (FileStream fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
-        this.Read((Stream) fileStream);
+        Read((Stream) fileStream);
     }
 
     public void Read(Stream stream)
     {
-      this.Sections.Clear();
+      Sections.Clear();
       using (StreamReader streamReader = new StreamReader(stream))
       {
         Dictionary<string, string> dictionary = (Dictionary<string, string>) null;
@@ -64,22 +58,22 @@ namespace Essence.Core.IO
             if (input == null)
               goto label_3;
           }
-          while (string.IsNullOrWhiteSpace(input) || IniFile.CommentRegex.IsMatch(input));
-          Match match1 = IniFile.SectionRegex.Match(input);
+          while (string.IsNullOrWhiteSpace(input) || CommentRegex.IsMatch(input));
+          Match match1 = SectionRegex.Match(input);
           if (match1.Success)
           {
             key1 = match1.Groups[1].Value;
-            if (!this.Sections.ContainsKey(key1))
+            if (!Sections.ContainsKey(key1))
             {
               dictionary = new Dictionary<string, string>((IEqualityComparer<string>) StringComparer.OrdinalIgnoreCase);
-              this.Sections.Add(key1, dictionary);
+              Sections.Add(key1, dictionary);
             }
             else
               goto label_7;
           }
           else
           {
-            Match match2 = IniFile.KeyValueRegex.Match(input);
+            Match match2 = KeyValueRegex.Match(input);
             if (match2.Success)
             {
               key2 = match2.Groups[1].Value.Trim();
@@ -117,7 +111,7 @@ label_15:
       {
         using (StreamWriter streamWriter = new StreamWriter((Stream) fileStream))
         {
-          foreach (KeyValuePair<string, Dictionary<string, string>> section in this.Sections)
+          foreach (KeyValuePair<string, Dictionary<string, string>> section in Sections)
           {
             streamWriter.WriteLine("[{0}]", (object) section.Key);
             foreach (KeyValuePair<string, string> keyValuePair in section.Value)

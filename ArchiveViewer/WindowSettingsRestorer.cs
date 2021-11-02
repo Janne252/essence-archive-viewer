@@ -9,33 +9,33 @@ namespace ArchiveViewer
 		// Token: 0x06000068 RID: 104 RVA: 0x000034A4 File Offset: 0x000016A4
 		public WindowSettingsRestorer(Window window, WindowSettings settings, Size defaultSize, Size minimumSize)
 		{
-			this.Window = window;
-			this.Settings = settings;
-			this.DefaultSize = defaultSize;
-			this.MinimumSize = minimumSize;
-			this.Window.LocationChanged += delegate(object s, EventArgs e)
+			Window = window;
+			Settings = settings;
+			DefaultSize = defaultSize;
+			MinimumSize = minimumSize;
+			Window.LocationChanged += delegate(object s, EventArgs e)
 			{
-				if (!this.restoring)
+				if (!restoring)
 				{
-					Rect restoreBounds = this.Window.RestoreBounds;
-					this.Settings.Left = (int)restoreBounds.Left;
-					this.Settings.Top = (int)restoreBounds.Top;
+					Rect restoreBounds = Window.RestoreBounds;
+					Settings.Left = (int)restoreBounds.Left;
+					Settings.Top = (int)restoreBounds.Top;
 				}
 			};
-			this.Window.SizeChanged += delegate(object s, SizeChangedEventArgs e)
+			Window.SizeChanged += delegate(object s, SizeChangedEventArgs e)
 			{
-				if (!this.restoring)
+				if (!restoring)
 				{
-					Rect restoreBounds = this.Window.RestoreBounds;
-					this.Settings.Height = (int)restoreBounds.Height;
-					this.Settings.Width = (int)restoreBounds.Width;
+					Rect restoreBounds = Window.RestoreBounds;
+					Settings.Height = (int)restoreBounds.Height;
+					Settings.Width = (int)restoreBounds.Width;
 				}
 			};
-			this.Window.StateChanged += delegate(object s, EventArgs e)
+			Window.StateChanged += delegate(object s, EventArgs e)
 			{
-				if (!this.restoring && this.Window.WindowState != WindowState.Minimized)
+				if (!restoring && Window.WindowState != WindowState.Minimized)
 				{
-					this.Settings.State = this.Window.WindowState;
+					Settings.State = Window.WindowState;
 				}
 			};
 		}
@@ -63,31 +63,31 @@ namespace ArchiveViewer
 		// Token: 0x06000071 RID: 113 RVA: 0x00003574 File Offset: 0x00001774
 		public void Restore()
 		{
-			this.restoring = true;
+			restoring = true;
 			double virtualScreenWidth = SystemParameters.VirtualScreenWidth;
 			double virtualScreenHeight = SystemParameters.VirtualScreenHeight;
-			if (this.Settings.Width <= 0 && this.Settings.Height <= 0)
+			if (Settings.Width <= 0 && Settings.Height <= 0)
 			{
-				this.Window.Width = Math.Max(this.MinimumSize.Width, Math.Min(this.DefaultSize.Width, virtualScreenWidth));
-				this.Window.Height = Math.Max(this.MinimumSize.Height, Math.Min(this.DefaultSize.Height, virtualScreenHeight));
+				Window.Width = Math.Max(MinimumSize.Width, Math.Min(DefaultSize.Width, virtualScreenWidth));
+				Window.Height = Math.Max(MinimumSize.Height, Math.Min(DefaultSize.Height, virtualScreenHeight));
 			}
 			else
 			{
-				this.Window.Left = Math.Min((double)this.Settings.Left, virtualScreenWidth - 32.0);
-				this.Window.Top = Math.Min((double)this.Settings.Top, virtualScreenHeight - 32.0);
-				this.Window.Width = Math.Max(this.MinimumSize.Width, Math.Min((double)this.Settings.Width, virtualScreenWidth));
-				this.Window.Height = Math.Max(this.MinimumSize.Height, Math.Min((double)this.Settings.Height, virtualScreenHeight));
+				Window.Left = Math.Min((double)Settings.Left, virtualScreenWidth - 32.0);
+				Window.Top = Math.Min((double)Settings.Top, virtualScreenHeight - 32.0);
+				Window.Width = Math.Max(MinimumSize.Width, Math.Min((double)Settings.Width, virtualScreenWidth));
+				Window.Height = Math.Max(MinimumSize.Height, Math.Min((double)Settings.Height, virtualScreenHeight));
 			}
-			switch (this.Settings.State)
+			switch (Settings.State)
 			{
 			case WindowState.Normal:
-				this.Window.WindowState = WindowState.Normal;
+				Window.WindowState = WindowState.Normal;
 				break;
 			case WindowState.Maximized:
-				this.Window.WindowState = WindowState.Maximized;
+				Window.WindowState = WindowState.Maximized;
 				break;
 			}
-			this.restoring = false;
+			restoring = false;
 		}
 
 		// Token: 0x04000035 RID: 53

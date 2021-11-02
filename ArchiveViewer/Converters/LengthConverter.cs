@@ -14,7 +14,7 @@ namespace ArchiveViewer.Converters
 			if (value is long)
 			{
 				long length = (long)value;
-				return LengthConverter.Convert(length, culture);
+				return Convert(length, culture);
 			}
 			return value;
 		}

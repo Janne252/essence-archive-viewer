@@ -1,10 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: Essence.Core.SharedProperty
-// Assembly: Essence.Core, Version=4.0.0.30534, Culture=neutral, PublicKeyToken=null
-// MVID: EADC86D6-B806-4644-B499-D7F487995E73
-// Assembly location: C:\Users\anon\Documents\GitHub\coh3-archive-viewer\CoH3.ArchiveViewer\bin\Release\AOE4\Essence.Core.dll
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -17,38 +11,38 @@ namespace Essence.Core
   public static class SharedProperty
   {
     public const string StorageRoot = "Z:\\Relic_Projects";
-    private static readonly Lazy<SharedProperty.SharedPropertyDatabase> Database = new Lazy<SharedProperty.SharedPropertyDatabase>((Func<SharedProperty.SharedPropertyDatabase>) (() => new SharedProperty.SharedPropertyDatabase(Environment.MachineName)), true);
+    private static readonly Lazy<SharedPropertyDatabase> Database = new Lazy<SharedPropertyDatabase>((Func<SharedPropertyDatabase>) (() => new SharedPropertyDatabase(Environment.MachineName)), true);
 
-    public static string BuildServer => SharedProperty.GetSharedProperty(nameof (BuildServer));
+    public static string BuildServer => GetSharedProperty(nameof (BuildServer));
 
-    public static string IdServer => SharedProperty.GetSharedProperty(nameof (IdServer));
+    public static string IdServer => GetSharedProperty(nameof (IdServer));
 
-    public static string GetSharedProperty(string name) => SharedProperty.Database.Value.SharedProperties[name];
+    public static string GetSharedProperty(string name) => Database.Value.SharedProperties[name];
 
     public static T GetSharedProperty<T>(string name)
     {
-      string sharedProperty = SharedProperty.Database.Value.SharedProperties[name];
+      string sharedProperty = Database.Value.SharedProperties[name];
       return (T) (TypeDescriptor.GetConverter(typeof (T)) ?? throw new NotSupportedException()).ConvertFrom((object) sharedProperty);
     }
 
     public static string GetSharedProperty(string name, string defaultValue)
     {
       string str;
-      return SharedProperty.TryGetSharedProperty(name, out str) ? str : defaultValue;
+      return TryGetSharedProperty(name, out str) ? str : defaultValue;
     }
 
     public static T GetSharedProperty<T>(string name, T defaultValue)
     {
       T obj;
-      return SharedProperty.TryGetSharedProperty<T>(name, out obj) ? obj : defaultValue;
+      return TryGetSharedProperty<T>(name, out obj) ? obj : defaultValue;
     }
 
-    public static bool TryGetSharedProperty(string name, out string value) => SharedProperty.Database.Value.SharedProperties.TryGetValue(name, out value);
+    public static bool TryGetSharedProperty(string name, out string value) => Database.Value.SharedProperties.TryGetValue(name, out value);
 
     public static bool TryGetSharedProperty<T>(string name, out T value)
     {
       string str;
-      if (SharedProperty.Database.Value.SharedProperties.TryGetValue(name, out str))
+      if (Database.Value.SharedProperties.TryGetValue(name, out str))
       {
         TypeConverter converter = TypeDescriptor.GetConverter(typeof (T));
         if (converter != null)
@@ -84,7 +78,7 @@ namespace Essence.Core
       public SharedPropertyDatabase(string machineName)
       {
         Dictionary<string, string> dictionary = new Dictionary<string, string>();
-        foreach (KeyValuePair<string, string> defaultSharedProperty in SharedProperty.SharedPropertyDatabase.DefaultSharedProperties)
+        foreach (KeyValuePair<string, string> defaultSharedProperty in DefaultSharedProperties)
           dictionary.Add(defaultSharedProperty.Key, defaultSharedProperty.Value);
         try
         {
@@ -129,7 +123,7 @@ namespace Essence.Core
         {
           Trace.TraceError("Error loading {0}: {1}", (object) "Z:\\Relic_Projects\\EssenseEngine\\SharedProperties\\SharedPropertyV2.xml", (object) ex.Message);
         }
-        this.SharedProperties = new ReadOnlyDictionary<string, string>((IDictionary<string, string>) dictionary);
+        SharedProperties = new ReadOnlyDictionary<string, string>((IDictionary<string, string>) dictionary);
       }
 
       public ReadOnlyDictionary<string, string> SharedProperties { get; }

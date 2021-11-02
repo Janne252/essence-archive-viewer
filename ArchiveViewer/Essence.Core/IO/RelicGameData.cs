@@ -1,10 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: Essence.Core.IO.RelicGameData
-// Assembly: Essence.Core, Version=4.0.0.30534, Culture=neutral, PublicKeyToken=null
-// MVID: EADC86D6-B806-4644-B499-D7F487995E73
-// Assembly location: C:\Users\anon\Documents\GitHub\coh3-archive-viewer\CoH3.ArchiveViewer\bin\Release\AOE4\Essence.Core.dll
-
-using Essence.Core.IO.Checksum;
+﻿using Essence.Core.IO.Checksum;
 using System.Collections.Generic;
 using System.IO;
 
@@ -22,7 +16,7 @@ namespace Essence.Core.IO
     {
       using (ChunkyWriter chunkyWriter = new ChunkyWriter(fileName))
       {
-        chunkyWriter.PushDataChunk(RelicGameData.AttributeEditorGameDataID, 3U, (string) null);
+        chunkyWriter.PushDataChunk(AttributeEditorGameDataID, 3U, (string) null);
         using (MemoryStream memoryStream = new MemoryStream())
         {
           binaryConfig.Save((Stream) memoryStream, true);
@@ -35,7 +29,7 @@ namespace Essence.Core.IO
           chunkyWriter.Write(memoryStream.GetBuffer(), 0, (int) memoryStream.Length);
         }
         chunkyWriter.PopChunk();
-        chunkyWriter.PushDataChunk(RelicGameData.KeysID, 1U, (string) null);
+        chunkyWriter.PushDataChunk(KeysID, 1U, (string) null);
         HashSet<DictionaryKey> dictionaryKeySet = new HashSet<DictionaryKey>();
         GatherKeys(binaryConfig.CurrentTable, dictionaryKeySet);
         List<DictionaryKey> dictionaryKeyList = new List<DictionaryKey>((IEnumerable<DictionaryKey>) dictionaryKeySet);
@@ -67,12 +61,12 @@ namespace Essence.Core.IO
       Dictionary<ulong, string> keys;
       using (ChunkyReader chunkyReader = new ChunkyReader(fileName))
       {
-        ChunkHeader chunkHeader = chunkyReader.PushDataChunk(RelicGameData.AttributeEditorGameDataID, 3U);
+        ChunkHeader chunkHeader = chunkyReader.PushDataChunk(AttributeEditorGameDataID, 3U);
         int num = (int) chunkyReader.ReadUInt32();
         uint count = chunkHeader.Version > 2U ? checked (chunkHeader.Size - 4U) : chunkyReader.ReadUInt32();
         buffer = chunkyReader.ReadBytes((int) count);
         chunkyReader.PopChunk();
-        chunkyReader.PushDataChunk(RelicGameData.KeysID, 1U);
+        chunkyReader.PushDataChunk(KeysID, 1U);
         uint capacity = chunkyReader.ReadUInt32();
         keys = new Dictionary<ulong, string>((int) capacity);
         for (uint index = 0; index < capacity; ++index)

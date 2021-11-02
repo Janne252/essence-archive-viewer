@@ -1,10 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: Essence.Core.ComponentModel.CategoryOrderAttribute
-// Assembly: Essence.Core, Version=4.0.0.30534, Culture=neutral, PublicKeyToken=null
-// MVID: EADC86D6-B806-4644-B499-D7F487995E73
-// Assembly location: C:\Users\anon\Documents\GitHub\coh3-archive-viewer\CoH3.ArchiveViewer\bin\Release\AOE4\Essence.Core.dll
-
-using System;
+﻿using System;
 
 namespace Essence.Core.ComponentModel
 {
@@ -13,8 +7,8 @@ namespace Essence.Core.ComponentModel
   {
     public CategoryOrderAttribute(string category, int order)
     {
-      this.Category = category ?? throw new ArgumentNullException(nameof (category));
-      this.Order = order;
+      Category = category ?? throw new ArgumentNullException(nameof (category));
+      Order = order;
     }
 
     public string Category { get; }
@@ -27,9 +21,9 @@ namespace Essence.Core.ComponentModel
     {
       if (this == obj)
         return true;
-      return obj is CategoryOrderAttribute categoryOrderAttribute && this.Category == categoryOrderAttribute.Category && categoryOrderAttribute.Order == this.Order;
+      return obj is CategoryOrderAttribute categoryOrderAttribute && Category == categoryOrderAttribute.Category && categoryOrderAttribute.Order == Order;
     }
 
-    public override int GetHashCode() => this.Category.GetHashCode() ^ this.Order.GetHashCode();
+    public override int GetHashCode() => Category.GetHashCode() ^ Order.GetHashCode();
   }
 }

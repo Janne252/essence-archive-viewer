@@ -1,10 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: Essence.Core.ComponentModel.PropertyCommentChangedEventManager
-// Assembly: Essence.Core, Version=4.0.0.30534, Culture=neutral, PublicKeyToken=null
-// MVID: EADC86D6-B806-4644-B499-D7F487995E73
-// Assembly location: C:\Users\anon\Documents\GitHub\coh3-archive-viewer\CoH3.ArchiveViewer\bin\Release\AOE4\Essence.Core.dll
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Windows;
@@ -33,7 +27,7 @@ namespace Essence.Core.ComponentModel
         default:
           if (listener == null)
             throw new ArgumentNullException(nameof (listener));
-          PropertyCommentChangedEventManager.CurrentManager.AddListener(source, propertyName, listener, (EventHandler<PropertyCommentChangedEventArgs>) null);
+          CurrentManager.AddListener(source, propertyName, listener, (EventHandler<PropertyCommentChangedEventArgs>) null);
           break;
       }
     }
@@ -54,7 +48,7 @@ namespace Essence.Core.ComponentModel
         default:
           if (listener == null)
             throw new ArgumentNullException(nameof (listener));
-          PropertyCommentChangedEventManager.CurrentManager.RemoveListener(source, propertyName, listener, (EventHandler<PropertyCommentChangedEventArgs>) null);
+          CurrentManager.RemoveListener(source, propertyName, listener, (EventHandler<PropertyCommentChangedEventArgs>) null);
           break;
       }
     }
@@ -75,7 +69,7 @@ namespace Essence.Core.ComponentModel
         default:
           if (handler == null)
             throw new ArgumentNullException(nameof (handler));
-          PropertyCommentChangedEventManager.CurrentManager.AddListener(source, propertyName, (IWeakEventListener) null, handler);
+          CurrentManager.AddListener(source, propertyName, (IWeakEventListener) null, handler);
           break;
       }
     }
@@ -96,16 +90,16 @@ namespace Essence.Core.ComponentModel
         default:
           if (handler == null)
             throw new ArgumentNullException(nameof (handler));
-          PropertyCommentChangedEventManager.CurrentManager.RemoveListener(source, propertyName, (IWeakEventListener) null, handler);
+          CurrentManager.RemoveListener(source, propertyName, (IWeakEventListener) null, handler);
           break;
       }
     }
 
-    protected override WeakEventManager.ListenerList NewListenerList() => (WeakEventManager.ListenerList) new WeakEventManager.ListenerList<PropertyCommentChangedEventArgs>();
+    protected override ListenerList NewListenerList() => (ListenerList) new ListenerList<PropertyCommentChangedEventArgs>();
 
-    protected override void StartListening(object source) => ((INotifyPropertyCommentChanged) source).PropertyCommentChanged += new PropertyCommentChangedEventHandler(this.OnPropertyCommentChanged);
+    protected override void StartListening(object source) => ((INotifyPropertyCommentChanged) source).PropertyCommentChanged += new PropertyCommentChangedEventHandler(OnPropertyCommentChanged);
 
-    protected override void StopListening(object source) => ((INotifyPropertyCommentChanged) source).PropertyCommentChanged -= new PropertyCommentChangedEventHandler(this.OnPropertyCommentChanged);
+    protected override void StopListening(object source) => ((INotifyPropertyCommentChanged) source).PropertyCommentChanged -= new PropertyCommentChangedEventHandler(OnPropertyCommentChanged);
 
     protected override bool Purge(object source, object data, bool purgeAll)
     {
@@ -121,8 +115,8 @@ namespace Essence.Core.ComponentModel
           bool flag2 = purgeAll || source == null;
           if (!flag2)
           {
-            WeakEventManager.ListenerList list = (WeakEventManager.ListenerList) hybridDictionary[(object) strArray[index]];
-            if (WeakEventManager.ListenerList.PrepareForWriting(ref list))
+            ListenerList list = (ListenerList) hybridDictionary[(object) strArray[index]];
+            if (ListenerList.PrepareForWriting(ref list))
               hybridDictionary[(object) strArray[index]] = (object) list;
             if (list.Purge())
               flag1 = true;
@@ -135,13 +129,13 @@ namespace Essence.Core.ComponentModel
         {
           purgeAll = true;
           if (source != null)
-            this.Remove(source);
+            Remove(source);
         }
       }
       if (purgeAll)
       {
         if (source != null)
-          this.StopListening(source);
+          StopListening(source);
         flag1 = true;
       }
       return flag1;
@@ -151,11 +145,11 @@ namespace Essence.Core.ComponentModel
     {
       get
       {
-        PropertyCommentChangedEventManager manager = (PropertyCommentChangedEventManager) WeakEventManager.GetCurrentManager(typeof (PropertyCommentChangedEventManager));
+        PropertyCommentChangedEventManager manager = (PropertyCommentChangedEventManager) GetCurrentManager(typeof (PropertyCommentChangedEventManager));
         if (manager == null)
         {
           manager = new PropertyCommentChangedEventManager();
-          WeakEventManager.SetCurrentManager(typeof (PropertyCommentChangedEventManager), (WeakEventManager) manager);
+          SetCurrentManager(typeof (PropertyCommentChangedEventManager), (WeakEventManager) manager);
         }
         return manager;
       }
@@ -167,28 +161,28 @@ namespace Essence.Core.ComponentModel
       IWeakEventListener listener,
       EventHandler<PropertyCommentChangedEventArgs> handler)
     {
-      using (this.WriteLock)
+      using (WriteLock)
       {
         HybridDictionary hybridDictionary = (HybridDictionary) this[(object) source];
         if (hybridDictionary == null)
         {
           hybridDictionary = new HybridDictionary(true);
           this[(object) source] = (object) hybridDictionary;
-          this.StartListening((object) source);
+          StartListening((object) source);
         }
-        WeakEventManager.ListenerList list = (WeakEventManager.ListenerList) hybridDictionary[(object) propertyName];
+        ListenerList list = (ListenerList) hybridDictionary[(object) propertyName];
         if (list == null)
         {
-          list = (WeakEventManager.ListenerList) new WeakEventManager.ListenerList<PropertyCommentChangedEventArgs>();
+          list = (ListenerList) new ListenerList<PropertyCommentChangedEventArgs>();
           hybridDictionary[(object) propertyName] = (object) list;
         }
-        if (WeakEventManager.ListenerList.PrepareForWriting(ref list))
+        if (ListenerList.PrepareForWriting(ref list))
           hybridDictionary[(object) propertyName] = (object) list;
         if (handler != null)
           list.AddHandler((Delegate) handler);
         else
           list.Add(listener);
-        this.ScheduleCleanup();
+        ScheduleCleanup();
       }
     }
 
@@ -198,15 +192,15 @@ namespace Essence.Core.ComponentModel
       IWeakEventListener listener,
       EventHandler<PropertyCommentChangedEventArgs> handler)
     {
-      using (this.WriteLock)
+      using (WriteLock)
       {
         HybridDictionary hybridDictionary = (HybridDictionary) this[(object) source];
         if (hybridDictionary == null)
           return;
-        WeakEventManager.ListenerList list = (WeakEventManager.ListenerList) hybridDictionary[(object) propertyName];
+        ListenerList list = (ListenerList) hybridDictionary[(object) propertyName];
         if (list != null)
         {
-          if (WeakEventManager.ListenerList.PrepareForWriting(ref list))
+          if (ListenerList.PrepareForWriting(ref list))
             hybridDictionary[(object) propertyName] = (object) list;
           if (handler != null)
             list.RemoveHandler((Delegate) handler);
@@ -217,26 +211,26 @@ namespace Essence.Core.ComponentModel
         }
         if (hybridDictionary.Count != 0)
           return;
-        this.StopListening((object) source);
-        this.Remove((object) source);
+        StopListening((object) source);
+        Remove((object) source);
       }
     }
 
     private void OnPropertyCommentChanged(object sender, PropertyCommentChangedEventArgs args)
     {
-      WeakEventManager.ListenerList list = (WeakEventManager.ListenerList) null;
-      using (this.ReadLock)
+      ListenerList list = (ListenerList) null;
+      using (ReadLock)
       {
         HybridDictionary hybridDictionary = (HybridDictionary) this[sender];
         if (hybridDictionary != null)
-          list = (WeakEventManager.ListenerList) hybridDictionary[(object) args.PropertyName];
+          list = (ListenerList) hybridDictionary[(object) args.PropertyName];
         if (list == null)
-          list = WeakEventManager.ListenerList.Empty;
+          list = ListenerList.Empty;
         list.BeginUse();
       }
       try
       {
-        this.DeliverEventToList(sender, (EventArgs) args, list);
+        DeliverEventToList(sender, (EventArgs) args, list);
       }
       finally
       {

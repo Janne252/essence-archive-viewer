@@ -15,26 +15,26 @@ namespace ArchiveViewer.Converters
 	{
 		// Token: 0x0600007B RID: 123
 		[DllImport("shell32.dll", CharSet = CharSet.Auto)]
-		private static extern IntPtr SHGetFileInfo(string pszPath, [MarshalAs(UnmanagedType.U4)] FileInfoCache.FileAttributes dwFileAttributes, ref FileInfoCache.SHFileInfo psfi, uint cbFileInfo, [MarshalAs(UnmanagedType.U4)] FileInfoCache.SHFileInfoFlags uFlags);
+		private static extern IntPtr SHGetFileInfo(string pszPath, [MarshalAs(UnmanagedType.U4)] FileAttributes dwFileAttributes, ref SHFileInfo psfi, uint cbFileInfo, [MarshalAs(UnmanagedType.U4)] SHFileInfoFlags uFlags);
 
 		// Token: 0x0600007C RID: 124
 		[DllImport("user32.dll")]
 		private static extern bool DestroyIcon(IntPtr hIcon);
 
 		// Token: 0x0600007D RID: 125 RVA: 0x0000377C File Offset: 0x0000197C
-		private bool GetFileInfo(FileInfoCache.FileInfoKey fileInfoKey, FileInfoCache.SHFileInfoFlags fileInfoFlags, out FileInfoCache.SHFileInfo shFileInfo)
+		private bool GetFileInfo(FileInfoKey fileInfoKey, SHFileInfoFlags fileInfoFlags, out SHFileInfo shFileInfo)
 		{
-			shFileInfo = default(FileInfoCache.SHFileInfo);
-			return FileInfoCache.SHGetFileInfo(fileInfoKey.Path, fileInfoKey.FileAttributes, ref shFileInfo, (uint)Marshal.SizeOf(shFileInfo), FileInfoCache.SHFileInfoFlags.SHGFI_USEFILEATTRIBUTES | fileInfoFlags) != IntPtr.Zero;
+			shFileInfo = default(SHFileInfo);
+			return SHGetFileInfo(fileInfoKey.Path, fileInfoKey.FileAttributes, ref shFileInfo, (uint)Marshal.SizeOf(shFileInfo), SHFileInfoFlags.SHGFI_USEFILEATTRIBUTES | fileInfoFlags) != IntPtr.Zero;
 		}
 
 		// Token: 0x0600007E RID: 126 RVA: 0x000037B8 File Offset: 0x000019B8
-		private ImageSource GetFileInfoIcon(FileInfoCache.FileInfoKey fileInfoKey, FileInfoCache.SHFileInfoFlags fileInfoFlags)
+		private ImageSource GetFileInfoIcon(FileInfoKey fileInfoKey, SHFileInfoFlags fileInfoFlags)
 		{
 			try
 			{
-				FileInfoCache.SHFileInfo shfileInfo;
-				if (this.GetFileInfo(fileInfoKey, FileInfoCache.SHFileInfoFlags.SHGFI_ICON | fileInfoFlags, out shfileInfo) && shfileInfo.hIcon != IntPtr.Zero)
+				SHFileInfo shfileInfo;
+				if (GetFileInfo(fileInfoKey, SHFileInfoFlags.SHGFI_ICON | fileInfoFlags, out shfileInfo) && shfileInfo.hIcon != IntPtr.Zero)
 				{
 					try
 					{
@@ -42,7 +42,7 @@ namespace ArchiveViewer.Converters
 					}
 					finally
 					{
-						FileInfoCache.DestroyIcon(shfileInfo.hIcon);
+						DestroyIcon(shfileInfo.hIcon);
 					}
 				}
 			}
@@ -53,32 +53,32 @@ namespace ArchiveViewer.Converters
 		}
 
 		// Token: 0x0600007F RID: 127 RVA: 0x00003838 File Offset: 0x00001A38
-		public FileInfoCache.FileInfo GetFileInfo(INode node)
+		public FileInfo GetFileInfo(INode node)
 		{
-			FileInfoCache.FileInfoKey fileInfoKey = null;
+			FileInfoKey fileInfoKey = null;
 			if (node is Archive || node is Essence.Core.IO.Archive.File)
 			{
 				int num = node.Name.LastIndexOf('.');
-				fileInfoKey = new FileInfoCache.FileInfoKey(string.Format("File{0}", (num >= 0) ? node.Name.Substring(num).ToLowerInvariant() : "File"), FileInfoCache.FileAttributes.FILE_ATTRIBUTE_NORMAL);
+				fileInfoKey = new FileInfoKey(string.Format("File{0}", (num >= 0) ? node.Name.Substring(num).ToLowerInvariant() : "File"), FileAttributes.FILE_ATTRIBUTE_NORMAL);
 			}
 			else if (node is TOC || node is Folder)
 			{
-				fileInfoKey = new FileInfoCache.FileInfoKey("Folder", FileInfoCache.FileAttributes.FILE_ATTRIBUTE_DIRECTORY);
+				fileInfoKey = new FileInfoKey("Folder", FileAttributes.FILE_ATTRIBUTE_DIRECTORY);
 			}
 			if (fileInfoKey == null)
 			{
 				return null;
 			}
-			FileInfoCache.FileInfo fileInfo;
-			if (this.fileInfoCache.TryGetValue(fileInfoKey, out fileInfo))
+			FileInfo fileInfo;
+			if (fileInfoCache.TryGetValue(fileInfoKey, out fileInfo))
 			{
 				return fileInfo;
 			}
 			string description;
-			if ((fileInfoKey.FileAttributes & FileInfoCache.FileAttributes.FILE_ATTRIBUTE_DIRECTORY) == FileInfoCache.FileAttributes.FILE_ATTRIBUTE_NONE)
+			if ((fileInfoKey.FileAttributes & FileAttributes.FILE_ATTRIBUTE_DIRECTORY) == FileAttributes.FILE_ATTRIBUTE_NONE)
 			{
-				FileInfoCache.SHFileInfo shfileInfo;
-				if (this.GetFileInfo(fileInfoKey, FileInfoCache.SHFileInfoFlags.SHGFI_TYPENAME, out shfileInfo))
+				SHFileInfo shfileInfo;
+				if (GetFileInfo(fileInfoKey, SHFileInfoFlags.SHGFI_TYPENAME, out shfileInfo))
 				{
 					description = shfileInfo.szTypeName;
 				}
@@ -104,22 +104,22 @@ namespace ArchiveViewer.Converters
 			{
 				description = "File Folder";
 			}
-			ImageSource fileInfoIcon = this.GetFileInfoIcon(fileInfoKey, FileInfoCache.SHFileInfoFlags.SHGFI_SMALLICON);
-			ImageSource fileInfoIcon2 = this.GetFileInfoIcon(fileInfoKey, FileInfoCache.SHFileInfoFlags.SHGFI_NONE);
+			ImageSource fileInfoIcon = GetFileInfoIcon(fileInfoKey, SHFileInfoFlags.SHGFI_SMALLICON);
+			ImageSource fileInfoIcon2 = GetFileInfoIcon(fileInfoKey, SHFileInfoFlags.SHGFI_NONE);
 			ImageSource imageSource = null;
 			ImageSource imageSource2 = null;
-			if ((fileInfoKey.FileAttributes & FileInfoCache.FileAttributes.FILE_ATTRIBUTE_DIRECTORY) != FileInfoCache.FileAttributes.FILE_ATTRIBUTE_NONE)
+			if ((fileInfoKey.FileAttributes & FileAttributes.FILE_ATTRIBUTE_DIRECTORY) != FileAttributes.FILE_ATTRIBUTE_NONE)
 			{
-				imageSource = this.GetFileInfoIcon(fileInfoKey, (FileInfoCache.SHFileInfoFlags)3u);
-				imageSource2 = this.GetFileInfoIcon(fileInfoKey, FileInfoCache.SHFileInfoFlags.SHGFI_OPENICON);
+				imageSource = GetFileInfoIcon(fileInfoKey, (SHFileInfoFlags)3u);
+				imageSource2 = GetFileInfoIcon(fileInfoKey, SHFileInfoFlags.SHGFI_OPENICON);
 			}
-			fileInfo = new FileInfoCache.FileInfo(description, fileInfoIcon ?? fileInfoIcon2, fileInfoIcon2 ?? fileInfoIcon, imageSource ?? imageSource2, imageSource2 ?? imageSource);
-			this.fileInfoCache.Add(fileInfoKey, fileInfo);
+			fileInfo = new FileInfo(description, fileInfoIcon ?? fileInfoIcon2, fileInfoIcon2 ?? fileInfoIcon, imageSource ?? imageSource2, imageSource2 ?? imageSource);
+			fileInfoCache.Add(fileInfoKey, fileInfo);
 			return fileInfo;
 		}
 
 		// Token: 0x0400003B RID: 59
-		private Dictionary<FileInfoCache.FileInfoKey, FileInfoCache.FileInfo> fileInfoCache = new Dictionary<FileInfoCache.FileInfoKey, FileInfoCache.FileInfo>();
+		private Dictionary<FileInfoKey, FileInfo> fileInfoCache = new Dictionary<FileInfoKey, FileInfo>();
 
 		// Token: 0x02000011 RID: 17
 		private enum FileAttributes : uint
@@ -224,17 +224,17 @@ namespace ArchiveViewer.Converters
 		}
 
 		// Token: 0x02000014 RID: 20
-		private class FileInfoKey : IEquatable<FileInfoCache.FileInfoKey>
+		private class FileInfoKey : IEquatable<FileInfoKey>
 		{
 			// Token: 0x06000081 RID: 129 RVA: 0x000039FF File Offset: 0x00001BFF
-			public FileInfoKey(string path, FileInfoCache.FileAttributes fileAttributes)
+			public FileInfoKey(string path, FileAttributes fileAttributes)
 			{
 				if (path == null)
 				{
 					throw new ArgumentNullException("path");
 				}
-				this.Path = path;
-				this.FileAttributes = fileAttributes;
+				Path = path;
+				FileAttributes = fileAttributes;
 			}
 
 			// Token: 0x17000020 RID: 32
@@ -245,30 +245,30 @@ namespace ArchiveViewer.Converters
 			// Token: 0x17000021 RID: 33
 			// (get) Token: 0x06000084 RID: 132 RVA: 0x00003A34 File Offset: 0x00001C34
 			// (set) Token: 0x06000085 RID: 133 RVA: 0x00003A3C File Offset: 0x00001C3C
-			public FileInfoCache.FileAttributes FileAttributes { get; private set; }
+			public FileAttributes FileAttributes { get; private set; }
 
 			// Token: 0x06000086 RID: 134 RVA: 0x00003A45 File Offset: 0x00001C45
 			public override bool Equals(object obj)
 			{
-				return this.Equals(obj as FileInfoCache.FileInfoKey);
+				return Equals(obj as FileInfoKey);
 			}
 
 			// Token: 0x06000087 RID: 135 RVA: 0x00003A53 File Offset: 0x00001C53
-			public bool Equals(FileInfoCache.FileInfoKey other)
+			public bool Equals(FileInfoKey other)
 			{
-				return other != null && this.Path.Equals(other.Path) && this.FileAttributes == other.FileAttributes;
+				return other != null && Path.Equals(other.Path) && FileAttributes == other.FileAttributes;
 			}
 
 			// Token: 0x06000088 RID: 136 RVA: 0x00003A7D File Offset: 0x00001C7D
 			public override int GetHashCode()
 			{
-				return this.Path.GetHashCode() ^ (int)this.FileAttributes;
+				return Path.GetHashCode() ^ (int)FileAttributes;
 			}
 
 			// Token: 0x06000089 RID: 137 RVA: 0x00003A91 File Offset: 0x00001C91
 			public override string ToString()
 			{
-				return this.Path;
+				return Path;
 			}
 		}
 
@@ -278,11 +278,11 @@ namespace ArchiveViewer.Converters
 			// Token: 0x0600008A RID: 138 RVA: 0x00003A99 File Offset: 0x00001C99
 			public FileInfo(string description, ImageSource smallIcon, ImageSource largeIcon, ImageSource smallOpenIcon, ImageSource largeOpenIcon)
 			{
-				this.Description = description;
-				this.SmallIcon = smallIcon;
-				this.LargeIcon = largeIcon;
-				this.SmallOpenIcon = (smallOpenIcon ?? smallIcon);
-				this.LargeOpenIcon = (largeOpenIcon ?? largeIcon);
+				Description = description;
+				SmallIcon = smallIcon;
+				LargeIcon = largeIcon;
+				SmallOpenIcon = (smallOpenIcon ?? smallIcon);
+				LargeOpenIcon = (largeOpenIcon ?? largeIcon);
 			}
 
 			// Token: 0x17000022 RID: 34

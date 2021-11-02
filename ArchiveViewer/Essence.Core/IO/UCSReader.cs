@@ -1,10 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: Essence.Core.IO.UCSReader
-// Assembly: Essence.Core, Version=4.0.0.30534, Culture=neutral, PublicKeyToken=null
-// MVID: EADC86D6-B806-4644-B499-D7F487995E73
-// Assembly location: C:\Users\anon\Documents\GitHub\coh3-archive-viewer\CoH3.ArchiveViewer\bin\Release\AOE4\Essence.Core.dll
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -33,25 +27,25 @@ namespace Essence.Core.IO
 
     public UCSReader(TextReader textReader, bool escape)
     {
-      this.m_textReader = textReader ?? throw new ArgumentNullException(nameof (textReader));
-      this.m_escape = escape;
+      m_textReader = textReader ?? throw new ArgumentNullException(nameof (textReader));
+      m_escape = escape;
     }
 
     public void Dispose()
     {
-      if (this.m_textReader != null)
+      if (m_textReader != null)
       {
-        this.m_textReader.Dispose();
-        this.m_textReader = (TextReader) null;
+        m_textReader.Dispose();
+        m_textReader = (TextReader) null;
       }
       GC.SuppressFinalize((object) this);
     }
 
-    public void Close() => this.Dispose();
+    public void Close() => Dispose();
 
     public bool Read(out int locStringID, out string text)
     {
-      string str = this.m_textReader.ReadLine();
+      string str = m_textReader.ReadLine();
       if (str != null)
       {
         int length = str.IndexOf('\t');
@@ -59,7 +53,7 @@ namespace Essence.Core.IO
         if (length != -1 && int.TryParse(str.Substring(0, length), NumberStyles.Integer, (IFormatProvider) CultureInfo.InvariantCulture, out result))
         {
           string input = str.Substring(length + 1);
-          if (this.m_escape)
+          if (m_escape)
             input = UCS.Unescape(input);
           locStringID = result;
           text = input;
@@ -79,7 +73,7 @@ namespace Essence.Core.IO
         string text;
         do
           ;
-        while (!this.Read(out locStringID, out text));
+        while (!Read(out locStringID, out text));
         yield return new KeyValuePair<int, string>(locStringID, text);
       }
     }

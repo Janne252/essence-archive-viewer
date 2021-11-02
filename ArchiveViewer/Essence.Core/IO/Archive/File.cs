@@ -1,10 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: Essence.Core.IO.Archive.File
-// Assembly: Essence.Core, Version=4.0.0.30534, Culture=neutral, PublicKeyToken=null
-// MVID: EADC86D6-B806-4644-B499-D7F487995E73
-// Assembly location: C:\Users\anon\Documents\GitHub\coh3-archive-viewer\CoH3.ArchiveViewer\bin\Release\AOE4\Essence.Core.dll
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Essence.Core.IO.Archive
 {
@@ -13,7 +7,7 @@ namespace Essence.Core.IO.Archive
     private uint? m_crc32;
 
     internal File(
-      Essence.Core.IO.Archive.Archive archive,
+      Archive archive,
       string name,
       uint storeLength,
       uint length,
@@ -22,19 +16,19 @@ namespace Essence.Core.IO.Archive
       long fileOffset,
       uint? crc32)
     {
-      this.Archive = archive;
-      this.Name = name;
+      Archive = archive;
+      Name = name;
       int num = name.LastIndexOf('.');
-      this.Extension = num >= 0 ? name.Substring(num + 1) : string.Empty;
-      this.StoreLength = storeLength;
-      this.Length = length;
-      this.VerificationType = verificationType;
-      this.StorageType = storageType;
-      this.FileOffset = fileOffset;
-      this.m_crc32 = crc32;
+      Extension = num >= 0 ? name.Substring(num + 1) : string.Empty;
+      StoreLength = storeLength;
+      Length = length;
+      VerificationType = verificationType;
+      StorageType = storageType;
+      FileOffset = fileOffset;
+      m_crc32 = crc32;
     }
 
-    public Essence.Core.IO.Archive.Archive Archive { get; }
+    public Archive Archive { get; }
 
     public INode Parent { get; internal set; }
 
@@ -42,7 +36,7 @@ namespace Essence.Core.IO.Archive
 
     public string Name { get; }
 
-    public string FullName => this.Parent == null ? this.Name : this.Parent.FullName + this.Name;
+    public string FullName => Parent == null ? Name : Parent.FullName + Name;
 
     public string Extension { get; }
 
@@ -60,14 +54,14 @@ namespace Essence.Core.IO.Archive
     {
       get
       {
-        if (!this.m_crc32.HasValue)
-          this.m_crc32 = new uint?(this.Archive.GetCRC(this));
-        return this.m_crc32.Value;
+        if (!m_crc32.HasValue)
+          m_crc32 = new uint?(Archive.GetCRC(this));
+        return m_crc32.Value;
       }
     }
 
-    public byte[] GetData() => this.Archive.GetData(this);
+    public byte[] GetData() => Archive.GetData(this);
 
-    public override string ToString() => this.Name;
+    public override string ToString() => Name;
   }
 }

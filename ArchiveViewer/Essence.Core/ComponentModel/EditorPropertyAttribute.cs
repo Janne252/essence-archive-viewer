@@ -1,10 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: Essence.Core.ComponentModel.EditorPropertyAttribute
-// Assembly: Essence.Core, Version=4.0.0.30534, Culture=neutral, PublicKeyToken=null
-// MVID: EADC86D6-B806-4644-B499-D7F487995E73
-// Assembly location: C:\Users\anon\Documents\GitHub\coh3-archive-viewer\CoH3.ArchiveViewer\bin\Release\AOE4\Essence.Core.dll
-
-using System;
+﻿using System;
 using System.ComponentModel;
 
 namespace Essence.Core.ComponentModel
@@ -14,16 +8,16 @@ namespace Essence.Core.ComponentModel
   {
     public EditorPropertyAttribute(string propertyName, object propertyValue)
     {
-      this.PropertyName = propertyName ?? throw new ArgumentNullException(nameof (propertyName));
-      this.PropertyValue = propertyValue;
+      PropertyName = propertyName ?? throw new ArgumentNullException(nameof (propertyName));
+      PropertyValue = propertyValue;
     }
 
     public EditorPropertyAttribute(string propertyName, Type propertyType, string propertyValue)
     {
-      this.PropertyName = propertyName ?? throw new ArgumentNullException(nameof (propertyName));
+      PropertyName = propertyName ?? throw new ArgumentNullException(nameof (propertyName));
       try
       {
-        this.PropertyValue = TypeDescriptor.GetConverter(propertyType).ConvertFromInvariantString(propertyValue);
+        PropertyValue = TypeDescriptor.GetConverter(propertyType).ConvertFromInvariantString(propertyValue);
       }
       catch
       {
@@ -99,15 +93,15 @@ namespace Essence.Core.ComponentModel
 
     public object PropertyValue { get; }
 
-    public override object TypeId => (object) (this.GetType().FullName + this.PropertyName);
+    public override object TypeId => (object) (GetType().FullName + PropertyName);
 
     public override bool Equals(object obj)
     {
       if (this == obj)
         return true;
-      return obj is EditorPropertyAttribute propertyAttribute && this.PropertyName == propertyAttribute.PropertyName && propertyAttribute.PropertyValue == this.PropertyValue;
+      return obj is EditorPropertyAttribute propertyAttribute && PropertyName == propertyAttribute.PropertyName && propertyAttribute.PropertyValue == PropertyValue;
     }
 
-    public override int GetHashCode() => this.PropertyName.GetHashCode() ^ (this.PropertyValue != null ? this.PropertyValue.GetHashCode() : 0);
+    public override int GetHashCode() => PropertyName.GetHashCode() ^ (PropertyValue != null ? PropertyValue.GetHashCode() : 0);
   }
 }

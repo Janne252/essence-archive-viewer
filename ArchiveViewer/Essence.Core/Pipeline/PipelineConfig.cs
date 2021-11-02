@@ -1,10 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: Essence.Core.Pipeline.PipelineConfig
-// Assembly: Essence.Core, Version=4.0.0.30534, Culture=neutral, PublicKeyToken=null
-// MVID: EADC86D6-B806-4644-B499-D7F487995E73
-// Assembly location: C:\Users\anon\Documents\GitHub\coh3-archive-viewer\CoH3.ArchiveViewer\bin\Release\AOE4\Essence.Core.dll
-
-using Essence.Core.IO;
+﻿using Essence.Core.IO;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,7 +17,7 @@ namespace Essence.Core.Pipeline
 
     public string PipelineRoot { get; }
 
-    public string PipelinePath => Path.Combine(this.PipelineRoot, "pipeline.ini");
+    public string PipelinePath => Path.Combine(PipelineRoot, "pipeline.ini");
 
     public PipelineConfig(IEnumerable<string> searchStartPaths)
     {
@@ -32,11 +26,11 @@ namespace Essence.Core.Pipeline
         string pipelineRoot;
         ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> configSections;
         ReadOnlyDictionary<string, Project> projects;
-        if (PipelineConfig.LoadPipelineIni(searchStartPath, out pipelineRoot, out configSections, out projects))
+        if (LoadPipelineIni(searchStartPath, out pipelineRoot, out configSections, out projects))
         {
-          this.PipelineRoot = pipelineRoot;
-          this.ConfigSections = configSections;
-          this.Projects = projects;
+          PipelineRoot = pipelineRoot;
+          ConfigSections = configSections;
+          Projects = projects;
           return;
         }
       }
@@ -52,24 +46,24 @@ namespace Essence.Core.Pipeline
     {
     }
 
-    public string GetConfigValue(string section, string key) => this.ConfigSections[section][key];
+    public string GetConfigValue(string section, string key) => ConfigSections[section][key];
 
     public string GetConfigValue(string section, string project, string key)
     {
       string str;
-      return this.TryGetProjectConfigValue(section, project, key, out str) ? str : this.GetConfigValue(section, key);
+      return TryGetProjectConfigValue(section, project, key, out str) ? str : GetConfigValue(section, key);
     }
 
     public bool TryGetConfigValue(string section, string key, out string value)
     {
       ReadOnlyDictionary<string, string> readOnlyDictionary;
-      if (this.ConfigSections.TryGetValue(section, out readOnlyDictionary))
+      if (ConfigSections.TryGetValue(section, out readOnlyDictionary))
         return readOnlyDictionary.TryGetValue(key, out value);
       value = (string) null;
       return false;
     }
 
-    public bool TryGetConfigValue(string section, string project, string key, out string value) => this.TryGetProjectConfigValue(section, project, key, out value) || this.TryGetConfigValue(section, key, out value);
+    public bool TryGetConfigValue(string section, string project, string key, out string value) => TryGetProjectConfigValue(section, project, key, out value) || TryGetConfigValue(section, key, out value);
 
     private bool TryGetProjectConfigValue(
       string section,
@@ -78,7 +72,7 @@ namespace Essence.Core.Pipeline
       out string value)
     {
       Project project1;
-      if (projectName != null && this.Projects.TryGetValue(projectName, out project1))
+      if (projectName != null && Projects.TryGetValue(projectName, out project1))
       {
         foreach (Project project2 in project1.DependencyChain)
         {
@@ -90,7 +84,7 @@ namespace Essence.Core.Pipeline
       return false;
     }
 
-    public string GetFullPath(string relativePath) => PipelineConfig.GetFullPath(this.PipelineRoot, relativePath);
+    public string GetFullPath(string relativePath) => GetFullPath(PipelineRoot, relativePath);
 
     internal static string GetFullPath(string pipelineRoot, string relativePath) => PathUtil.EnsureTrailingDirectorySeparatorChar(PathUtil.CanonicalizePath(Path.Combine(pipelineRoot, relativePath)));
 
@@ -105,7 +99,7 @@ namespace Essence.Core.Pipeline
         if (File.Exists(Path.Combine(str, "pipeline.ini")))
         {
           pipelineRoot = str;
-          PipelineConfig.ParsePipelineIni(pipelineRoot, out configSections, out projects);
+          ParsePipelineIni(pipelineRoot, out configSections, out projects);
           return true;
         }
       }

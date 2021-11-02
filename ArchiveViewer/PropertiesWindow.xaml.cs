@@ -20,11 +20,11 @@ namespace ArchiveViewer
 		// Token: 0x06000035 RID: 53 RVA: 0x00002A10 File Offset: 0x00000C10
 		public PropertiesWindow(INode node)
 		{
-			this.Node = node;
-			this.calculateCumulativeProperties(node);
-			this.calculateExtendedProperties(node);
-			this.InitializeComponent();
-			base.Icon = (ImageSource)((FileInfoConverter)base.FindResource("FileInfoConverter")).Convert(this.Node, typeof(ImageSource), FileInfoParameter.LargeIcon, CultureInfo.CurrentCulture);
+			Node = node;
+			calculateCumulativeProperties(node);
+			calculateExtendedProperties(node);
+			InitializeComponent();
+			Icon = (ImageSource)((FileInfoConverter)FindResource("FileInfoConverter")).Convert(Node, typeof(ImageSource), FileInfoParameter.LargeIcon, CultureInfo.CurrentCulture);
 		}
 
 		// Token: 0x1700000C RID: 12
@@ -55,7 +55,7 @@ namespace ArchiveViewer
 		// Token: 0x17000011 RID: 17
 		// (get) Token: 0x06000040 RID: 64 RVA: 0x00002ACE File Offset: 0x00000CCE
 		// (set) Token: 0x06000041 RID: 65 RVA: 0x00002AD6 File Offset: 0x00000CD6
-		public ReadOnlyCollection<PropertiesWindow.ExtendedProperty> ExtendedProperties { get; private set; }
+		public ReadOnlyCollection<ExtendedProperty> ExtendedProperties { get; private set; }
 
 		// Token: 0x06000042 RID: 66 RVA: 0x00002AE0 File Offset: 0x00000CE0
 		private void calculateCumulativeProperties(INode node)
@@ -63,22 +63,22 @@ namespace ArchiveViewer
 			File file = node as File;
 			if (file != null)
 			{
-				this.Size += (long)((ulong)file.StoreLength);
-				this.SizeOnDisk += (long)((ulong)file.Length);
-				if (!object.ReferenceEquals(this.Node, node))
+				Size += (long)((ulong)file.StoreLength);
+				SizeOnDisk += (long)((ulong)file.Length);
+				if (!ReferenceEquals(Node, node))
 				{
-					this.Files += 1L;
+					Files += 1L;
 				}
 			}
-			else if (!object.ReferenceEquals(this.Node, node))
+			else if (!ReferenceEquals(Node, node))
 			{
-				this.Folders += 1L;
+				Folders += 1L;
 			}
 			if (node.Children != null)
 			{
 				foreach (INode node2 in node.Children)
 				{
-					this.calculateCumulativeProperties(node2);
+					calculateCumulativeProperties(node2);
 				}
 			}
 		}
@@ -86,21 +86,21 @@ namespace ArchiveViewer
 		// Token: 0x06000043 RID: 67 RVA: 0x00002BA4 File Offset: 0x00000DA4
 		private void calculateExtendedProperties(INode node)
 		{
-			List<PropertiesWindow.ExtendedProperty> list = new List<PropertiesWindow.ExtendedProperty>();
+			List<ExtendedProperty> list = new List<ExtendedProperty>();
 			if (node is Archive)
 			{
 				Archive archive = (Archive)node;
-				list.Add(new PropertiesWindow.ExtendedProperty("Name", archive.NiceName));
-				list.Add(new PropertiesWindow.ExtendedProperty("Version", archive.Version));
-				list.Add(new PropertiesWindow.ExtendedProperty("Product", archive.Product));
+				list.Add(new ExtendedProperty("Name", archive.NiceName));
+				list.Add(new ExtendedProperty("Version", archive.Version));
+				list.Add(new ExtendedProperty("Product", archive.Product));
 				if (archive.Version <= 5)
 				{
-					list.Add(new PropertiesWindow.ExtendedProperty("Archive Hash", HashConverter.Convert(archive.FileMD5, CultureInfo.CurrentCulture)));
-					list.Add(new PropertiesWindow.ExtendedProperty("Header Hash", HashConverter.Convert(archive.HeaderMD5, CultureInfo.CurrentCulture)));
+					list.Add(new ExtendedProperty("Archive Hash", HashConverter.Convert(archive.FileMD5, CultureInfo.CurrentCulture)));
+					list.Add(new ExtendedProperty("Header Hash", HashConverter.Convert(archive.HeaderMD5, CultureInfo.CurrentCulture)));
 				}
 				if (archive.Version >= 7)
 				{
-					list.Add(new PropertiesWindow.ExtendedProperty("Block Size", ArchiveViewer.Converters.LengthConverter.Convert((long)((ulong)archive.BlockSize), CultureInfo.CurrentCulture)));
+					list.Add(new ExtendedProperty("Block Size", Converters.LengthConverter.Convert((long)((ulong)archive.BlockSize), CultureInfo.CurrentCulture)));
 				}
 			}
 			else if (node is File)
@@ -108,21 +108,21 @@ namespace ArchiveViewer
 				File file = (File)node;
 				try
 				{
-					list.Add(new PropertiesWindow.ExtendedProperty("CRC", HashConverter.Convert(BitConverter.GetBytes(file.CRC32), CultureInfo.CurrentCulture)));
+					list.Add(new ExtendedProperty("CRC", HashConverter.Convert(BitConverter.GetBytes(file.CRC32), CultureInfo.CurrentCulture)));
 				}
 				catch (Exception)
 				{
 				}
-				list.Add(new PropertiesWindow.ExtendedProperty("Verification Type", file.VerificationType));
-				list.Add(new PropertiesWindow.ExtendedProperty("Storage Type", file.StorageType));
+				list.Add(new ExtendedProperty("Verification Type", file.VerificationType));
+				list.Add(new ExtendedProperty("Storage Type", file.StorageType));
 			}
-			this.ExtendedProperties = new ReadOnlyCollection<PropertiesWindow.ExtendedProperty>(list);
+			ExtendedProperties = new ReadOnlyCollection<ExtendedProperty>(list);
 		}
 
 		// Token: 0x06000044 RID: 68 RVA: 0x00002D18 File Offset: 0x00000F18
 		private void Close_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			base.DialogResult = new bool?(true);
+			DialogResult = new bool?(true);
 		}
 
 		// Token: 0x0200000A RID: 10
@@ -131,8 +131,8 @@ namespace ArchiveViewer
 			// Token: 0x06000047 RID: 71 RVA: 0x00002DA5 File Offset: 0x00000FA5
 			public ExtendedProperty(string name, object value)
 			{
-				this.Name = name;
-				this.Value = value;
+				Name = name;
+				Value = value;
 			}
 
 			// Token: 0x17000012 RID: 18

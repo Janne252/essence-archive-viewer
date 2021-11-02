@@ -1,10 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: Essence.Core.IO.Wildcard
-// Assembly: Essence.Core, Version=4.0.0.30534, Culture=neutral, PublicKeyToken=null
-// MVID: EADC86D6-B806-4644-B499-D7F487995E73
-// Assembly location: C:\Users\anon\Documents\GitHub\coh3-archive-viewer\CoH3.ArchiveViewer\bin\Release\AOE4\Essence.Core.dll
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -20,7 +14,7 @@ namespace Essence.Core.IO
       '?'
     };
 
-    public static Regex CreateWildcardRegex(string wildcard) => Wildcard.CreateWildcardRegex(wildcard, RegexOptions.None);
+    public static Regex CreateWildcardRegex(string wildcard) => CreateWildcardRegex(wildcard, RegexOptions.None);
 
     public static Regex CreateWildcardRegex(string wildcard, RegexOptions regexOptions)
     {
@@ -31,7 +25,7 @@ namespace Essence.Core.IO
       int index;
       for (int startIndex = 0; startIndex < wildcard.Length; startIndex = index + 1)
       {
-        index = wildcard.IndexOfAny(Wildcard.WildcardCharacters, startIndex);
+        index = wildcard.IndexOfAny(WildcardCharacters, startIndex);
         if (index == -1)
         {
           stringBuilder.Append(Regex.Escape(wildcard.Substring(startIndex)));
@@ -67,7 +61,7 @@ namespace Essence.Core.IO
       if (pathParts.Length == 0)
         return new string[0];
       List<string> files = new List<string>();
-      Wildcard.GetFiles(path, pathParts, 0, SearchOption.TopDirectoryOnly, files);
+      GetFiles(path, pathParts, 0, SearchOption.TopDirectoryOnly, files);
       return files.ToArray();
     }
 
@@ -78,7 +72,7 @@ namespace Essence.Core.IO
       SearchOption searchOption,
       List<string> files)
     {
-      if (Wildcard.IsWildcard(pathParts[index]))
+      if (IsWildcard(pathParts[index]))
       {
         if (index + 1 < pathParts.Length)
         {
@@ -86,14 +80,14 @@ namespace Essence.Core.IO
           {
             if (index + 2 != pathParts.Length)
               throw new ApplicationException("Recursive wildcard pattern only allowed on last directory.");
-            Wildcard.GetFiles(path, pathParts, ++index, SearchOption.AllDirectories, files);
+            GetFiles(path, pathParts, ++index, SearchOption.AllDirectories, files);
           }
           else
           {
             try
             {
               foreach (string directory in Directory.GetDirectories(path, pathParts[index], searchOption))
-                Wildcard.GetFiles(directory, pathParts, ++index, searchOption, files);
+                GetFiles(directory, pathParts, ++index, searchOption, files);
             }
             catch (DirectoryNotFoundException ex)
             {
@@ -113,7 +107,7 @@ namespace Essence.Core.IO
         }
       }
       else if (index + 1 < pathParts.Length)
-        Wildcard.GetFiles(Path.Combine(path, pathParts[index]), pathParts, ++index, searchOption, files);
+        GetFiles(Path.Combine(path, pathParts[index]), pathParts, ++index, searchOption, files);
       else
         files.Add(Path.Combine(path, pathParts[index]));
     }
@@ -122,7 +116,7 @@ namespace Essence.Core.IO
     {
       if (@string == null)
         throw new ArgumentNullException(nameof (@string));
-      return @string.IndexOfAny(Wildcard.WildcardCharacters) != -1;
+      return @string.IndexOfAny(WildcardCharacters) != -1;
     }
   }
 }

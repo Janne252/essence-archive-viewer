@@ -1,10 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: Essence.Core.IO.BinaryConfig
-// Assembly: Essence.Core, Version=4.0.0.30534, Culture=neutral, PublicKeyToken=null
-// MVID: EADC86D6-B806-4644-B499-D7F487995E73
-// Assembly location: C:\Users\anon\Documents\GitHub\coh3-archive-viewer\CoH3.ArchiveViewer\bin\Release\AOE4\Essence.Core.dll
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -17,28 +11,28 @@ namespace Essence.Core.IO
 
     public BinaryConfig()
     {
-      this.m_root = (BinaryConfigTableNodeBase) new BinaryConfigTableNode(new DictionaryKey());
-      this.m_stack = new Stack<BinaryConfigTableNodeBase>();
-      this.m_stack.Push(this.m_root);
+      m_root = (BinaryConfigTableNodeBase) new BinaryConfigTableNode(new DictionaryKey());
+      m_stack = new Stack<BinaryConfigTableNodeBase>();
+      m_stack.Push(m_root);
     }
 
-    public int Count => this.CurrentTable.Children.Count;
+    public int Count => CurrentTable.Children.Count;
 
-    public BinaryConfigTableNodeBase CurrentTable => this.m_stack.Peek();
+    public BinaryConfigTableNodeBase CurrentTable => m_stack.Peek();
 
-    public void AddFloat(string key, float value) => this.CurrentTable.Children.Add((BinaryConfigNode) new BinaryConfigFloatNode(key)
+    public void AddFloat(string key, float value) => CurrentTable.Children.Add((BinaryConfigNode) new BinaryConfigFloatNode(key)
     {
       Value = value
     });
 
-    public float GetFloat(string key) => this.GetNode<BinaryConfigFloatNode>(key).Value;
+    public float GetFloat(string key) => GetNode<BinaryConfigFloatNode>(key).Value;
 
-    public float GetFloatAt(int index) => this.GetNodeAt<BinaryConfigFloatNode>(index).Value;
+    public float GetFloatAt(int index) => GetNodeAt<BinaryConfigFloatNode>(index).Value;
 
     public bool TryGetFloat(string key, out float value)
     {
       BinaryConfigFloatNode node;
-      if (this.TryGetNode<BinaryConfigFloatNode>(key, out node))
+      if (TryGetNode<BinaryConfigFloatNode>(key, out node))
       {
         value = node.Value;
         return true;
@@ -50,7 +44,7 @@ namespace Essence.Core.IO
     public bool TryGetFloatAt(int index, out float value)
     {
       BinaryConfigFloatNode node;
-      if (this.TryGetNodeAt<BinaryConfigFloatNode>(index, out node))
+      if (TryGetNodeAt<BinaryConfigFloatNode>(index, out node))
       {
         value = node.Value;
         return true;
@@ -59,19 +53,19 @@ namespace Essence.Core.IO
       return false;
     }
 
-    public void AddInt(string key, int value) => this.CurrentTable.Children.Add((BinaryConfigNode) new BinaryConfigIntNode(key)
+    public void AddInt(string key, int value) => CurrentTable.Children.Add((BinaryConfigNode) new BinaryConfigIntNode(key)
     {
       Value = value
     });
 
-    public int GetInt(string key) => this.GetNode<BinaryConfigIntNode>(key).Value;
+    public int GetInt(string key) => GetNode<BinaryConfigIntNode>(key).Value;
 
-    public int GetIntAt(int index) => this.GetNodeAt<BinaryConfigIntNode>(index).Value;
+    public int GetIntAt(int index) => GetNodeAt<BinaryConfigIntNode>(index).Value;
 
     public bool TryGetInt(string key, out int value)
     {
       BinaryConfigIntNode node;
-      if (this.TryGetNode<BinaryConfigIntNode>(key, out node))
+      if (TryGetNode<BinaryConfigIntNode>(key, out node))
       {
         value = node.Value;
         return true;
@@ -83,7 +77,7 @@ namespace Essence.Core.IO
     public bool TryGetIntAt(int index, out int value)
     {
       BinaryConfigIntNode node;
-      if (this.TryGetNodeAt<BinaryConfigIntNode>(index, out node))
+      if (TryGetNodeAt<BinaryConfigIntNode>(index, out node))
       {
         value = node.Value;
         return true;
@@ -92,19 +86,19 @@ namespace Essence.Core.IO
       return false;
     }
 
-    public void AddBool(string key, bool value) => this.CurrentTable.Children.Add((BinaryConfigNode) new BinaryConfigBoolNode(key)
+    public void AddBool(string key, bool value) => CurrentTable.Children.Add((BinaryConfigNode) new BinaryConfigBoolNode(key)
     {
       Value = value
     });
 
-    public bool GetBool(string key) => this.GetNode<BinaryConfigBoolNode>(key).Value;
+    public bool GetBool(string key) => GetNode<BinaryConfigBoolNode>(key).Value;
 
-    public bool GetBoolAt(int index) => this.GetNodeAt<BinaryConfigBoolNode>(index).Value;
+    public bool GetBoolAt(int index) => GetNodeAt<BinaryConfigBoolNode>(index).Value;
 
     public bool TryGetBool(string key, out bool value)
     {
       BinaryConfigBoolNode node;
-      if (this.TryGetNode<BinaryConfigBoolNode>(key, out node))
+      if (TryGetNode<BinaryConfigBoolNode>(key, out node))
       {
         value = node.Value;
         return true;
@@ -116,7 +110,7 @@ namespace Essence.Core.IO
     public bool TryGetBoolAt(int index, out bool value)
     {
       BinaryConfigBoolNode node;
-      if (this.TryGetNodeAt<BinaryConfigBoolNode>(index, out node))
+      if (TryGetNodeAt<BinaryConfigBoolNode>(index, out node))
       {
         value = node.Value;
         return true;
@@ -127,7 +121,7 @@ namespace Essence.Core.IO
 
     public void AddString(string key, string value)
     {
-      List<BinaryConfigNode> children = this.CurrentTable.Children;
+      List<BinaryConfigNode> children = CurrentTable.Children;
       BinaryConfigStringNode configStringNode = new BinaryConfigStringNode(key);
       configStringNode.Value = value;
       children.Add((BinaryConfigNode) configStringNode);
@@ -135,20 +129,20 @@ namespace Essence.Core.IO
 
     public void AddWString(string key, string value)
     {
-      List<BinaryConfigNode> children = this.CurrentTable.Children;
+      List<BinaryConfigNode> children = CurrentTable.Children;
       BinaryConfigWStringNode configWstringNode = new BinaryConfigWStringNode(key);
       configWstringNode.Value = value;
       children.Add((BinaryConfigNode) configWstringNode);
     }
 
-    public string GetString(string key) => this.GetNode<BinaryConfigStringNodeBase>(key).Value;
+    public string GetString(string key) => GetNode<BinaryConfigStringNodeBase>(key).Value;
 
-    public string GetStringAt(int index) => this.GetNodeAt<BinaryConfigStringNodeBase>(index).Value;
+    public string GetStringAt(int index) => GetNodeAt<BinaryConfigStringNodeBase>(index).Value;
 
     public bool TryGetString(string key, out string value)
     {
       BinaryConfigStringNodeBase node;
-      if (this.TryGetNode<BinaryConfigStringNodeBase>(key, out node))
+      if (TryGetNode<BinaryConfigStringNodeBase>(key, out node))
       {
         value = node.Value;
         return true;
@@ -160,7 +154,7 @@ namespace Essence.Core.IO
     public bool TryGetStringAt(int index, out string value)
     {
       BinaryConfigStringNodeBase node;
-      if (this.TryGetNodeAt<BinaryConfigStringNodeBase>(index, out node))
+      if (TryGetNodeAt<BinaryConfigStringNodeBase>(index, out node))
       {
         value = node.Value;
         return true;
@@ -172,61 +166,61 @@ namespace Essence.Core.IO
     public void AddTable(string key)
     {
       BinaryConfigTableNode binaryConfigTableNode = new BinaryConfigTableNode(key);
-      this.CurrentTable.Children.Add((BinaryConfigNode) binaryConfigTableNode);
-      this.m_stack.Push((BinaryConfigTableNodeBase) binaryConfigTableNode);
+      CurrentTable.Children.Add((BinaryConfigNode) binaryConfigTableNode);
+      m_stack.Push((BinaryConfigTableNodeBase) binaryConfigTableNode);
     }
 
     public void AddOrderedTable(string key)
     {
       BinaryConfigOrderedTableNode orderedTableNode = new BinaryConfigOrderedTableNode(key);
-      this.CurrentTable.Children.Add((BinaryConfigNode) orderedTableNode);
-      this.m_stack.Push((BinaryConfigTableNodeBase) orderedTableNode);
+      CurrentTable.Children.Add((BinaryConfigNode) orderedTableNode);
+      m_stack.Push((BinaryConfigTableNodeBase) orderedTableNode);
     }
 
-    public void PushTable(string key) => this.m_stack.Push(this.GetNode<BinaryConfigTableNodeBase>(key));
+    public void PushTable(string key) => m_stack.Push(GetNode<BinaryConfigTableNodeBase>(key));
 
-    public void PushTableAt(int index) => this.m_stack.Push(this.GetNodeAt<BinaryConfigTableNodeBase>(index));
+    public void PushTableAt(int index) => m_stack.Push(GetNodeAt<BinaryConfigTableNodeBase>(index));
 
     public bool TryPushTable(string key)
     {
       BinaryConfigTableNodeBase node;
-      if (!this.TryGetNode<BinaryConfigTableNodeBase>(key, out node))
+      if (!TryGetNode<BinaryConfigTableNodeBase>(key, out node))
         return false;
-      this.m_stack.Push(node);
+      m_stack.Push(node);
       return true;
     }
 
     public bool TryPushTableAt(int index)
     {
       BinaryConfigTableNodeBase node;
-      if (!this.TryGetNodeAt<BinaryConfigTableNodeBase>(index, out node))
+      if (!TryGetNodeAt<BinaryConfigTableNodeBase>(index, out node))
         return false;
-      this.m_stack.Push(node);
+      m_stack.Push(node);
       return true;
     }
 
     public void PopTable()
     {
-      if (this.m_stack.Count == 1)
+      if (m_stack.Count == 1)
         throw new InvalidOperationException("Cannot pop root table.");
-      this.m_stack.Pop();
+      m_stack.Pop();
     }
 
-    public void Save(string fileName) => this.Save((Stream) new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Read));
+    public void Save(string fileName) => Save((Stream) new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Read));
 
-    public void Save(Stream stream) => this.Save(stream, false);
+    public void Save(Stream stream) => Save(stream, false);
 
     public void Save(Stream stream, bool leaveOpen)
     {
       using (BinaryWriter binaryWriter = new BinaryWriter(stream, Chunky.Encoding, leaveOpen))
-        this.m_root.Write(binaryWriter);
+        m_root.Write(binaryWriter);
     }
 
-    public static BinaryConfig Load(string fileName) => BinaryConfig.Load((Stream) new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Read));
+    public static BinaryConfig Load(string fileName) => Load((Stream) new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Read));
 
-    public static BinaryConfig Load(Stream stream) => BinaryConfig.Load(stream, false);
+    public static BinaryConfig Load(Stream stream) => Load(stream, false);
 
-    public static BinaryConfig Load(Stream stream, bool leaveOpen) => BinaryConfig.Load(stream, leaveOpen, (KeyResolver) null);
+    public static BinaryConfig Load(Stream stream, bool leaveOpen) => Load(stream, leaveOpen, (KeyResolver) null);
 
     public static BinaryConfig Load(
       Stream stream,
@@ -243,11 +237,11 @@ namespace Essence.Core.IO
       }
     }
 
-    private T GetNode<T>(string key) where T : BinaryConfigNode => this.GetNode<T>(new DictionaryKey(key));
+    private T GetNode<T>(string key) where T : BinaryConfigNode => GetNode<T>(new DictionaryKey(key));
 
     private T GetNode<T>(DictionaryKey key) where T : BinaryConfigNode
     {
-      foreach (BinaryConfigNode child in this.CurrentTable.Children)
+      foreach (BinaryConfigNode child in CurrentTable.Children)
       {
         if (key == child.Key)
           return (T) child;
@@ -257,17 +251,17 @@ namespace Essence.Core.IO
 
     private T GetNodeAt<T>(int index) where T : BinaryConfigNode
     {
-      BinaryConfigTableNodeBase currentTable = this.CurrentTable;
+      BinaryConfigTableNodeBase currentTable = CurrentTable;
       if (index >= 0 && index < currentTable.Children.Count)
         return (T) currentTable.Children[index];
       throw new ArgumentOutOfRangeException(nameof (index));
     }
 
-    private bool TryGetNode<T>(string key, out T node) where T : BinaryConfigNode => this.TryGetNode<T>(new DictionaryKey(key), out node);
+    private bool TryGetNode<T>(string key, out T node) where T : BinaryConfigNode => TryGetNode<T>(new DictionaryKey(key), out node);
 
     private bool TryGetNode<T>(DictionaryKey key, out T node) where T : BinaryConfigNode
     {
-      foreach (BinaryConfigNode child in this.CurrentTable.Children)
+      foreach (BinaryConfigNode child in CurrentTable.Children)
       {
         if (key == child.Key)
         {
@@ -285,7 +279,7 @@ namespace Essence.Core.IO
 
     private bool TryGetNodeAt<T>(int index, out T node) where T : BinaryConfigNode
     {
-      BinaryConfigTableNodeBase currentTable = this.CurrentTable;
+      BinaryConfigTableNodeBase currentTable = CurrentTable;
       if (index >= 0 && index < currentTable.Children.Count && currentTable.Children[index] is T child)
       {
         node = child;

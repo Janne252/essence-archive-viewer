@@ -27,19 +27,19 @@ namespace ArchiveViewer
 		// Token: 0x060000A3 RID: 163 RVA: 0x00003E2C File Offset: 0x0000202C
 		public MainWindow()
 		{
-			this.Archives = new ObservableCollection<Archive>();
-			this.Items = new ObservableCollection<INode>();
-			this.InitializeComponent();
-			this.windowSettingsRestorer = new WindowSettingsRestorer(this, App.Settings.MainWindow, new Size(1024.0, 704.0), new Size(0.0, 0.0));
-			this.windowSettingsRestorer.Restore();
-			this.currentArchive = (ObjectDataProvider)base.FindResource("CurrentArchive");
-			this.currentNode = (ObjectDataProvider)base.FindResource("CurrentNode");
-			this.openFileDialog = new Microsoft.Win32.OpenFileDialog();
-			this.openFileDialog.Filter = "Archive File (*.sga)|*.sga";
-			this.openFileDialog.Multiselect = true;
-			this.saveFileDialog = new Microsoft.Win32.SaveFileDialog();
-			this.folderBrowserDialog = new FolderBrowserDialog();
-			this.folderBrowserDialog.ShowNewFolderButton = true;
+			Archives = new ObservableCollection<Archive>();
+			Items = new ObservableCollection<INode>();
+			InitializeComponent();
+			windowSettingsRestorer = new WindowSettingsRestorer(this, App.Settings.MainWindow, new Size(1024.0, 704.0), new Size(0.0, 0.0));
+			windowSettingsRestorer.Restore();
+			currentArchive = (ObjectDataProvider)FindResource("CurrentArchive");
+			currentNode = (ObjectDataProvider)FindResource("CurrentNode");
+			openFileDialog = new Microsoft.Win32.OpenFileDialog();
+			openFileDialog.Filter = "Archive File (*.sga)|*.sga";
+			openFileDialog.Multiselect = true;
+			saveFileDialog = new Microsoft.Win32.SaveFileDialog();
+			folderBrowserDialog = new FolderBrowserDialog();
+			folderBrowserDialog.ShowNewFolderButton = true;
 		}
 
 		// Token: 0x17000027 RID: 39
@@ -66,24 +66,24 @@ namespace ArchiveViewer
 		// Token: 0x060000A9 RID: 169 RVA: 0x00004058 File Offset: 0x00002258
 		private void setObjectInstances(INode node)
 		{
-			if (!object.ReferenceEquals(this.currentArchive.ObjectInstance, node.Archive))
+			if (!ReferenceEquals(currentArchive.ObjectInstance, node.Archive))
 			{
-				this.currentArchive.ObjectInstance = node.Archive;
-				this.currentArchive.Refresh();
+				currentArchive.ObjectInstance = node.Archive;
+				currentArchive.Refresh();
 			}
 			if (node.Children != null)
 			{
-				if (!object.ReferenceEquals(this.currentNode.ObjectInstance, node))
+				if (!ReferenceEquals(currentNode.ObjectInstance, node))
 				{
-					this.currentNode.ObjectInstance = node;
-					this.currentNode.Refresh();
+					currentNode.ObjectInstance = node;
+					currentNode.Refresh();
 					return;
 				}
 			}
-			else if (node.Parent != null && !object.ReferenceEquals(this.currentNode.ObjectInstance, node.Parent))
+			else if (node.Parent != null && !ReferenceEquals(currentNode.ObjectInstance, node.Parent))
 			{
-				this.currentNode.ObjectInstance = node.Parent;
-				this.currentNode.Refresh();
+				currentNode.ObjectInstance = node.Parent;
+				currentNode.Refresh();
 			}
 		}
 
@@ -92,12 +92,12 @@ namespace ArchiveViewer
 		{
 			if (node != null)
 			{
-				bool flag = this.currentNode.ObjectInstance == null;
-				this.setObjectInstances(node);
+				bool flag = currentNode.ObjectInstance == null;
+				setObjectInstances(node);
 				if (node.Children != null || flag)
 				{
-					ItemsControl itemsControl = this.Tree;
-					foreach (INode node2 in MainWindow.parents(node).Reverse<INode>())
+					ItemsControl itemsControl = Tree;
+					foreach (INode node2 in parents(node).Reverse<INode>())
 					{
 						TreeViewItem treeViewItem = itemsControl.ItemContainerGenerator.ContainerFromItem(node2) as TreeViewItem;
 						if (treeViewItem == null)
@@ -107,11 +107,11 @@ namespace ArchiveViewer
 						treeViewItem.IsExpanded = true;
 						if (treeViewItem.ItemContainerGenerator.Status != GeneratorStatus.ContainersGenerated)
 						{
-							this.Tree.Dispatcher.Invoke(new Action(delegate()
+							Tree.Dispatcher.Invoke(new Action(delegate()
 							{
 							}), DispatcherPriority.Render, new object[0]);
 						}
-						if (object.ReferenceEquals(node2, node))
+						if (ReferenceEquals(node2, node))
 						{
 							treeViewItem.IsSelected = true;
 							treeViewItem.BringIntoView();
@@ -129,13 +129,13 @@ namespace ArchiveViewer
 		// Token: 0x060000AB RID: 171 RVA: 0x00004214 File Offset: 0x00002414
 		private INode getSelectedNode(object source)
 		{
-			if (object.ReferenceEquals(source, this.Tree))
+			if (ReferenceEquals(source, Tree))
 			{
-				return this.Tree.SelectedItem as INode;
+				return Tree.SelectedItem as INode;
 			}
-			if (object.ReferenceEquals(source, this.List) && this.List.SelectedItems.Count == 1)
+			if (ReferenceEquals(source, List) && List.SelectedItems.Count == 1)
 			{
-				return this.List.SelectedItem as INode;
+				return List.SelectedItem as INode;
 			}
 			return null;
 		}
@@ -148,18 +148,18 @@ namespace ArchiveViewer
 				try
 				{
 					string fullName = Path.GetFullPath(text);
-					Archive archive = this.Archives.FirstOrDefault((Archive a) => a.FullName.Equals(fullName, StringComparison.InvariantCultureIgnoreCase));
+					Archive archive = Archives.FirstOrDefault((Archive a) => a.FullName.Equals(fullName, StringComparison.InvariantCultureIgnoreCase));
 					if (archive == null)
 					{
 						archive = new Archive(fullName);
-						this.Archives.Add(archive);
+						Archives.Add(archive);
 					}
-					this.setSelectedNode(archive, true);
+					setSelectedNode(archive, true);
 					App.Settings.AddRecentFile(fullName);
 				}
 				catch (Exception ex)
 				{
-					System.Windows.MessageBox.Show(string.Format("Error opening {0}:{1}{1}{2}", text, Environment.NewLine, ex.Message), base.Title, MessageBoxButton.OK, MessageBoxImage.Hand);
+					System.Windows.MessageBox.Show(string.Format("Error opening {0}:{1}{1}{2}", text, Environment.NewLine, ex.Message), Title, MessageBoxButton.OK, MessageBoxImage.Hand);
 				}
 			}
 		}
@@ -180,14 +180,14 @@ namespace ArchiveViewer
 			}
 			catch (Exception ex)
 			{
-				System.Windows.MessageBox.Show(string.Format("Error executing {1}:{0}{0}{2}", Environment.NewLine, file.Name, ex.Message), base.Title, MessageBoxButton.OK, MessageBoxImage.Hand);
+				System.Windows.MessageBox.Show(string.Format("Error executing {1}:{0}{0}{2}", Environment.NewLine, file.Name, ex.Message), Title, MessageBoxButton.OK, MessageBoxImage.Hand);
 			}
 		}
 
 		// Token: 0x060000AE RID: 174 RVA: 0x00004410 File Offset: 0x00002610
 		private void MainWindow_Loaded(object sender, RoutedEventArgs e)
 		{
-			this.open((from arg in Environment.GetCommandLineArgs().Skip(1)
+			open((from arg in Environment.GetCommandLineArgs().Skip(1)
 			where System.IO.File.Exists(arg)
 			select arg).Distinct<string>());
 		}
@@ -195,8 +195,8 @@ namespace ArchiveViewer
 		// Token: 0x060000AF RID: 175 RVA: 0x0000444C File Offset: 0x0000264C
 		private void File_SubmenuOpened(object sender, RoutedEventArgs e)
 		{
-			this.RecentFiles.Items.Clear();
-			this.RecentFiles.IsEnabled = (App.Settings.RecentFiles.Count > 0);
+			RecentFiles.Items.Clear();
+			RecentFiles.IsEnabled = (App.Settings.RecentFiles.Count > 0);
 			foreach (string text in App.Settings.RecentFiles)
 			{
 				System.Windows.Controls.MenuItem menuItem = new System.Windows.Controls.MenuItem
@@ -204,17 +204,17 @@ namespace ArchiveViewer
 					Header = text,
 					Tag = text
 				};
-				menuItem.Click += this.OpenRecent_Click;
-				this.RecentFiles.Items.Add(menuItem);
+				menuItem.Click += OpenRecent_Click;
+				RecentFiles.Items.Add(menuItem);
 			}
 		}
 
 		// Token: 0x060000B0 RID: 176 RVA: 0x00004500 File Offset: 0x00002700
 		private void Open_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (this.openFileDialog.ShowDialog() ?? false)
+			if (openFileDialog.ShowDialog() ?? false)
 			{
-				this.open(this.openFileDialog.FileNames);
+				open(openFileDialog.FileNames);
 			}
 		}
 
@@ -224,13 +224,13 @@ namespace ArchiveViewer
 			string text = (string)((System.Windows.Controls.MenuItem)sender).Tag;
 			if (System.IO.File.Exists(text))
 			{
-				this.open(new string[]
+				open(new string[]
 				{
 					text
 				});
 				return;
 			}
-			if (System.Windows.MessageBox.Show(this, string.Format("{0} not found. Remove from list?", text), base.Title, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+			if (System.Windows.MessageBox.Show(this, string.Format("{0} not found. Remove from list?", text), Title, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
 			{
 				App.Settings.RemoveRecentFile(text);
 			}
@@ -239,16 +239,16 @@ namespace ArchiveViewer
 		// Token: 0x060000B2 RID: 178 RVA: 0x000045A1 File Offset: 0x000027A1
 		private void Close_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.CanExecute = (this.currentArchive.ObjectInstance != null);
+			e.CanExecute = (currentArchive.ObjectInstance != null);
 		}
 
 		// Token: 0x060000B3 RID: 179 RVA: 0x000045BC File Offset: 0x000027BC
 		private void Close_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			Archive archive = this.currentArchive.ObjectInstance as Archive;
+			Archive archive = currentArchive.ObjectInstance as Archive;
 			if (archive != null)
 			{
-				this.Archives.Remove(archive);
+				Archives.Remove(archive);
 				archive.Dispose();
 			}
 		}
@@ -256,14 +256,14 @@ namespace ArchiveViewer
 		// Token: 0x060000B4 RID: 180 RVA: 0x000045F0 File Offset: 0x000027F0
 		private void CloseAll_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.CanExecute = (this.Archives.Count > 0);
+			e.CanExecute = (Archives.Count > 0);
 		}
 
 		// Token: 0x060000B5 RID: 181 RVA: 0x00004608 File Offset: 0x00002808
 		private void CloseAll_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			Archive[] array = this.Archives.ToArray<Archive>();
-			this.Archives.Clear();
+			Archive[] array = Archives.ToArray<Archive>();
+			Archives.Clear();
 			foreach (Archive archive in array)
 			{
 				archive.Dispose();
@@ -273,13 +273,13 @@ namespace ArchiveViewer
 		// Token: 0x060000B6 RID: 182 RVA: 0x00004646 File Offset: 0x00002846
 		private void Exit_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			base.Close();
+			Close();
 		}
 
 		// Token: 0x060000B7 RID: 183 RVA: 0x00004650 File Offset: 0x00002850
 		private void Find_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (new FindWindow(this.options)
+			if (new FindWindow(options)
 			{
 				Owner = this
 			}.ShowDialog() ?? false)
@@ -287,22 +287,22 @@ namespace ArchiveViewer
 				Func<INode, bool> predicate;
 				try
 				{
-					predicate = this.options.GetPredicate();
+					predicate = options.GetPredicate();
 				}
 				catch (Exception ex)
 				{
-					System.Windows.MessageBox.Show(string.Format("Error parsing what:{0}{0}{1}", Environment.NewLine, ex.Message), base.Title, MessageBoxButton.OK, MessageBoxImage.Hand);
+					System.Windows.MessageBox.Show(string.Format("Error parsing what:{0}{0}{1}", Environment.NewLine, ex.Message), Title, MessageBoxButton.OK, MessageBoxImage.Hand);
 					return;
 				}
-				this.Items.Clear();
-				foreach (Archive node in this.Archives)
+				Items.Clear();
+				foreach (Archive node in Archives)
 				{
-					this.find(node, predicate);
+					find(node, predicate);
 				}
-				this.currentArchive.ObjectInstance = null;
-				this.currentArchive.Refresh();
-				this.currentNode.ObjectInstance = null;
-				this.currentNode.Refresh();
+				currentArchive.ObjectInstance = null;
+				currentArchive.Refresh();
+				currentNode.ObjectInstance = null;
+				currentNode.Refresh();
 			}
 		}
 
@@ -311,13 +311,13 @@ namespace ArchiveViewer
 		{
 			if (predicate(node))
 			{
-				this.Items.Add(node);
+				Items.Add(node);
 			}
 			if (node.Children != null)
 			{
 				foreach (INode node2 in node.Children)
 				{
-					this.find(node2, predicate);
+					find(node2, predicate);
 				}
 			}
 		}
@@ -334,18 +334,18 @@ namespace ArchiveViewer
 		// Token: 0x060000BA RID: 186 RVA: 0x000047DD File Offset: 0x000029DD
 		private void SelectAll_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			this.List.SelectAll();
+			List.SelectAll();
 		}
 
 		// Token: 0x060000BB RID: 187 RVA: 0x000047EC File Offset: 0x000029EC
 		private void BrowseUp_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (this.currentNode != null)
+			if (currentNode != null)
 			{
-				INode node = this.currentNode.ObjectInstance as INode;
+				INode node = currentNode.ObjectInstance as INode;
 				if (node != null && node.Parent != null)
 				{
-					this.setSelectedNode(node.Parent, true);
+					setSelectedNode(node.Parent, true);
 				}
 			}
 		}
@@ -353,40 +353,40 @@ namespace ArchiveViewer
 		// Token: 0x060000BC RID: 188 RVA: 0x0000482A File Offset: 0x00002A2A
 		private void Node_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.CanExecute = (this.getSelectedNode(e.Source) != null);
+			e.CanExecute = (getSelectedNode(e.Source) != null);
 		}
 
 		// Token: 0x060000BD RID: 189 RVA: 0x00004844 File Offset: 0x00002A44
 		private void List_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.CanExecute = (this.List.SelectedItem is INode);
+			e.CanExecute = (List.SelectedItem is INode);
 		}
 
 		// Token: 0x060000BE RID: 190 RVA: 0x00004860 File Offset: 0x00002A60
 		private void Extract_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			INode selectedNode = this.getSelectedNode(e.Source);
+			INode selectedNode = getSelectedNode(e.Source);
 			if (selectedNode != null)
 			{
                 Essence.Core.IO.Archive.File file = selectedNode as Essence.Core.IO.Archive.File;
 				if (file != null)
 				{
-					this.saveFileDialog.Filter = ((!string.IsNullOrWhiteSpace(file.Extension)) ? string.Format("{0} File (*.{1})|*.{1}", file.Extension.ToUpperInvariant(), file.Extension.ToLowerInvariant()) : "All Files|*");
-					this.saveFileDialog.FileName = ((!string.IsNullOrEmpty(this.extractPath)) ? Path.Combine(this.extractPath, selectedNode.Name) : selectedNode.Name);
-					if (!(this.saveFileDialog.ShowDialog() ?? false))
+					saveFileDialog.Filter = ((!string.IsNullOrWhiteSpace(file.Extension)) ? string.Format("{0} File (*.{1})|*.{1}", file.Extension.ToUpperInvariant(), file.Extension.ToLowerInvariant()) : "All Files|*");
+					saveFileDialog.FileName = ((!string.IsNullOrEmpty(extractPath)) ? Path.Combine(extractPath, selectedNode.Name) : selectedNode.Name);
+					if (!(saveFileDialog.ShowDialog() ?? false))
 					{
 						return;
 					}
 					try
 					{
-						this.extractPath = Path.GetDirectoryName(this.saveFileDialog.FileName);
+						extractPath = Path.GetDirectoryName(saveFileDialog.FileName);
 					}
 					catch (Exception)
 					{
 					}
 					try
 					{
-						System.IO.File.WriteAllBytes(this.saveFileDialog.FileName, file.GetData());
+						System.IO.File.WriteAllBytes(saveFileDialog.FileName, file.GetData());
 						return;
 					}
 					catch (Exception ex)
@@ -395,21 +395,21 @@ namespace ArchiveViewer
 						{
 							Environment.NewLine,
 							file.Name,
-							this.saveFileDialog.FileName,
+							saveFileDialog.FileName,
 							ex.Message
-						}), base.Title, MessageBoxButton.OK, MessageBoxImage.Hand);
+						}), Title, MessageBoxButton.OK, MessageBoxImage.Hand);
 						return;
 					}
 				}
-				this.folderBrowserDialog.Description = string.Format("Extract {0} to:", selectedNode.Name);
-				if (!string.IsNullOrEmpty(this.extractPath))
+				folderBrowserDialog.Description = string.Format("Extract {0} to:", selectedNode.Name);
+				if (!string.IsNullOrEmpty(extractPath))
 				{
-					this.folderBrowserDialog.SelectedPath = this.extractPath;
+					folderBrowserDialog.SelectedPath = extractPath;
 				}
-				if (this.folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+				if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
 				{
-					this.extractPath = this.folderBrowserDialog.SelectedPath;
-					new ProgressWindow(selectedNode, this.extractPath)
+					extractPath = folderBrowserDialog.SelectedPath;
+					new ProgressWindow(selectedNode, extractPath)
 					{
 						Owner = this
 					}.ShowDialog();
@@ -420,7 +420,7 @@ namespace ArchiveViewer
 		// Token: 0x060000BF RID: 191 RVA: 0x00004A3C File Offset: 0x00002C3C
 		private void Copy_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			INode selectedNode = this.getSelectedNode(e.Source);
+			INode selectedNode = getSelectedNode(e.Source);
 			if (selectedNode != null)
 			{
 				System.Windows.Clipboard.SetData(System.Windows.DataFormats.Text, selectedNode.FullName);
@@ -430,17 +430,17 @@ namespace ArchiveViewer
 		// Token: 0x060000C0 RID: 192 RVA: 0x00004A6C File Offset: 0x00002C6C
 		private void OpenFileLocation_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			INode node = this.List.SelectedItem as INode;
+			INode node = List.SelectedItem as INode;
 			if (node != null)
 			{
-				this.setSelectedNode(node, false);
+				setSelectedNode(node, false);
 			}
 		}
 
 		// Token: 0x060000C1 RID: 193 RVA: 0x00004A98 File Offset: 0x00002C98
 		private void Properties_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			INode selectedNode = this.getSelectedNode(e.Source);
+			INode selectedNode = getSelectedNode(e.Source);
 			if (selectedNode != null)
 			{
 				new PropertiesWindow(selectedNode)
@@ -466,27 +466,27 @@ namespace ArchiveViewer
 			INode node = e.NewValue as INode;
 			if (node != null)
 			{
-				this.setObjectInstances(node);
+				setObjectInstances(node);
 				if (node.Children == null)
 				{
 					return;
 				}
-				this.Items.Clear();
+				Items.Clear();
 				using (IEnumerator<INode> enumerator = node.Children.GetEnumerator())
 				{
 					while (enumerator.MoveNext())
 					{
 						INode item = enumerator.Current;
-						this.Items.Add(item);
+						Items.Add(item);
 					}
 					return;
 				}
 			}
-			this.currentArchive.ObjectInstance = null;
-			this.currentArchive.Refresh();
-			this.currentNode.ObjectInstance = null;
-			this.currentNode.Refresh();
-			this.Items.Clear();
+			currentArchive.ObjectInstance = null;
+			currentArchive.Refresh();
+			currentNode.ObjectInstance = null;
+			currentNode.Refresh();
+			Items.Clear();
 		}
 
 		// Token: 0x060000C4 RID: 196 RVA: 0x00004BA0 File Offset: 0x00002DA0
@@ -494,10 +494,10 @@ namespace ArchiveViewer
 		{
 			if (e.ChangedButton == MouseButton.Left)
 			{
-                Essence.Core.IO.Archive.File file = this.Tree.SelectedItem as Essence.Core.IO.Archive.File;
+                Essence.Core.IO.Archive.File file = Tree.SelectedItem as Essence.Core.IO.Archive.File;
 				if (file != null)
 				{
-					this.execute(file);
+					execute(file);
 				}
 			}
 		}
@@ -507,16 +507,16 @@ namespace ArchiveViewer
 		{
 			if (e.ChangedButton == MouseButton.Left)
 			{
-				INode node = this.List.SelectedItem as INode;
+				INode node = List.SelectedItem as INode;
 				if (node != null)
 				{
                     Essence.Core.IO.Archive.File file = node as Essence.Core.IO.Archive.File;
 					if (file != null)
 					{
-						this.execute(file);
+						execute(file);
 						return;
 					}
-					this.setSelectedNode(node, false);
+					setSelectedNode(node, false);
 				}
 			}
 		}
@@ -524,15 +524,15 @@ namespace ArchiveViewer
 		// Token: 0x060000C6 RID: 198 RVA: 0x00004C14 File Offset: 0x00002E14
 		private void FileDrag_PreviewMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
 		{
-			if (this.dragStart != null && this.dragItem != null && e.LeftButton == MouseButtonState.Pressed)
+			if (dragStart != null && dragItem != null && e.LeftButton == MouseButtonState.Pressed)
 			{
-				Vector vector = this.dragStart.Value - e.GetPosition(null);
+				Vector vector = dragStart.Value - e.GetPosition(null);
 				if (Math.Abs(vector.X) > SystemParameters.MinimumHorizontalDragDistance || Math.Abs(vector.Y) > SystemParameters.MinimumVerticalDragDistance)
 				{
-					ItemsControl itemsControl = ItemsControl.ItemsControlFromItemContainer(this.dragItem);
+					ItemsControl itemsControl = ItemsControl.ItemsControlFromItemContainer(dragItem);
 					if (itemsControl != null)
 					{
-						INode node = itemsControl.ItemContainerGenerator.ItemFromContainer(this.dragItem) as INode;
+						INode node = itemsControl.ItemContainerGenerator.ItemFromContainer(dragItem) as INode;
 						if (node != null)
 						{
                             Essence.Core.IO.Archive.File file = node as Essence.Core.IO.Archive.File;
@@ -542,7 +542,7 @@ namespace ArchiveViewer
 								try
 								{
 									System.IO.File.WriteAllBytes(text, file.GetData());
-									DragDrop.DoDragDrop(this.dragItem, new System.Windows.DataObject(System.Windows.DataFormats.FileDrop, new string[]
+									DragDrop.DoDragDrop(dragItem, new System.Windows.DataObject(System.Windows.DataFormats.FileDrop, new string[]
 									{
 										text
 									}), System.Windows.DragDropEffects.Copy);
@@ -555,7 +555,7 @@ namespace ArchiveViewer
 										file.Name,
 										text,
 										ex.Message
-									}), base.Title, MessageBoxButton.OK, MessageBoxImage.Hand);
+									}), Title, MessageBoxButton.OK, MessageBoxImage.Hand);
 								}
 							}
 						}
@@ -575,19 +575,19 @@ namespace ArchiveViewer
 			}
 			if (dependencyObject != null)
 			{
-				this.dragStart = new Point?(e.GetPosition(null));
-				this.dragItem = dependencyObject;
+				dragStart = new Point?(e.GetPosition(null));
+				dragItem = dependencyObject;
 				return;
 			}
-			this.dragStart = null;
-			this.dragItem = null;
+			dragStart = null;
+			dragItem = null;
 		}
 
 		// Token: 0x060000C8 RID: 200 RVA: 0x00004DDB File Offset: 0x00002FDB
 		private void FileDrag_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
 		{
-			this.dragStart = null;
-			this.dragItem = null;
+			dragStart = null;
+			dragItem = null;
 		}
 
 		// Token: 0x060000C9 RID: 201 RVA: 0x00004DF0 File Offset: 0x00002FF0
@@ -609,7 +609,7 @@ namespace ArchiveViewer
 				string[] array = e.Data.GetData(System.Windows.DataFormats.FileDrop, true) as string[];
 				if (array != null)
 				{
-					this.open(array);
+					open(array);
 				}
 			}
 		}
@@ -625,8 +625,8 @@ namespace ArchiveViewer
 				return;
 			}
 			EventSetter eventSetter = new EventSetter();
-			eventSetter.Event = UIElement.PreviewMouseRightButtonDownEvent;
-			eventSetter.Handler = new MouseButtonEventHandler(this.TreeViewItem_PreviewMouseDown);
+			eventSetter.Event = PreviewMouseRightButtonDownEvent;
+			eventSetter.Handler = new MouseButtonEventHandler(TreeViewItem_PreviewMouseDown);
 			((Style)target).Setters.Add(eventSetter);
 		}
 

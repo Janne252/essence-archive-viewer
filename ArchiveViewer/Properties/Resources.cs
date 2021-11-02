@@ -26,12 +26,12 @@ namespace ArchiveViewer.Properties
 		{
 			get
 			{
-				if (Resources.resourceMan == null)
+				if (resourceMan == null)
 				{
 					ResourceManager resourceManager = new ResourceManager("ArchiveViewer.Properties.Resources", typeof(Resources).Assembly);
-					Resources.resourceMan = resourceManager;
+					resourceMan = resourceManager;
 				}
-				return Resources.resourceMan;
+				return resourceMan;
 			}
 		}
 
@@ -43,11 +43,11 @@ namespace ArchiveViewer.Properties
 		{
 			get
 			{
-				return Resources.resourceCulture;
+				return resourceCulture;
 			}
 			set
 			{
-				Resources.resourceCulture = value;
+				resourceCulture = value;
 			}
 		}
 

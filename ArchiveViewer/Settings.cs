@@ -15,8 +15,8 @@ namespace ArchiveViewer
 		// Token: 0x06000058 RID: 88 RVA: 0x00002E8A File Offset: 0x0000108A
 		public Settings()
 		{
-			this.mainWindow = new WindowSettings();
-			this.validate();
+			mainWindow = new WindowSettings();
+			validate();
 		}
 
 		// Token: 0x17000019 RID: 25
@@ -25,7 +25,7 @@ namespace ArchiveViewer
 		{
 			get
 			{
-				return this.mainWindow;
+				return mainWindow;
 			}
 		}
 
@@ -35,7 +35,7 @@ namespace ArchiveViewer
 		{
 			get
 			{
-				return this.recentFiles;
+				return recentFiles;
 			}
 		}
 
@@ -47,7 +47,7 @@ namespace ArchiveViewer
 		// Token: 0x0600005D RID: 93 RVA: 0x00002F30 File Offset: 0x00001130
 		private void notifyPropertyChanged(params string[] propertyNames)
 		{
-			PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+			PropertyChangedEventHandler propertyChanged = PropertyChanged;
 			if (propertyChanged != null)
 			{
 				foreach (string propertyName in propertyNames)
@@ -60,18 +60,18 @@ namespace ArchiveViewer
 		// Token: 0x0600005E RID: 94 RVA: 0x00002F68 File Offset: 0x00001168
 		private void validate()
 		{
-			if (this.mainWindow == null)
+			if (mainWindow == null)
 			{
-				this.mainWindow = new WindowSettings();
+				mainWindow = new WindowSettings();
 			}
-			if (this.recentFiles == null)
+			if (recentFiles == null)
 			{
-				this.recentFiles = new ObservableCollection<string>();
+				recentFiles = new ObservableCollection<string>();
 				return;
 			}
-			while (this.recentFiles.Count > 10)
+			while (recentFiles.Count > 10)
 			{
-				this.recentFiles.RemoveAt(this.recentFiles.Count - 1);
+				recentFiles.RemoveAt(recentFiles.Count - 1);
 			}
 		}
 
@@ -79,7 +79,7 @@ namespace ArchiveViewer
 		[OnDeserialized]
 		private void onDeserialized(StreamingContext context)
 		{
-			this.validate();
+			validate();
 		}
 
 		// Token: 0x06000060 RID: 96 RVA: 0x00002FCC File Offset: 0x000011CC
@@ -120,7 +120,7 @@ namespace ArchiveViewer
 		// Token: 0x06000061 RID: 97 RVA: 0x00003064 File Offset: 0x00001264
 		public static string GetSettingsPath(bool create)
 		{
-			string rootPath = Settings.GetRootPath(create);
+			string rootPath = GetRootPath(create);
 			if (rootPath == null)
 			{
 				return null;
@@ -131,7 +131,7 @@ namespace ArchiveViewer
 		// Token: 0x06000062 RID: 98 RVA: 0x00003088 File Offset: 0x00001288
 		public static Settings Load()
 		{
-			string settingsPath = Settings.GetSettingsPath(false);
+			string settingsPath = GetSettingsPath(false);
 			if (settingsPath != null)
 			{
 				try
@@ -164,7 +164,7 @@ namespace ArchiveViewer
 		// Token: 0x06000063 RID: 99 RVA: 0x00003148 File Offset: 0x00001348
 		public void Save()
 		{
-			string settingsPath = Settings.GetSettingsPath(true);
+			string settingsPath = GetSettingsPath(true);
 			if (settingsPath != null)
 			{
 				try
@@ -195,9 +195,9 @@ namespace ArchiveViewer
 		// Token: 0x06000064 RID: 100 RVA: 0x00003204 File Offset: 0x00001404
 		private int findRecentFile(string fileName)
 		{
-			for (int i = 0; i < this.recentFiles.Count; i++)
+			for (int i = 0; i < recentFiles.Count; i++)
 			{
-				if (fileName.Equals(this.recentFiles[i], StringComparison.CurrentCultureIgnoreCase))
+				if (fileName.Equals(recentFiles[i], StringComparison.CurrentCultureIgnoreCase))
 				{
 					return i;
 				}
@@ -208,26 +208,26 @@ namespace ArchiveViewer
 		// Token: 0x06000065 RID: 101 RVA: 0x00003240 File Offset: 0x00001440
 		public void AddRecentFile(string fileName)
 		{
-			int num = this.findRecentFile(fileName);
+			int num = findRecentFile(fileName);
 			if (num != -1)
 			{
-				this.recentFiles.Move(num, 0);
+				recentFiles.Move(num, 0);
 				return;
 			}
-			this.recentFiles.Insert(0, fileName);
-			while (this.recentFiles.Count > 10)
+			recentFiles.Insert(0, fileName);
+			while (recentFiles.Count > 10)
 			{
-				this.recentFiles.RemoveAt(this.recentFiles.Count - 1);
+				recentFiles.RemoveAt(recentFiles.Count - 1);
 			}
 		}
 
 		// Token: 0x06000066 RID: 102 RVA: 0x000032A0 File Offset: 0x000014A0
 		public void RemoveRecentFile(string fileName)
 		{
-			int num = this.findRecentFile(fileName);
+			int num = findRecentFile(fileName);
 			if (num != -1)
 			{
-				this.recentFiles.RemoveAt(num);
+				recentFiles.RemoveAt(num);
 			}
 		}
 

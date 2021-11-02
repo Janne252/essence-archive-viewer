@@ -1,10 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: Essence.Core.IO.BinaryConfigTableNodeBase
-// Assembly: Essence.Core, Version=4.0.0.30534, Culture=neutral, PublicKeyToken=null
-// MVID: EADC86D6-B806-4644-B499-D7F487995E73
-// Assembly location: C:\Users\anon\Documents\GitHub\coh3-archive-viewer\CoH3.ArchiveViewer\bin\Release\AOE4\Essence.Core.dll
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 
 namespace Essence.Core.IO
@@ -29,7 +23,7 @@ namespace Essence.Core.IO
       List<BinaryConfigNode> children)
     {
       uint length = binaryReader.ReadUInt32();
-      BinaryConfigTableNodeBase.NodeHeader[] nodeHeaderArray = new BinaryConfigTableNodeBase.NodeHeader[(int) length];
+      NodeHeader[] nodeHeaderArray = new NodeHeader[(int) length];
       for (uint index = 0; index < length; ++index)
       {
         nodeHeaderArray[(int) index].Key = binaryReader.ReadUInt64();
@@ -38,7 +32,7 @@ namespace Essence.Core.IO
       }
       children.Capacity = (int) length;
       long position = binaryReader.BaseStream.Position;
-      foreach (BinaryConfigTableNodeBase.NodeHeader nodeHeader in nodeHeaderArray)
+      foreach (NodeHeader nodeHeader in nodeHeaderArray)
       {
         DictionaryKey key = keyResolver(nodeHeader.Key);
         binaryReader.BaseStream.Seek(position + (long) nodeHeader.Offset, SeekOrigin.Begin);
@@ -73,25 +67,25 @@ namespace Essence.Core.IO
 
     protected internal override long Write(BinaryWriter binaryWriter)
     {
-      BinaryConfigNode.WritePadding(binaryWriter, 4);
+      WritePadding(binaryWriter, 4);
       long position1 = binaryWriter.BaseStream.Position;
-      binaryWriter.Write((uint) this.Children.Count);
-      if (this.Children.Count > 0)
+      binaryWriter.Write((uint) Children.Count);
+      if (Children.Count > 0)
       {
-        BinaryConfigTableNodeBase.NodeFixup[] nodeFixupArray = new BinaryConfigTableNodeBase.NodeFixup[this.Children.Count];
+        NodeFixup[] nodeFixupArray = new NodeFixup[Children.Count];
         int num1 = 0;
-        foreach (BinaryConfigNode orderedChild in this.GetOrderedChildren())
+        foreach (BinaryConfigNode orderedChild in GetOrderedChildren())
         {
           binaryWriter.Write(orderedChild.Key.Hash);
           binaryWriter.Write(orderedChild.GetNodeType());
-          nodeFixupArray[num1++] = new BinaryConfigTableNodeBase.NodeFixup(orderedChild, binaryWriter.BaseStream.Position);
+          nodeFixupArray[num1++] = new NodeFixup(orderedChild, binaryWriter.BaseStream.Position);
           binaryWriter.Write(0U);
         }
         long position2 = binaryWriter.BaseStream.Position;
         for (int index = 0; index < nodeFixupArray.Length; ++index)
         {
           long num2 = nodeFixupArray[index].Node.Write(binaryWriter);
-          nodeFixupArray[index] = new BinaryConfigTableNodeBase.NodeFixup(nodeFixupArray[index], (uint) (num2 - position2));
+          nodeFixupArray[index] = new NodeFixup(nodeFixupArray[index], (uint) (num2 - position2));
         }
         long position3 = binaryWriter.BaseStream.Position;
         for (int index = 0; index < nodeFixupArray.Length; ++index)
@@ -119,16 +113,16 @@ namespace Essence.Core.IO
     {
       public NodeFixup(BinaryConfigNode node, long offsetPosition)
       {
-        this.Node = node;
-        this.OffsetPosition = offsetPosition;
-        this.Offset = 0U;
+        Node = node;
+        OffsetPosition = offsetPosition;
+        Offset = 0U;
       }
 
-      public NodeFixup(BinaryConfigTableNodeBase.NodeFixup nodeFixup, uint offset)
+      public NodeFixup(NodeFixup nodeFixup, uint offset)
       {
-        this.Node = nodeFixup.Node;
-        this.OffsetPosition = nodeFixup.OffsetPosition;
-        this.Offset = offset;
+        Node = nodeFixup.Node;
+        OffsetPosition = nodeFixup.OffsetPosition;
+        Offset = offset;
       }
 
       public BinaryConfigNode Node { get; }

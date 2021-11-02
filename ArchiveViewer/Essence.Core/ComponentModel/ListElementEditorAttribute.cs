@@ -1,10 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: Essence.Core.ComponentModel.ListElementEditorAttribute
-// Assembly: Essence.Core, Version=4.0.0.30534, Culture=neutral, PublicKeyToken=null
-// MVID: EADC86D6-B806-4644-B499-D7F487995E73
-// Assembly location: C:\Users\anon\Documents\GitHub\coh3-archive-viewer\CoH3.ArchiveViewer\bin\Release\AOE4\Essence.Core.dll
-
-using System;
+﻿using System;
 
 namespace Essence.Core.ComponentModel
 {
@@ -20,8 +14,8 @@ namespace Essence.Core.ComponentModel
 
     public ListElementEditorAttribute(string editorTypeName, string editorBaseTypeName)
     {
-      this.EditorTypeName = editorTypeName;
-      this.EditorBaseTypeName = editorBaseTypeName;
+      EditorTypeName = editorTypeName;
+      EditorBaseTypeName = editorBaseTypeName;
     }
 
     public ListElementEditorAttribute(string editorTypeName, Type baseType)
@@ -42,15 +36,15 @@ namespace Essence.Core.ComponentModel
     {
       get
       {
-        if (this.m_typeId == null)
+        if (m_typeId == null)
         {
-          string str = this.EditorBaseTypeName;
+          string str = EditorBaseTypeName;
           int length = str.IndexOf(',');
           if (length != -1)
             str = str.Substring(0, length);
-          this.m_typeId = this.GetType().FullName + str;
+          m_typeId = GetType().FullName + str;
         }
-        return (object) this.m_typeId;
+        return (object) m_typeId;
       }
     }
 
@@ -58,14 +52,14 @@ namespace Essence.Core.ComponentModel
     {
       if (this == obj)
         return true;
-      return obj is ListElementEditorAttribute elementEditorAttribute && elementEditorAttribute.EditorTypeName == this.EditorTypeName && elementEditorAttribute.EditorBaseTypeName == this.EditorBaseTypeName;
+      return obj is ListElementEditorAttribute elementEditorAttribute && elementEditorAttribute.EditorTypeName == EditorTypeName && elementEditorAttribute.EditorBaseTypeName == EditorBaseTypeName;
     }
 
     public override int GetHashCode()
     {
-      string editorTypeName = this.EditorTypeName;
+      string editorTypeName = EditorTypeName;
       int num1 = editorTypeName != null ? editorTypeName.GetHashCode() : 0;
-      string editorBaseTypeName = this.EditorBaseTypeName;
+      string editorBaseTypeName = EditorBaseTypeName;
       int num2 = editorBaseTypeName != null ? editorBaseTypeName.GetHashCode() : 0;
       return num1 ^ num2;
     }

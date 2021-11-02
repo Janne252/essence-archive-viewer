@@ -15,7 +15,7 @@ namespace ArchiveViewer.Converters
 			byte[] array = value as byte[];
 			if (array != null)
 			{
-				return HashConverter.Convert(array, culture);
+				return Convert(array, culture);
 			}
 			return value;
 		}

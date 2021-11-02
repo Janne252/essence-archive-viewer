@@ -1,10 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: Essence.Core.IO.PathUtil
-// Assembly: Essence.Core, Version=4.0.0.30534, Culture=neutral, PublicKeyToken=null
-// MVID: EADC86D6-B806-4644-B499-D7F487995E73
-// Assembly location: C:\Users\anon\Documents\GitHub\coh3-archive-viewer\CoH3.ArchiveViewer\bin\Release\AOE4\Essence.Core.dll
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -24,27 +18,27 @@ namespace Essence.Core.IO
     public const string UNCLongPathPrefix = "\\\\?\\UNC\\";
     private static readonly string s_currentDirectoryWithSuffix = "." + Path.DirectorySeparatorChar.ToString();
 
-    public static string CanonicalizePath(string path) => string.Join(new string(Path.DirectorySeparatorChar, 1), PathUtil.CanonicalizePath(path, true));
+    public static string CanonicalizePath(string path) => string.Join(new string(Path.DirectorySeparatorChar, 1), CanonicalizePath(path, true));
 
     private static IEnumerable<string> CanonicalizePath(
       string path,
       bool preserveTrailingDirectorySeparatorChar)
     {
-      string path1 = PathUtil.NormalizeDirectorySeparators(path);
-      int pathRootLength = PathUtil.GetPathRootLength(path1);
+      string path1 = NormalizeDirectorySeparators(path);
+      int pathRootLength = GetPathRootLength(path1);
       if (pathRootLength == 0)
       {
         path1 = Environment.CurrentDirectory + Path.DirectorySeparatorChar.ToString() + path;
-        pathRootLength = PathUtil.GetPathRootLength(path1);
+        pathRootLength = GetPathRootLength(path1);
       }
       else if (pathRootLength == 1)
       {
         path1 = Path.GetPathRoot(Environment.CurrentDirectory) + path;
-        pathRootLength = PathUtil.GetPathRootLength(path1);
+        pathRootLength = GetPathRootLength(path1);
       }
       if (pathRootLength == 0)
         throw new ApplicationException(string.Format("Unable to canonicalize path \"{0}\"", (object) path));
-      string[] strArray = path1.Substring(pathRootLength).Split(PathUtil.DirectorySeparatorChars);
+      string[] strArray = path1.Substring(pathRootLength).Split(DirectorySeparatorChars);
       Stack<string> source = new Stack<string>(strArray.Length);
       bool flag = preserveTrailingDirectorySeparatorChar && strArray.Length != 0 && strArray[strArray.Length - 1] == "";
       string str1 = path1.Substring(0, pathRootLength);
@@ -70,25 +64,25 @@ namespace Essence.Core.IO
 
     public static string GetLongestCommonPath(string pathA, string pathB)
     {
-      List<string> values = PathUtil.PathsRelatable(pathA, pathB) ? PathUtil.CanonicalizePath(pathA, true).ToList<string>() : throw new InvalidOperationException("There is no common path for paths with different roots");
-      List<string> list = PathUtil.CanonicalizePath(pathB, true).ToList<string>();
+      List<string> values = PathsRelatable(pathA, pathB) ? CanonicalizePath(pathA, true).ToList<string>() : throw new InvalidOperationException("There is no common path for paths with different roots");
+      List<string> list = CanonicalizePath(pathB, true).ToList<string>();
       Stack<string> stringStack = new Stack<string>(Math.Min(values.Count, list.Count));
-      for (int index = 0; index < Math.Min(values.Count, list.Count) && PathUtil.PathComponentsEqual(values[index], list[index]); ++index)
+      for (int index = 0; index < Math.Min(values.Count, list.Count) && PathComponentsEqual(values[index], list[index]); ++index)
         stringStack.Push(values[index]);
       return stringStack.Count == values.Count && stringStack.Count == list.Count ? string.Join(new string(Path.DirectorySeparatorChar, 1), (IEnumerable<string>) values) : string.Join(new string(Path.DirectorySeparatorChar, 1), stringStack.ToArray());
     }
 
     public static bool IsPathWithin(string childPath, string parentPath)
     {
-      if (!PathUtil.PathsRelatable(childPath, parentPath))
+      if (!PathsRelatable(childPath, parentPath))
         return false;
-      List<string> list1 = PathUtil.CanonicalizePath(childPath, true).ToList<string>();
-      List<string> list2 = PathUtil.CanonicalizePath(parentPath, false).ToList<string>();
+      List<string> list1 = CanonicalizePath(childPath, true).ToList<string>();
+      List<string> list2 = CanonicalizePath(parentPath, false).ToList<string>();
       if (list2.Count > list1.Count)
         return false;
       for (int index = 0; index < list2.Count; ++index)
       {
-        if (!PathUtil.PathComponentsEqual(list1[index], list2[index]))
+        if (!PathComponentsEqual(list1[index], list2[index]))
           return false;
       }
       return true;
@@ -96,10 +90,10 @@ namespace Essence.Core.IO
 
     public static string GetPathRelativeTo(string childPath, string parentPath)
     {
-      List<string> stringList1 = PathUtil.PathsRelatable(childPath, parentPath) ? PathUtil.CanonicalizePath(childPath, true).ToList<string>() : throw new InvalidOperationException("Paths with different roots cannot be made relative to each other");
-      List<string> list = PathUtil.CanonicalizePath(parentPath, false).ToList<string>();
+      List<string> stringList1 = PathsRelatable(childPath, parentPath) ? CanonicalizePath(childPath, true).ToList<string>() : throw new InvalidOperationException("Paths with different roots cannot be made relative to each other");
+      List<string> list = CanonicalizePath(parentPath, false).ToList<string>();
       int index1 = 0;
-      while (index1 < stringList1.Count && index1 < list.Count && PathUtil.PathComponentsEqual(stringList1[index1], list[index1]))
+      while (index1 < stringList1.Count && index1 < list.Count && PathComponentsEqual(stringList1[index1], list[index1]))
         ++index1;
       List<string> stringList2 = new List<string>(list.Count - index1 + stringList1.Count - index1);
       for (int index2 = index1; index2 < list.Count; ++index2)
@@ -113,7 +107,7 @@ namespace Essence.Core.IO
     {
       int length = path.Length;
       if (length <= 0)
-        return PathUtil.s_currentDirectoryWithSuffix;
+        return s_currentDirectoryWithSuffix;
       return (int) path[length - 1] != (int) Path.DirectorySeparatorChar && (int) path[length - 1] != (int) Path.AltDirectorySeparatorChar ? path + Path.DirectorySeparatorChar.ToString() : path;
     }
 
@@ -123,7 +117,7 @@ namespace Essence.Core.IO
       for (int index = 0; index < path.Length; ++index)
       {
         char c = path[index];
-        if (PathUtil.IsDirectorySeparator(c) && ((int) c != (int) Path.DirectorySeparatorChar || index > 0 && index + 1 < path.Length && PathUtil.IsDirectorySeparator(path[index + 1])))
+        if (IsDirectorySeparator(c) && ((int) c != (int) Path.DirectorySeparatorChar || index > 0 && index + 1 < path.Length && IsDirectorySeparator(path[index + 1])))
         {
           flag = false;
           break;
@@ -135,9 +129,9 @@ namespace Essence.Core.IO
       for (int index = 0; index < path.Length; ++index)
       {
         char directorySeparatorChar = path[index];
-        if (PathUtil.IsDirectorySeparator(directorySeparatorChar))
+        if (IsDirectorySeparator(directorySeparatorChar))
         {
-          if (index <= 0 || index + 1 >= path.Length || !PathUtil.IsDirectorySeparator(path[index + 1]))
+          if (index <= 0 || index + 1 >= path.Length || !IsDirectorySeparator(path[index + 1]))
             directorySeparatorChar = Path.DirectorySeparatorChar;
           else
             continue;
@@ -147,7 +141,7 @@ namespace Essence.Core.IO
       return stringBuilder.ToString();
     }
 
-    public static bool PathsRelatable(string pathA, string pathB) => PathUtil.PathComponentsEqual(Path.GetPathRoot(Path.IsPathRooted(pathA) ? pathA : Path.GetFullPath(".")), Path.GetPathRoot(Path.IsPathRooted(pathB) ? pathB : Path.GetFullPath(".")));
+    public static bool PathsRelatable(string pathA, string pathB) => PathComponentsEqual(Path.GetPathRoot(Path.IsPathRooted(pathA) ? pathA : Path.GetFullPath(".")), Path.GetPathRoot(Path.IsPathRooted(pathB) ? pathB : Path.GetFullPath(".")));
 
     public static bool PathComponentsEqual(string componentA, string componentB) => string.Equals(componentA, componentB, StringComparison.OrdinalIgnoreCase);
 

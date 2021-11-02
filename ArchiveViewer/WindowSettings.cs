@@ -11,21 +11,21 @@ namespace ArchiveViewer
 		// Token: 0x0600004C RID: 76 RVA: 0x00002DDD File Offset: 0x00000FDD
 		public WindowSettings()
 		{
-			this.Top = 0;
-			this.Left = 0;
-			this.Width = 0;
-			this.Height = 0;
-			this.State = WindowState.Normal;
+			Top = 0;
+			Left = 0;
+			Width = 0;
+			Height = 0;
+			State = WindowState.Normal;
 		}
 
 		// Token: 0x0600004D RID: 77 RVA: 0x00002E08 File Offset: 0x00001008
 		public WindowSettings(int top, int left, int width, int height, WindowState state)
 		{
-			this.Top = top;
-			this.Left = left;
-			this.Width = width;
-			this.Height = height;
-			this.State = state;
+			Top = top;
+			Left = left;
+			Width = width;
+			Height = height;
+			State = state;
 		}
 
 		// Token: 0x17000014 RID: 20
