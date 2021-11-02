@@ -1,5 +1,5 @@
 <Window
-	x:Class="ArchiveViewer.FindWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:system="clr-namespace:System;assembly=mscorlib" xmlns:archiveViewer="clr-namespace:ArchiveViewer"
+	x:Class="EssenceArchiveViewer.FindWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:system="clr-namespace:System;assembly=mscorlib" xmlns:archiveViewer="clr-namespace:EssenceArchiveViewer"
 	Name="ThisWindow"
 	Title="Find"
 	Icon="Icon.ico"

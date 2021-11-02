@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 
-namespace ArchiveViewer
+namespace EssenceArchiveViewer
 {
     internal class WindowSettingsRestorer
 	{

@@ -1,6 +1,6 @@
 ﻿using System.Windows.Input;
 
-namespace ArchiveViewer
+namespace EssenceArchiveViewer
 {
     public static class WindowCommands
 	{

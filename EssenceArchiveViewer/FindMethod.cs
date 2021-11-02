@@ -1,4 +1,4 @@
-﻿namespace ArchiveViewer
+﻿namespace EssenceArchiveViewer
 {
     public enum FindMethod
 	{

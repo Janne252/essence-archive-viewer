@@ -6,7 +6,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Xml;
 
-namespace ArchiveViewer
+namespace EssenceArchiveViewer
 {
     [DataContract]
 	public sealed class Settings : INotifyPropertyChanged

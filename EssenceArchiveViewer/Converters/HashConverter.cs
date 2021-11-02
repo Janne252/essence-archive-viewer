@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Text;
 using System.Windows.Data;
 
-namespace ArchiveViewer.Converters
+namespace EssenceArchiveViewer.Converters
 {
 	[ValueConversion(typeof(byte[]), typeof(string))]
 	public class HashConverter : IValueConverter

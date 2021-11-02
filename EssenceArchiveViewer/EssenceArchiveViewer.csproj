@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{FC918012-5336-416C-868C-56CAF090F8FC}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>ArchiveViewer</RootNamespace>
-    <AssemblyName>ArchiveViewer</AssemblyName>
+    <RootNamespace>EssenceArchiveViewer</RootNamespace>
+    <AssemblyName>EssenceArchiveViewer</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -15,7 +15,8 @@
     <ProjectTypeGuids>{60DC8134-EBA5-43B8-BCC9-BB4BC16C2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>EssenceArchiveViewer.ico</ApplicationIcon>
-    <StartupObject>ArchiveViewer.App</StartupObject>
+    <StartupObject>
+    </StartupObject>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>

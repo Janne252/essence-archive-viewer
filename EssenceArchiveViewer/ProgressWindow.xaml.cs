@@ -7,7 +7,7 @@ using System.Windows.Input;
 using Essence.Core.IO.Archive;
 using File = Essence.Core.IO.Archive.File;
 
-namespace ArchiveViewer
+namespace EssenceArchiveViewer
 {
     public partial class ProgressWindow : Window, INotifyPropertyChanged
 	{

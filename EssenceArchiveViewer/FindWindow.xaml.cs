@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Input;
 using Essence.Core.IO.Archive;
 
-namespace ArchiveViewer
+namespace EssenceArchiveViewer
 {
 	public partial class FindWindow : Window
 	{

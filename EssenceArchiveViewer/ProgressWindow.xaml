@@ -1,11 +1,11 @@
 <Window
-	x:Class="ArchiveViewer.ProgressWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:converters="clr-namespace:ArchiveViewer.Converters"
+	x:Class="EssenceArchiveViewer.ProgressWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:converters="clr-namespace:EssenceArchiveViewer.Converters"
 	Name="ThisWindow"
 	Icon="Icon.ico"
 	Height="192"
 	Width="384"
 	ResizeMode="NoResize"
-	WindowStartupLocation="CenterOwner" xmlns:archiveviewer="clr-namespace:ArchiveViewer"
+	WindowStartupLocation="CenterOwner" xmlns:archiveviewer="clr-namespace:EssenceArchiveViewer"
 	Title="{Binding Path=Name, StringFormat=Extracting {0}..., Mode=OneTime}"
 	DataContext="{Binding ElementName=ThisWindow, Path=Node}"
 	Loaded="ProgressWindow_Loaded">

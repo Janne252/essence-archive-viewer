@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace ArchiveViewer.Converters
+namespace EssenceArchiveViewer.Converters
 {
 	[ValueConversion(typeof(long), typeof(string))]
 	public class LengthConverter : IValueConverter

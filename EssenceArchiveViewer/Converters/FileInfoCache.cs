@@ -8,7 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Essence.Core.IO.Archive;
 
-namespace ArchiveViewer.Converters
+namespace EssenceArchiveViewer.Converters
 {
 	internal class FileInfoCache
 	{

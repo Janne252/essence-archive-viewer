@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Serialization;
 using System.Windows;
 
-namespace ArchiveViewer
+namespace EssenceArchiveViewer
 {
     [DataContract]
 	public sealed class WindowSettings

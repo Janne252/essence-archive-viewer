@@ -19,7 +19,7 @@ using System.Windows.Threading;
 using Essence.Core.IO.Archive;
 using File = Essence.Core.IO.Archive.File;
 
-namespace ArchiveViewer
+namespace EssenceArchiveViewer
 {
 	public partial class MainWindow : Window, IStyleConnector
 	{

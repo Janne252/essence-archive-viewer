@@ -1,4 +1,4 @@
-﻿namespace ArchiveViewer.Converters
+﻿namespace EssenceArchiveViewer.Converters
 {
     public enum FileInfoParameter
 	{

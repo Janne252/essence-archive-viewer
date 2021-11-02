@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows.Data;
 using Essence.Core.IO.Archive;
 
-namespace ArchiveViewer.Converters
+namespace EssenceArchiveViewer.Converters
 {
 	[ValueConversion(typeof(INode), typeof(object))]
 	public class FileInfoConverter : IValueConverter

@@ -1,10 +1,10 @@
 <Window
-	x:Class="ArchiveViewer.MainWindow" 
+	x:Class="EssenceArchiveViewer.MainWindow" 
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
-    xmlns:archiveViewer="clr-namespace:ArchiveViewer" 
-    xmlns:converters="clr-namespace:ArchiveViewer.Converters"
-	Name="ThisWindow"
+    xmlns:converters="clr-namespace:EssenceArchiveViewer.Converters"
+    xmlns:essenceArchiveViewer="clr-namespace:EssenceArchiveViewer"
+    Name="ThisWindow"
 	Title="Essence Archive Viewer"
 	Icon="Icon.ico"
 	Height="704"
@@ -15,11 +15,11 @@
 			Command="Open"
 			Executed="Open_Executed" />
 		<CommandBinding
-			Command="archiveViewer:WindowCommands.Close"
+			Command="essenceArchiveViewer:WindowCommands.Close"
 			CanExecute="Close_CanExecute"
 			Executed="Close_Executed" />
 		<CommandBinding
-			Command="archiveViewer:WindowCommands.CloseAll"
+			Command="essenceArchiveViewer:WindowCommands.CloseAll"
 			CanExecute="CloseAll_CanExecute"
 			Executed="CloseAll_Executed" />
 		<CommandBinding
@@ -35,22 +35,22 @@
 			Command="Help"
 			Executed="About_Executed" />
 		<CommandBinding
-			Command="archiveViewer:WindowCommands.NavUp"
+			Command="essenceArchiveViewer:WindowCommands.NavUp"
 			Executed="BrowseUp_Executed" />
 		<CommandBinding
-			Command="archiveViewer:WindowCommands.Extract"
+			Command="essenceArchiveViewer:WindowCommands.Extract"
 			CanExecute="Node_CanExecute"
 			Executed="Extract_Executed" />
 		<CommandBinding
-			Command="archiveViewer:WindowCommands.CopyPath"
+			Command="essenceArchiveViewer:WindowCommands.CopyPath"
 			CanExecute="Node_CanExecute"
 			Executed="Copy_Executed" />
 		<CommandBinding
-			Command="archiveViewer:WindowCommands.OpenFileLocation"
+			Command="essenceArchiveViewer:WindowCommands.OpenFileLocation"
 			CanExecute="List_CanExecute"
 			Executed="OpenFileLocation_Executed" />
 		<CommandBinding
-			Command="archiveViewer:WindowCommands.Properties"
+			Command="essenceArchiveViewer:WindowCommands.Properties"
 			CanExecute="Node_CanExecute"
 			Executed="Properties_Executed" />
 	</UIElement.CommandBindings>
@@ -90,9 +90,9 @@
 				</MenuItem>
 				<Separator />
 				<MenuItem
-					Command="archiveViewer:WindowCommands.Close" />
+					Command="essenceArchiveViewer:WindowCommands.Close" />
 				<MenuItem
-					Command="archiveViewer:WindowCommands.CloseAll" />
+					Command="essenceArchiveViewer:WindowCommands.CloseAll" />
 				<Separator />
 				<MenuItem
 					Name="RecentFiles"
@@ -143,7 +143,7 @@
 			</Button>
 			<Separator />
 			<Button
-				Command="archiveViewer:WindowCommands.NavUp"
+				Command="essenceArchiveViewer:WindowCommands.NavUp"
 				IsEnabled="{Binding Source={StaticResource CurrentNode}, Converter={StaticResource HasParentConverter}, Mode=OneWay, FallbackValue=false}">
 				<Image
 					Source="Media\NavUp.png"
@@ -302,7 +302,7 @@
 				<FrameworkElement.ContextMenu>
 					<ContextMenu>
 						<MenuItem
-							Command="archiveViewer:WindowCommands.Extract">
+							Command="essenceArchiveViewer:WindowCommands.Extract">
 							<MenuItem.Icon>
 								<Image
 									Source="Media\SaveFile.png"
@@ -312,7 +312,7 @@
 						</MenuItem>
 						<Separator />
 						<MenuItem
-							Command="archiveViewer:WindowCommands.CopyPath">
+							Command="essenceArchiveViewer:WindowCommands.CopyPath">
 							<MenuItem.Icon>
 								<Image
 									Source="Media\Copy.png"
@@ -322,7 +322,7 @@
 						</MenuItem>
 						<Separator />
 						<MenuItem
-							Command="archiveViewer:WindowCommands.Properties">
+							Command="essenceArchiveViewer:WindowCommands.Properties">
 							<MenuItem.Icon>
 								<Image
 									Source="Media\Properties.png"
@@ -397,7 +397,7 @@
 				<FrameworkElement.ContextMenu>
 					<ContextMenu>
 						<MenuItem
-							Command="archiveViewer:WindowCommands.Extract">
+							Command="essenceArchiveViewer:WindowCommands.Extract">
 							<MenuItem.Icon>
 								<Image
 									Source="Media\SaveFile.png"
@@ -407,7 +407,7 @@
 						</MenuItem>
 						<Separator />
 						<MenuItem
-							Command="archiveViewer:WindowCommands.CopyPath">
+							Command="essenceArchiveViewer:WindowCommands.CopyPath">
 							<MenuItem.Icon>
 								<Image
 									Source="Media\Copy.png"
@@ -416,10 +416,10 @@
 							</MenuItem.Icon>
 						</MenuItem>
 						<MenuItem
-							Command="archiveViewer:WindowCommands.OpenFileLocation" />
+							Command="essenceArchiveViewer:WindowCommands.OpenFileLocation" />
 						<Separator />
 						<MenuItem
-							Command="archiveViewer:WindowCommands.Properties">
+							Command="essenceArchiveViewer:WindowCommands.Properties">
 							<MenuItem.Icon>
 								<Image
 									Source="Media\Properties.png"

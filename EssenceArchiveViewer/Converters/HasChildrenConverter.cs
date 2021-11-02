@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Data;
 using Essence.Core.IO.Archive;
 
-namespace ArchiveViewer.Converters
+namespace EssenceArchiveViewer.Converters
 {
 	[ValueConversion(typeof(INode), typeof(Visibility))]
 	public class HasChildrenConverter : IValueConverter

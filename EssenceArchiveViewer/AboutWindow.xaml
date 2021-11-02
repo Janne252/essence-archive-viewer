@@ -1,12 +1,12 @@
 <Window
-	x:Class="ArchiveViewer.AboutWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	x:Class="EssenceArchiveViewer.AboutWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	Name="ThisWindow"
 	Title="About"
 	Icon="Icon.ico"
 	Height="192"
 	Width="304"
 	ResizeMode="NoResize"
-	WindowStartupLocation="CenterOwner" xmlns:archiveviewer="clr-namespace:ArchiveViewer"
+	WindowStartupLocation="CenterOwner" xmlns:archiveviewer="clr-namespace:EssenceArchiveViewer"
 	DataContext="{Binding ElementName=ThisWindow, Path=AssemblyName}">
     <UIElement.CommandBindings>
         <CommandBinding

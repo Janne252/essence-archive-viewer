@@ -5,10 +5,10 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using ArchiveViewer.Converters;
 using Essence.Core.IO.Archive;
+using EssenceArchiveViewer.Converters;
 
-namespace ArchiveViewer
+namespace EssenceArchiveViewer
 {
     public partial class PropertiesWindow : Window
 	{

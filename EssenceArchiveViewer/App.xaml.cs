@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace ArchiveViewer
+namespace EssenceArchiveViewer
 {
 	public partial class App : Application
 	{
