@@ -1,0 +1,277 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{FC918012-5336-416C-868C-56CAF090F8FC}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>ArchiveViewer</RootNamespace>
+    <AssemblyName>ArchiveViewer</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60DC8134-EBA5-43B8-BCC9-BB4BC16C2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>ArchiveViewer.ico</ApplicationIcon>
+    <StartupObject>ArchiveViewer.App</StartupObject>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>7F62EF36D39F862A4871D30F4D66FB16A6B5E5BB</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>CoH3.AchiveViewer_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="mscorlib" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Converters\FileInfoCache.cs" />
+    <Compile Include="Converters\FileInfoConverter.cs" />
+    <Compile Include="Converters\FileInfoParameter.cs" />
+    <Compile Include="Converters\HasChildrenConverter.cs" />
+    <Compile Include="Converters\HashConverter.cs" />
+    <Compile Include="Converters\HasParentConverter.cs" />
+    <Compile Include="Converters\LengthConverter.cs" />
+    <Compile Include="Converters\SizeConverter.cs" />
+    <Compile Include="Essence.Core\Collections\EnumerableExtensions.cs" />
+    <Compile Include="Essence.Core\Commands\BaseCommand.cs" />
+    <Compile Include="Essence.Core\Commands\BaseCommand`1.cs" />
+    <Compile Include="Essence.Core\Commands\DelegateCommand.cs" />
+    <Compile Include="Essence.Core\Commands\DelegateCommand`1.cs" />
+    <Compile Include="Essence.Core\ComponentModel\CategoryOrderAttribute.cs" />
+    <Compile Include="Essence.Core\ComponentModel\CommentPropertyAttribute.cs" />
+    <Compile Include="Essence.Core\ComponentModel\ComponentListAttribute.cs" />
+    <Compile Include="Essence.Core\ComponentModel\ComponentModelExtensions.cs" />
+    <Compile Include="Essence.Core\ComponentModel\CustomTypeAttribute.cs" />
+    <Compile Include="Essence.Core\ComponentModel\DisplayIconAttribute.cs" />
+    <Compile Include="Essence.Core\ComponentModel\EditorPropertyAttribute.cs" />
+    <Compile Include="Essence.Core\ComponentModel\FilterAttribute.cs" />
+    <Compile Include="Essence.Core\ComponentModel\FilterOperation.cs" />
+    <Compile Include="Essence.Core\ComponentModel\ICustomType.cs" />
+    <Compile Include="Essence.Core\ComponentModel\INotifyPropertyCommentChanged.cs" />
+    <Compile Include="Essence.Core\ComponentModel\ListElementEditorAttribute.cs" />
+    <Compile Include="Essence.Core\ComponentModel\ListElementEditorPropertyAttribute.cs" />
+    <Compile Include="Essence.Core\ComponentModel\LocalizableString.cs" />
+    <Compile Include="Essence.Core\ComponentModel\NamePropertyAttribute.cs" />
+    <Compile Include="Essence.Core\ComponentModel\PropertyCommentChangedEventArgs.cs" />
+    <Compile Include="Essence.Core\ComponentModel\PropertyCommentChangedEventHandler.cs" />
+    <Compile Include="Essence.Core\ComponentModel\PropertyCommentChangedEventManager.cs" />
+    <Compile Include="Essence.Core\ComponentModel\PropertyEmphasis.cs" />
+    <Compile Include="Essence.Core\ComponentModel\PropertyEmphasisAttributeAttribute.cs" />
+    <Compile Include="Essence.Core\ComponentModel\PropertyOrderAttribute.cs" />
+    <Compile Include="Essence.Core\ComponentModel\TypeDisplayAttribute.cs" />
+    <Compile Include="Essence.Core\DesignTimeResourceDictionary.cs" />
+    <Compile Include="Essence.Core\Diagnostics\FriendlyTraceListener.cs" />
+    <Compile Include="Essence.Core\Diagnostics\ILog.cs" />
+    <Compile Include="Essence.Core\Diagnostics\LogLevels.cs" />
+    <Compile Include="Essence.Core\Diagnostics\TraceLog.cs" />
+    <Compile Include="Essence.Core\DictionaryHash.cs" />
+    <Compile Include="Essence.Core\DictionaryKey.cs" />
+    <Compile Include="Essence.Core\FourCC.cs" />
+    <Compile Include="Essence.Core\IO\Archive\Archive.cs" />
+    <Compile Include="Essence.Core\IO\Archive\File.cs" />
+    <Compile Include="Essence.Core\IO\Archive\FileStorageType.cs" />
+    <Compile Include="Essence.Core\IO\Archive\FileVerificationType.cs" />
+    <Compile Include="Essence.Core\IO\Archive\Folder.cs" />
+    <Compile Include="Essence.Core\IO\Archive\INode.cs" />
+    <Compile Include="Essence.Core\IO\Archive\Product.cs" />
+    <Compile Include="Essence.Core\IO\Archive\TOC.cs" />
+    <Compile Include="Essence.Core\IO\BinaryConfig.cs" />
+    <Compile Include="Essence.Core\IO\BinaryConfigBoolNode.cs" />
+    <Compile Include="Essence.Core\IO\BinaryConfigFloatNode.cs" />
+    <Compile Include="Essence.Core\IO\BinaryConfigIntNode.cs" />
+    <Compile Include="Essence.Core\IO\BinaryConfigNode.cs" />
+    <Compile Include="Essence.Core\IO\BinaryConfigOrderedTableNode.cs" />
+    <Compile Include="Essence.Core\IO\BinaryConfigStringNode.cs" />
+    <Compile Include="Essence.Core\IO\BinaryConfigStringNodeBase.cs" />
+    <Compile Include="Essence.Core\IO\BinaryConfigTableNode.cs" />
+    <Compile Include="Essence.Core\IO\BinaryConfigTableNodeBase.cs" />
+    <Compile Include="Essence.Core\IO\BinaryConfigWStringNode.cs" />
+    <Compile Include="Essence.Core\IO\Checksum\Adler32.cs" />
+    <Compile Include="Essence.Core\IO\Checksum\CRC32.cs" />
+    <Compile Include="Essence.Core\IO\ChunkHeader.cs" />
+    <Compile Include="Essence.Core\IO\Chunky.cs" />
+    <Compile Include="Essence.Core\IO\ChunkyReader.cs" />
+    <Compile Include="Essence.Core\IO\ChunkyWriter.cs" />
+    <Compile Include="Essence.Core\IO\FileTime.cs" />
+    <Compile Include="Essence.Core\IO\IniFile.cs" />
+    <Compile Include="Essence.Core\IO\KeyResolver.cs" />
+    <Compile Include="Essence.Core\IO\PathUtil.cs" />
+    <Compile Include="Essence.Core\IO\RelicGameData.cs" />
+    <Compile Include="Essence.Core\IO\TarWriter.cs" />
+    <Compile Include="Essence.Core\IO\UCS.cs" />
+    <Compile Include="Essence.Core\IO\UCSFile.cs" />
+    <Compile Include="Essence.Core\IO\UCSReader.cs" />
+    <Compile Include="Essence.Core\IO\UCSWriter.cs" />
+    <Compile Include="Essence.Core\IO\Wildcard.cs" />
+    <Compile Include="Essence.Core\OptionParser.cs" />
+    <Compile Include="Essence.Core\Pipeline\PipelineConfig.cs" />
+    <Compile Include="Essence.Core\Pipeline\Project.cs" />
+    <Compile Include="Essence.Core\PushBinding\FreezableBinding.cs" />
+    <Compile Include="Essence.Core\PushBinding\PushBinding.cs" />
+    <Compile Include="Essence.Core\PushBinding\PushBindingCollection.cs" />
+    <Compile Include="Essence.Core\PushBinding\PushBindingManager.cs" />
+    <Compile Include="Essence.Core\RefCountedDisposable`1.cs" />
+    <Compile Include="Essence.Core\SharedProperty.cs" />
+    <Compile Include="Essence.Core\ValueChangedEventArgs`1.cs" />
+    <Compile Include="Essence.Core\ValueChangedEventHandler`1.cs" />
+    <Compile Include="Essence.Core\ViewModels\ViewModelBase.cs" />
+    <Compile Include="FindMethod.cs" />
+    <Compile Include="FindWindow.xaml.cs">
+      <DependentUpon>FindWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ProgressWindow.xaml.cs">
+      <DependentUpon>ProgressWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PropertiesWindow.xaml.cs">
+      <DependentUpon>PropertiesWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <DependentUpon>Settings.settings</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Settings.cs" />
+    <Compile Include="WindowCommands.cs" />
+    <Compile Include="WindowSettings.cs" />
+    <Compile Include="WindowSettingsRestorer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resources" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="app.manifest" />
+    <None Include="CoH3.AchiveViewer_TemporaryKey.pfx" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </ApplicationDefinition>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="AboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FindWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ProgressWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PropertiesWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icon.ico" />
+    <Resource Include="media\copy.png" />
+    <Resource Include="media\find.png" />
+    <Resource Include="media\help.png" />
+    <Resource Include="media\navback.png" />
+    <Resource Include="media\navforward.png" />
+    <Resource Include="media\navup.png" />
+    <Resource Include="media\openfile.png" />
+    <Resource Include="media\properties.png" />
+    <Resource Include="media\savefile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
