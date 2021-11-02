@@ -7,7 +7,7 @@
     <ProjectGuid>{FC918012-5336-416C-868C-56CAF090F8FC}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>ArchiveViewer</RootNamespace>
-    <AssemblyName>CoH3.ArchiveViewer</AssemblyName>
+    <AssemblyName>Essence.ArchiveViewer</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
