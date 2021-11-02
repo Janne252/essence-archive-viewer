@@ -6,10 +6,10 @@ using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Windows;
 
-[assembly: AssemblyVersion("1.1.0.0")]
+[assembly: AssemblyVersion("1.2.0.0")]
 [assembly: CompilationRelaxations(8)]
 [assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: AssemblyFileVersion("1.1.0.0")]
+[assembly: AssemblyFileVersion("1.2.0.0")]
 [assembly: RuntimeCompatibility(WrapNonExceptionThrows = true)]
 [assembly: AssemblyTitle("Archive Viewer")]
 [assembly: AssemblyDescription("Archive Viewer")]
