@@ -1,4 +1,10 @@
-# AOE4 Archive Viewer
+# Essence Archive Viewer
 
-Can open up Age of Empires IV SGA files.
-Application can run as a single exe.
+Opens and extracts SGA files.
+
+Game support;
+Age of Empires IV
+Company of Heroes
+Company of Heroes 2
+Company of Heroes 3
+Dawn of War III
