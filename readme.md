@@ -1,3 +1,10 @@
+# This project is no longer maintained. Please use the bundled modding tools instead.
+- Company of Heroes 3: https://www.companyofheroes.com/en/post/company-of-heroes-3-essence-editor
+- Age of Empires IV: https://support.ageofempires.com/hc/en-us/articles/5407791017108-Launching-the-Age-of-Empires-IV-Content-Editor
+ ### Instructions
+- Launch `EssenceEditor.exe` (CoH3 or AoE4, depending on which game's `.sga` archives you're trying to extract)
+- Choose "Continue without a mod"
+- Click "File" -> "Open..." and browse to the `.sga` file
 
 # Essence Archive Viewer
 ![](/preview.png)
